@@ -13,8 +13,8 @@ def fisher_yates(els):
                 l.pop()
                 yield el
 
-def randgeometric(p):
-        return int(random.expovariate(p))
+def randgeometric(mu):
+        return int(random.expovariate(1.0 / mu))
 
 def sim_molecules(size, avg):
         '''
@@ -22,7 +22,7 @@ def sim_molecules(size, avg):
         '''
         pos = 0
         while pos < size:
-                pos += randgeometric(1.0 / avg)
+                pos += randgeometric(avg)
                 yield pos
         yield size
 
@@ -39,16 +39,23 @@ def knick_molecules(knicks, size, avg, fprate, fnrate, circular = 0):
         prev = shift
         for end in molecules:
                 molecule = []
-                while index < len(knicks) and shift + end > knicks[index]:
-                        if random.randint(0, fnrate) != 0:
-                                #TP
-                                molecule.append(knicks[index] - prev)
-                        index += 1
-                false_knick_pos = randgeometric(1.0 / fprate)
+                fp = []
+                false_knick_pos = randgeometric(fprate)
                 while false_knick_pos < end - prev:
                         #FP
-                        molecule.append(false_knick_pos)
-                        false_knick_pos += randgeometric(1.0 / fprate)
+                        fp.append(false_knick_pos)
+                        false_knick_pos += randgeometric(fprate)
+                while len(fp) > 0 or (index < len(knicks) and knicks[index] < shift + end):
+                        if len(fp) == 0:
+                                if random.randint(0, fnrate) != 0:
+                                        molecule.append(knicks[index] - prev)
+                                index += 1
+                        elif index >= len(knicks) or fp[0] < knicks[index] - prev:
+                                molecule.append(fp.pop(0))
+                        else:
+                                if random.randint(0, fnrate) != 0:
+                                        molecule.append(knicks[index] - prev)
+                                index += 1
                 if(len(molecule) > 0):
                         yield molecule
                 prev = end
