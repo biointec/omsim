@@ -12,7 +12,7 @@ ofile = open(ifname + ".bnx", 'w')
 bnx_version = '1.2'
 bnx_header(ofile, bnx_version, pattern, min_mol_len)
 avg = 200000
-coverage = 10
+coverage = 100
 
 molecules = []
 for meta, seq in RF(ifname):

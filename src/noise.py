@@ -33,14 +33,16 @@ def knick_molecules(knicks, size, avg, circular = 0):
         while index + 1 < len(knicks) and shift > knicks[index + 1]:
                 #skip until we passed the circular shift
                 index += 1
+        prev = shift
         for end in molecules:
                 molecule = []
                 while index < len(knicks) and shift + end > knicks[index]:
                         #add knicks in region [shift, shift + end[
-                        molecule.append(knicks[index])
+                        molecule.append(knicks[index] - int(prev))
                         index += 1
                 if(len(molecule) > 0):
                         yield molecule
+                prev = end
 
 def strand():
         return random.randint(0, 1)
