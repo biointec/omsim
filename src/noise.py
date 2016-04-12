@@ -23,7 +23,7 @@ def sim_molecules(size, avg):
                 yield pos
         yield size
 
-def knick_molecules(knicks, size, avg, circular = 0):
+def knick_molecules(knicks, size, avg, fprate, fnrate, circular = 0):
         knicks = list(knicks)
         molecules = sim_molecules(size, avg)
         shift = 0
@@ -37,9 +37,15 @@ def knick_molecules(knicks, size, avg, circular = 0):
         for end in molecules:
                 molecule = []
                 while index < len(knicks) and shift + end > knicks[index]:
-                        #add knicks in region [shift, shift + end[
-                        molecule.append(knicks[index] - int(prev))
+                        if random.randint(0, fnrate) != 0:
+                                #TP
+                                molecule.append(knicks[index] - int(prev))
                         index += 1
+                false_knick_pos = 0
+                while false_knick_pos < end:
+                        #FP
+                        false_knick_pos += int(random.expovariate(1.0 / fprate))
+                        molecule.append(false_knick_pos)
                 if(len(molecule) > 0):
                         yield molecule
                 prev = end

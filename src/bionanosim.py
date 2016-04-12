@@ -13,6 +13,8 @@ bnx_version = '1.2'
 bnx_header(ofile, bnx_version, pattern, min_mol_len)
 avg = 200000
 coverage = 100
+fprate = 100000
+fnrate = 100
 
 molecules = []
 for meta, seq in RF(ifname):
@@ -23,10 +25,10 @@ for meta, seq in RF(ifname):
         while c < coverage:
                 if (strand()):
                         #forward
-                        molecules += list(knick_molecules(fk, len(seq), avg))
+                        molecules += list(knick_molecules(fk, len(seq), avg, fprate, fnrate))
                 else:
                         #reverse complement
-                        molecules += list(knick_molecules(rck, len(seq), avg))
+                        molecules += list(knick_molecules(rck, len(seq), avg, fprate, fnrate))
                 c += 1
 for molecule in fisher_yates(molecules):
         bnx_entry(molecule, ofile)
