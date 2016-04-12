@@ -42,7 +42,7 @@ def knick_molecules(knicks, size, avg, fprate, fnrate, circular = 0):
                                 molecule.append(knicks[index] - int(prev))
                         index += 1
                 false_knick_pos = 0
-                while false_knick_pos < end:
+                while false_knick_pos < end - shift:
                         #FP
                         false_knick_pos += int(random.expovariate(1.0 / fprate))
                         molecule.append(false_knick_pos)
