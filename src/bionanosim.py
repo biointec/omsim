@@ -1,52 +1,59 @@
 #!/usr/bin/python
 import sys
-from KMP import KnuthMorrisPratt as KMP
 from readFasta import fasta_parse as RF
-from reverseComplement import reverse_complement as rc
-
-def knick(seq, pattern):
-        for pos in KMP(seq, pattern):
-                yield(pos)
-def init_bnx():
-        ofile.write('# BNX File Version: ' + bnx_version + '\n')
-        ofile.write('# Label Channels:\n')
-        ofile.write('# Nickase Recognition: ' + pattern + '\n')
-        ofile.write('# Min Molecule Length (Kb): ' + min_mol_len + '\n')
-        ofile.write('# Label SNR Filter Type:\n')
-        ofile.write('# Min Label SNR:\n')                                       #avg signal to noise ratio for new chip is ~12
-        ofile.write('# Software Version:\n')
-        ofile.write('# rh\n')
-        ofile.write('# Run Data\n')
-        ofile.write('# 0h\n')
-        ofile.write('# 0f\n')
-        ofile.write('# 1h\n')
-        ofile.write('# 1f\n')
-        ofile.write('# Qh\n')
-        ofile.write('# Qf\n')
-def sim_qx11():
-        return str(12)
-def sim_qx12():
-        return str(0.1)
-def sim_bnx_entry(seq, pattern):
-        backbone = '0'
-        channel = '1'
-        q1 = 'QX11'
-        q2 = 'QX12'
-        for pos in knick(seq, pattern):
-                channel += '\t' + str(pos)
-                q1 += '\t' + sim_qx11()
-                q2 += '\t' + sim_qx12()
-        ofile.write(backbone + '\n')
-        ofile.write(channel + '\n')
-        ofile.write(q1 + '\n')
-        ofile.write(q2 + '\n')
+from knick import f_knicks, rc_knicks
+from bnx import bnx_header, bnx_entry
+from noise import knick_molecules, fisher_yates, strand
 
 ifname = sys.argv[1]
 pattern = sys.argv[2]
 min_mol_len = sys.argv[3] #kb
 ofile = open(ifname + ".bnx", 'w')
 bnx_version = '1.2'
-init_bnx()
+bnx_header(ofile, bnx_version, pattern, min_mol_len)
+avg = 200000
+coverage = 10
+
+molecules = []
 for meta, seq in RF(ifname):
-        sim_bnx_entry(seq, pattern)
-        sim_bnx_entry(rc(seq), pattern)
+        #this step might use some memory
+        fk = f_knicks(seq, pattern)
+        rck = rc_knicks(seq, pattern)
+        c = 0
+        while c < coverage:
+                if (strand()):
+                        #forward
+                        molecules += list(knick_molecules(fk, len(seq), avg))
+                else:
+                        #reverse complement
+                        molecules += list(knick_molecules(rck, len(seq), avg))
+                c += 1
+for molecule in fisher_yates(molecules):
+        bnx_entry(molecule, ofile)
+        
+
+'''
+import sys
+import getopt
+
+class Usage(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    try:
+        try:
+            opts, args = getopt.getopt(argv[1:], "h", ["help"])
+        except getopt.error, msg:
+             raise Usage(msg)
+    except Usage, err:
+        print >>sys.stderr, err.msg
+        print >>sys.stderr, "for help use --help"
+        return 2
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+'''

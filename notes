@@ -1,2 +1,5 @@
 #BNX file simulation
-> circular genomes!
+> Circular genomes! Pick circular shift U[0,N] to start the genome splitting.
+> Pick molecule size from distribution.
+> 
+
