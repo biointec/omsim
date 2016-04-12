@@ -13,13 +13,16 @@ def fisher_yates(els):
                 l.pop()
                 yield el
 
+def randgeometric(p):
+        return int(random.expovariate(p))
+
 def sim_molecules(size, avg):
         '''
         returns end positions of the molecules
         '''
         pos = 0
         while pos < size:
-                pos += random.expovariate(1.0 / avg)
+                pos += randgeometric(1.0 / avg)
                 yield pos
         yield size
 
@@ -39,13 +42,13 @@ def knick_molecules(knicks, size, avg, fprate, fnrate, circular = 0):
                 while index < len(knicks) and shift + end > knicks[index]:
                         if random.randint(0, fnrate) != 0:
                                 #TP
-                                molecule.append(knicks[index] - int(prev))
+                                molecule.append(knicks[index] - prev)
                         index += 1
-                false_knick_pos = int(random.expovariate(1.0 / fprate))
-                while false_knick_pos < end - int(prev):
+                false_knick_pos = randgeometric(1.0 / fprate)
+                while false_knick_pos < end - prev:
                         #FP
                         molecule.append(false_knick_pos)
-                        false_knick_pos += int(random.expovariate(1.0 / fprate))
+                        false_knick_pos += randgeometric(1.0 / fprate)
                 if(len(molecule) > 0):
                         yield molecule
                 prev = end
