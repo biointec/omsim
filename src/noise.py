@@ -1,4 +1,5 @@
 import random
+from bisect import bisect_left
 
 def fisher_yates(els):
         '''
@@ -16,6 +17,9 @@ def fisher_yates(els):
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
+def false_positive(rate):
+        return random.expovariate(rate / 100000)
+
 def sim_molecules(size, avg):
         '''
         returns end positions of the molecules
@@ -26,39 +30,45 @@ def sim_molecules(size, avg):
                 yield pos
         yield size
 
-def knick_molecules(knicks, size, avg, fprate, fnrate, circular = 0):
+def knick_position(mu, sd):
+        pos = random.gauss(mu, sd)
+        return pos
+
+def knick_molecule(knicks, size, avg, fprate, fnrate, sd, circular = 0):
         knicks = list(knicks)
-        molecules = sim_molecules(size, avg)
-        shift = 0
-        if circular:
-                shift = random.randint(0, size - 1)
-        index = 0
-        while index + 1 < len(knicks) and shift > knicks[index + 1]:
-                #skip until we passed the circular shift
-                index += 1
-        prev = shift
-        for end in molecules:
-                molecule = []
-                fp = []
-                false_knick_pos = randgeometric(fprate)
-                while false_knick_pos < end - prev:
-                        #FP
-                        fp.append(false_knick_pos)
-                        false_knick_pos += randgeometric(fprate)
-                while len(fp) > 0 or (index < len(knicks) and knicks[index] < shift + end):
-                        if len(fp) == 0:
-                                if random.randint(0, fnrate) != 0:
-                                        molecule.append(knicks[index] - prev)
-                                index += 1
-                        elif index >= len(knicks) or fp[0] < knicks[index] - prev:
-                                molecule.append(fp.pop(0))
+        shift = random.randint(0, size - 1)
+        length = randgeometric(avg)
+        if length > size:
+                return
+        end = shift + length
+        if not circular and end >= size:
+                return
+        index = bisect_left(knicks, shift)
+        molecule = []
+        fp = []
+        TP = 0
+        FP = 0
+        FN = 0
+        false_knick_pos = false_positive(fprate)
+        while false_knick_pos < end - shift:
+                #generate FP's
+                fp.append(false_knick_pos)
+                false_knick_pos += false_positive(fprate)
+        while len(fp) > 0 or (index < len(knicks) and knicks[index] < end):
+                if len(fp) != 0 and (index >= len(knicks) or fp[0] < knicks[index] - shift):
+                        molecule.append(fp.pop(0))
+                        FP += 1
+                else:
+                        if random.random() < fnrate:
+                                pos = molecule.append(knick_position(knicks[index] - shift, sd))
+                                if 0 <= pos and pos <= length - 1:
+                                        molecule.append(knick_position(knicks[index] - shift, sd))
+                                TP += 1
                         else:
-                                if random.randint(0, fnrate) != 0:
-                                        molecule.append(knicks[index] - prev)
-                                index += 1
-                if(len(molecule) > 0):
-                        yield molecule
-                prev = end
+                                FN += 1
+                        index += 1
+        if(len(molecule) > 0):
+                yield [length, TP, FP, FN], molecule
 
 def strand():
         return random.randint(0, 1)
