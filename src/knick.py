@@ -1,5 +1,5 @@
-from KMP import KnuthMorrisPratt as KMP
-from reverseComplement import reverse_complement as rc
+from util import KnuthMorrisPratt as KMP
+from util import reverse_complement as rc
 
 def knick(seq, pattern):
         for pos in KMP(seq, pattern):

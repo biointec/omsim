@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from readFasta import fasta_parse as RF
+from util import fasta_parse as RF
 from knick import f_knicks, rc_knicks
 from bnx import bnx_header, bnx_entry
 from noise import knick_molecule, fisher_yates, strand
