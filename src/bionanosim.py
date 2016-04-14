@@ -28,13 +28,13 @@ for meta, seq in RF(ifname):
         if circular:
                 seq += seq[0:max_pattern_len]
         fk, rck = knicks(seq, patterns)
+        seq = None
         if circular:
                 #remove duplicate hits
                 while fk[-1][0] >= seqLen:
                         fk.pop()
                 while rck[-1][0] >= seqLen:
                         rck.pop()
-        seq = None
         size = 0
         while size < coverage * seqLen:
                 i, m = knick_molecule([fk, rck][strand()], seqLen, avg, fprate, fnrate, sd, circular)
