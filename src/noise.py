@@ -4,6 +4,9 @@ from bisect import bisect_left
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
+def strand():
+        return random.randint(0, 1)
+
 def knick_position(mu, sd):
         pos = random.gauss(mu, sd)
         return pos
@@ -24,7 +27,8 @@ def fragile_sites(molecule, length):
         #TODO
         return ([(molecule, length)])
 
-def knick_molecule(knicks, size, avg, fprate, fnrate, sd, circular = 0):
+def generate_molecule(knicks, size, stats, circular = 0):
+        avg, coverage, fprate, fnrate, sd, min_mol_len = stats
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
         length = randgeometric(avg)
@@ -55,6 +59,19 @@ def knick_molecule(knicks, size, avg, fprate, fnrate, sd, circular = 0):
         else:
                 return ([-1], [])
 
-def strand():
-        return random.randint(0, 1)
+def generate_molecules(seqLens, fks, rcks, stats, circular):
+        avg, coverage, fprate, fnrate, sd, min_mol_len = stats
+        size = 0
+        seqCount = len(seqLens)
+        cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
+        while size < coverage * cumSeqLens[-1]:
+                idx = seqCount
+                r = random.random() * cumSeqLens[-1]
+                while 0 < idx and r < cumSeqLens[idx - 1]:
+                        idx -= 1
+                i, m = generate_molecule([fks[idx], rcks[idx]][strand()], seqLens[idx], stats, circular[idx])
+                l = i[0]
+                if l >= min_mol_len:
+                        size += l
+                        yield l, m
 

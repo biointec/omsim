@@ -1,4 +1,4 @@
-def bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
+def write_bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
         '''
         Writes the bnx-header
         '''
@@ -12,8 +12,8 @@ def bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
         ofile.write('# Label SNR Filter Type:\t' + '\n')
         ofile.write('# Min Label SNR:\t' + '\n') #avg signal to noise ratio for new chip is ~12
         ofile.write('# Software Version:\t' + '\n')
-        ofile.write('#rh\t' + 'SourceFolder\tInstrumentSeria\tTime\tNanoChannelPixelsPerScan\tStretchFactor\tBasesPerPixel\tNumberofScans\tChipId\tFlowCell\tLabelSNRFilterType\tMinMoleculeLength\tMinLabelSNR\tRunId\n')
-        ofile.write('# Run Data\t' + '\n')
+        ofile.write('#rh\t' + 'SourceFolder\tInstrumentSerial\tTime\tNanoChannelPixelsPerScan\tStretchFactor\tBasesPerPixel\tNumberofScans\tChipId\tFlowCell\tLabelSNRFilterType\tMinMoleculeLength\tMinLabelSNR\tRunId\n')
+        ofile.write('# Run Data\t' + '\n') #TODO
         ofile.write('# Number of Molecules:	34292' + '\n')
         ofile.write('#0h LabelChannel	MoleculeID	Length	AvgIntensity	SNR	NumberofLables	OriginalMoleculeId	ScanNumber	ScanDirection	ChipId	Flowcell	RunId	GlobalScanNumber' + '\n')
         ofile.write('#0f int	 int	 float	float	float	int	int	int	int	string	int	int	int' + '\n')
@@ -47,7 +47,7 @@ def get_backbone_info(moleculeID, length, count):
         info.append(1)          #GlobalScanNumber       #12
         return info
 
-def bnx_entry(info, knicks, ofile):
+def write_bnx_entry(info, knicks, ofile):
         info = get_backbone_info(info[0], info[1], len(knicks))
         backbone = ''
         backbone += str(info[0]) + '\t'                         #backboneLabelChannel   0
