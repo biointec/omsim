@@ -1,22 +1,6 @@
 import random
 from bisect import bisect_left
 
-def fisher_yates(els):
-        '''
-        Implements the Fisher-Yates shuffle, this yields elements of a list in 
-        pseudo-random order. Note that for even rather small len(els), the total
-        number of permutations of els is larger than the period of most random 
-        number generators; this implies that most permutations of a long list 
-        can never be generated.
-        '''
-        l = list(els)
-        while len(l):
-                i = random.randint(0, len(l) - 1)
-                el = l[i]
-                l[i] = l[-1]
-                l.pop()
-                yield el
-
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
