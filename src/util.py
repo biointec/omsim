@@ -27,35 +27,46 @@ def reverse_complement(seq):
         return ''.join(reversed(complement_list(seq)))
 
 
-# Knuth-Morris-Pratt string matching
-# David Eppstein, UC Irvine, 1 Mar 2002
-#from http://code.activestate.com/recipes/117214/
-def KnuthMorrisPratt(text, pattern):
-        '''Yields all starting positions of copies of the pattern in the text.
-        Calling conventions are similar to string.find, but its arguments can be
-        lists or iterators, not just strings, it returns all matches, not just
-        the first one, and it does not need the whole text in memory at once.
-        Whenever it yields, it will have read the text exactly up to and including
-        the match that caused the yield.'''
+def double_stranded_KMP(text, pattern):
+        c_pattern = reverse_complement(pattern)
+        size = len(pattern)
         # allow indexing into pattern and protect against change during yield
         pattern = list(pattern)
+        c_pattern = list(c_pattern)
         # build table of shift amounts
-        shifts = [1] * (len(pattern) + 1)
+        shifts = [1] * (size + 1)
         shift = 1
-        for pos in range(len(pattern)):
+        for pos in range(size):
                 while shift <= pos and pattern[pos] != pattern[pos - shift]:
                         shift += shifts[pos - shift]
                 shifts[pos + 1] = shift
+        
+        c_shifts = [1] * (size + 1)
+        c_shift = 1
+        for pos in range(size):
+                while c_shift <= pos and c_pattern[pos] != c_pattern[pos - c_shift]:
+                        c_shift += c_shifts[pos - c_shift]
+                c_shifts[pos + 1] = c_shift
+        
         # do the actual search
         startPos = 0
         matchLen = 0
+        c_startPos = 0
+        c_matchLen = 0
         for c in text:
-                while matchLen == len(pattern) or \
-                      matchLen >= 0 and pattern[matchLen] != c:
+                while matchLen == size or matchLen >= 0 and pattern[matchLen] != c:
                         startPos += shifts[matchLen]
                         matchLen -= shifts[matchLen]
                 matchLen += 1
-                if matchLen == len(pattern):
+                if matchLen == size:
                         yield startPos
+                while c_matchLen == size or c_matchLen >= 0 and c_pattern[c_matchLen] != c:
+                        c_startPos += c_shifts[c_matchLen]
+                        c_matchLen -= c_shifts[c_matchLen]
+                c_matchLen += 1
+                if c_matchLen == size:
+                        yield c_startPos
+
+
 
 

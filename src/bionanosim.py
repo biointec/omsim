@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 from util import fasta_parse as RF
-from knick import f_knicks, rc_knicks
+from knick import knicks
 from bnx import bnx_header, bnx_entry
 from noise import knick_molecule, fisher_yates, strand
 
@@ -21,8 +21,9 @@ sd = 1500 #sd of knick position
 molecules = []
 for meta, seq in RF(ifname):
         #this step might use some memory
-        fk = f_knicks(seq, pattern)
-        rck = rc_knicks(seq, pattern)
+        fk = knicks(seq, pattern)
+        shift = len(seq) - len(pattern)
+        rck = reversed([shift - k for k in fk])
         c = 0
         size = 0
         while c < coverage:
@@ -38,6 +39,7 @@ for meta, seq in RF(ifname):
                                         size += i[0]
                                         molecules.append((i[0], m))
                 c += 1
+
 moleculeID = 0
 for length, molecule in fisher_yates(molecules):
         moleculeID += 1

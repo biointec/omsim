@@ -1,19 +1,11 @@
-from util import KnuthMorrisPratt as KMP
-from util import reverse_complement as rc
+from util import double_stranded_KMP
 
-def knick(seq, pattern):
-        for pos in KMP(seq, pattern):
+def double_stranded_knick(seq, pattern):
+        for pos in double_stranded_KMP(seq, pattern):
                 yield(pos)
 
-def f_knicks(seq, pattern):
-        fknicks = [];
-        for pos in knick(seq, pattern):
-                fknicks.append(pos)
-        return fknicks
-
-def rc_knicks(seq, pattern):
-        rcknicks = [];
-        offset = len(seq) - len(pattern)
-        for pos in knick(seq, rc(pattern)):
-                rcknicks.append(offset - pos)
-        return reversed(rcknicks)
+def knicks(seq, pattern):
+        k = [];
+        for pos in double_stranded_knick(seq, pattern):
+                k.append(pos)
+        return k
