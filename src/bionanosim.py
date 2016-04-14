@@ -8,6 +8,7 @@ from noise import knick_molecule, fisher_yates, strand
 ifname = sys.argv[1]
 patterns = [sys.argv[2]]
 min_mol_len = int(sys.argv[3]) #kb
+circular = int(sys.argv[4])
 if min_mol_len < 0:
         min_mol_len = 0
 ofile = open(ifname + ".bnx", 'w')
@@ -21,22 +22,32 @@ fnrate = 0.15 #fn rate of true labels
 sd = 1500 #sd of knick position
 
 molecules = []
+max_pattern_len = max([len(p) for p in patterns])
 for meta, seq in RF(ifname):
-        fk, rck = knicks(seq, patterns)
         seqLen = len(seq)
+        if circular:
+                seq += seq[0:max_pattern_len]
+        fk, rck = knicks(seq, patterns)
+        if circular:
+                #remove duplicate hits
+                while fk[-1][0] >= seqLen:
+                        fk.pop()
+                while rck[-1][0] >= seqLen:
+                        rck.pop()
+        print(len(fk))
         seq = None
         size = 0
         while size < coverage * seqLen:
                 if (strand()):
                         #forward
-                        i, m = knick_molecule(fk, seqLen, avg, fprate, fnrate, sd)
+                        i, m = knick_molecule(fk, seqLen, avg, fprate, fnrate, sd, circular)
                         l = i[0]
                         if l >= min_mol_len:
                                 size += l
                                 molecules.append((l, m))
                 else:
                         #reverse complement
-                        i, m = knick_molecule(rck, seqLen, avg, fprate, fnrate, sd)
+                        i, m = knick_molecule(rck, seqLen, avg, fprate, fnrate, sd, circular)
                         l = i[0]
                         if l >= min_mol_len:
                                 size += l

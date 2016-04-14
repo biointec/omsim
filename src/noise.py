@@ -51,7 +51,7 @@ def knick_molecule(knicks, size, avg, fprate, fnrate, sd, circular = 0):
                 return  ([-1], [])
         idx = bisect_left(knicks, (shift, None))
         molecule = []
-        fp = false_positives(fprate, end - shift)
+        fp = false_positives(fprate, length)
         while len(fp) > 0 or (idx < len(knicks) and knicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(knicks) or fp[0][0] < knicks[idx][0] - shift):
                         molecule.append(fp.pop(0)[0])

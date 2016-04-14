@@ -6,4 +6,4 @@ def knicks(seq, patterns):
         for pos, rev in double_stranded_multi_KMP(seq, patterns):
                 f.append(pos)
                 r.append(rev)
-        return f, reversed(r)
+        return f, list(reversed(r))
