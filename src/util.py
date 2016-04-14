@@ -28,10 +28,6 @@ def reverse_complement(seq):
 
 def double_stranded_multi_KMP(seq, patterns):
         patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
-        for pos, rev in multi_KMP(seq, patterns):
-                yield pos, rev
-
-def multi_KMP(seq, patterns):
         count = len(patterns)
         sizes = [len(pattern) for pattern in patterns]
         reverses = [len(seq) - sizes[i] for i in range(count)]
@@ -56,6 +52,6 @@ def multi_KMP(seq, patterns):
                                 matchLen[i] -= shifts[i][matchLen[i]]
                         matchLen[i] += 1
                         if matchLen[i] == sizes[i]:
-                                yield startPos[i], reverses[i] - startPos[i]
+                                yield (startPos[i], i < count / 2), (reverses[i] - startPos[i], i < count / 2)
 
 

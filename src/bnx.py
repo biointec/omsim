@@ -8,7 +8,7 @@ def bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
         for i in range(len(patterns)):
                 ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + patterns[i] + '\n')
         ofile.write('# Bases per Pixel:\t' + '500' + '\n')
-        ofile.write('# Min Molecule Length (Kb):\t' + min_mol_len + '\n')
+        ofile.write('# Min Molecule Length (Kb):\t' + str(min_mol_len) + '\n')
         ofile.write('# Label SNR Filter Type:\t' + '\n')
         ofile.write('# Min Label SNR:\t' + '\n') #avg signal to noise ratio for new chip is ~12
         ofile.write('# Software Version:\t' + '\n')

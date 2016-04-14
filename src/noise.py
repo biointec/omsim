@@ -20,58 +20,56 @@ def fisher_yates(els):
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
-def false_positive(rate):
-        return random.expovariate(rate / 100000)
-
-def sim_molecules(size, avg):
-        '''
-        returns end positions of the molecules
-        '''
-        pos = 0
-        while pos < size:
-                pos += randgeometric(avg)
-                yield pos
-        yield size
-
 def knick_position(mu, sd):
         pos = random.gauss(mu, sd)
         return pos
+
+def false_positive(fprate):
+        return random.expovariate(fprate / 100000)
+
+def false_positives(fprate, length):
+        fp = []
+        false_knick_pos = false_positive(fprate)
+        while false_knick_pos < length:
+                #generate FP's on random strand
+                fp.append((false_knick_pos, strand()))
+                false_knick_pos += false_positive(fprate)
+        return fp
+
+def fragile_sites(molecule, length):
+        #TODO
+        return ([(molecule, length)])
 
 def knick_molecule(knicks, size, avg, fprate, fnrate, sd, circular = 0):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
         length = randgeometric(avg)
         if length > size:
-                return
+                return  ([-1], [])
         end = shift + length
         if not circular and end >= size:
-                return
-        index = bisect_left(knicks, shift)
+                return  ([-1], [])
+        idx = bisect_left(knicks, (shift, None))
         molecule = []
-        fp = []
-        TP = 0
-        FP = 0
-        FN = 0
-        false_knick_pos = false_positive(fprate)
-        while false_knick_pos < end - shift:
-                #generate FP's
-                fp.append(false_knick_pos)
-                false_knick_pos += false_positive(fprate)
-        while len(fp) > 0 or (index < len(knicks) and knicks[index] < end):
-                if len(fp) != 0 and (index >= len(knicks) or fp[0] < knicks[index] - shift):
-                        molecule.append(fp.pop(0))
-                        FP += 1
+        fp = false_positives(fprate, end - shift)
+        while len(fp) > 0 or (idx < len(knicks) and knicks[idx][0] < end):
+                if len(fp) != 0 and (idx >= len(knicks) or fp[0][0] < knicks[idx][0] - shift):
+                        molecule.append(fp.pop(0)[0])
                 else:
                         if random.random() < fnrate:
-                                pos = molecule.append(knick_position(knicks[index] - shift, sd))
+                                pos = knick_position(knicks[idx][0] - shift, sd)
                                 if 0 <= pos and pos <= length - 1:
-                                        molecule.append(knick_position(knicks[index] - shift, sd))
-                                TP += 1
-                        else:
-                                FN += 1
-                        index += 1
-        if(len(molecule) > 0):
-                yield [length, TP, FP, FN], molecule
+                                        molecule.append(pos)
+                        idx += 1
+        res = []
+        for m, l in fragile_sites(molecule, length):
+                if len(m) > 0:
+                        res.append(([l], m))
+        if len(res) > 0:
+                idx = random.randint(0, len(res) - 1)
+                return res[idx]
+        else:
+                return ([-1], [])
 
 def strand():
         return random.randint(0, 1)

@@ -7,7 +7,9 @@ from noise import knick_molecule, fisher_yates, strand
 
 ifname = sys.argv[1]
 patterns = [sys.argv[2]]
-min_mol_len = sys.argv[3] #kb
+min_mol_len = int(sys.argv[3]) #kb
+if min_mol_len < 0:
+        min_mol_len = 0
 ofile = open(ifname + ".bnx", 'w')
 bns_version = '0.1'
 bnx_version = '1.2'
@@ -21,21 +23,24 @@ sd = 1500 #sd of knick position
 molecules = []
 for meta, seq in RF(ifname):
         fk, rck = knicks(seq, patterns)
-        c = 0
+        seqLen = len(seq)
+        seq = None
         size = 0
-        while c < coverage:
-                while size < (c + 1) * len(seq):
-                        if (strand()):
-                                #forward
-                                for i, m in knick_molecule(fk, len(seq), avg, fprate, fnrate, sd):
-                                        size += i[0]
-                                        molecules.append((i[0], m))
-                        else:
-                                #reverse complement
-                                for i, m in knick_molecule(rck, len(seq), avg, fprate, fnrate, sd):
-                                        size += i[0]
-                                        molecules.append((i[0], m))
-                c += 1
+        while size < coverage * seqLen:
+                if (strand()):
+                        #forward
+                        i, m = knick_molecule(fk, seqLen, avg, fprate, fnrate, sd)
+                        l = i[0]
+                        if l >= min_mol_len:
+                                size += l
+                                molecules.append((l, m))
+                else:
+                        #reverse complement
+                        i, m = knick_molecule(rck, seqLen, avg, fprate, fnrate, sd)
+                        l = i[0]
+                        if l >= min_mol_len:
+                                size += l
+                                molecules.append((l, m))
 
 moleculeID = 0
 for length, molecule in fisher_yates(molecules):
