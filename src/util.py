@@ -13,18 +13,18 @@ def fasta_parse(ifname):
                 yield key, val
 
 
-alt_map = {'ins':'0'}
-complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'} 
-def reverse_complement(seq):    
-        for k,v in alt_map.iteritems():
-                seq = seq.replace(k,v)
-        bases = list(seq) 
-        bases = reversed([complement.get(base,base) for base in bases])
-        bases = ''.join(bases)
-        for k,v in alt_map.iteritems():
-                bases = bases.replace(v,k)
-        return bases
+complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
+def complement_list(seq):
+        bases = list(seq) 
+        return [complements.get(base, base) for base in bases]
+
+def complement(seq):
+        return ''.join(complement_list(seq))
+
+
+def reverse_complement(seq):
+        return ''.join(reversed(complement_list(seq)))
 
 
 # Knuth-Morris-Pratt string matching
