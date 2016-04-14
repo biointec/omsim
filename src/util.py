@@ -13,11 +13,11 @@ def fasta_parse(ifname):
                 yield key, val
 
 
-complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+base_complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
 def complement_list(seq):
         bases = list(seq) 
-        return [complements.get(base, base) for base in bases]
+        return [base_complements.get(base, base) for base in bases]
 
 def complement(seq):
         return ''.join(complement_list(seq))
@@ -26,47 +26,36 @@ def complement(seq):
 def reverse_complement(seq):
         return ''.join(reversed(complement_list(seq)))
 
+def double_stranded_multi_KMP(seq, patterns):
+        patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
+        for pos, rev in multi_KMP(seq, patterns):
+                yield pos, rev
 
-def double_stranded_KMP(text, pattern):
-        c_pattern = reverse_complement(pattern)
-        size = len(pattern)
-        # allow indexing into pattern and protect against change during yield
-        pattern = list(pattern)
-        c_pattern = list(c_pattern)
-        # build table of shift amounts
-        shifts = [1] * (size + 1)
-        shift = 1
-        for pos in range(size):
-                while shift <= pos and pattern[pos] != pattern[pos - shift]:
-                        shift += shifts[pos - shift]
-                shifts[pos + 1] = shift
-        
-        c_shifts = [1] * (size + 1)
-        c_shift = 1
-        for pos in range(size):
-                while c_shift <= pos and c_pattern[pos] != c_pattern[pos - c_shift]:
-                        c_shift += c_shifts[pos - c_shift]
-                c_shifts[pos + 1] = c_shift
-        
-        # do the actual search
-        startPos = 0
-        matchLen = 0
-        c_startPos = 0
-        c_matchLen = 0
-        for c in text:
-                while matchLen == size or matchLen >= 0 and pattern[matchLen] != c:
-                        startPos += shifts[matchLen]
-                        matchLen -= shifts[matchLen]
-                matchLen += 1
-                if matchLen == size:
-                        yield startPos
-                while c_matchLen == size or c_matchLen >= 0 and c_pattern[c_matchLen] != c:
-                        c_startPos += c_shifts[c_matchLen]
-                        c_matchLen -= c_shifts[c_matchLen]
-                c_matchLen += 1
-                if c_matchLen == size:
-                        yield c_startPos
-
-
+def multi_KMP(seq, patterns):
+        count = len(patterns)
+        sizes = [len(pattern) for pattern in patterns]
+        reverses = [len(seq) - sizes[i] for i in range(count)]
+        # allow indexing into patterns
+        patterns = [list(pattern) for pattern in patterns]
+        # build table of shifts
+        shifts = []
+        shift = [1] * count
+        for i in range(count):
+                shifts.append([1] * (sizes[i] + 1))
+                for pos in range(sizes[i]):
+                        while shift[i] <= pos and patterns[i][pos] != patterns[i][pos - shift[i]]:
+                                shift[i] += shifts[i][pos - shift[i]]
+                        shifts[i][pos + 1] = shift[i]
+        # search for patterns
+        startPos = [0] * count
+        matchLen = [0] * count
+        for c in seq:
+                for i in range(count):
+                        while matchLen[i] == sizes[i] or matchLen[i] >= 0 and patterns[i][matchLen[i]] != c:
+                                startPos[i] += shifts[i][matchLen[i]]
+                                matchLen[i] -= shifts[i][matchLen[i]]
+                        matchLen[i] += 1
+                        if matchLen[i] == sizes[i]:
+                                yield startPos[i], reverses[i] - startPos[i]
 
 

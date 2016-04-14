@@ -1,11 +1,12 @@
-def bnx_header(ofile, bns_version, bnx_version, pattern, min_mol_len):
+def bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
         '''
         Writes the bnx-header
         '''
         ofile.write('# BNSim Version:\t' + bns_version + '\n')
         ofile.write('# BNX File Version:\t' + bnx_version + '\n')
         ofile.write('# Label Channels:\t' + '1' + '\n')
-        ofile.write('# Nickase Recognition Site 1:\t' + pattern + '\n')
+        for i in range(len(patterns)):
+                ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + patterns[i] + '\n')
         ofile.write('# Bases per Pixel:\t' + '500' + '\n')
         ofile.write('# Min Molecule Length (Kb):\t' + min_mol_len + '\n')
         ofile.write('# Label SNR Filter Type:\t' + '\n')

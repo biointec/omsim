@@ -1,11 +1,9 @@
-from util import double_stranded_KMP
+from util import double_stranded_multi_KMP
 
-def double_stranded_knick(seq, pattern):
-        for pos in double_stranded_KMP(seq, pattern):
-                yield(pos)
-
-def knicks(seq, pattern):
-        k = [];
-        for pos in double_stranded_knick(seq, pattern):
-                k.append(pos)
-        return k
+def knicks(seq, patterns):
+        f = [];
+        r = [];
+        for pos, rev in double_stranded_multi_KMP(seq, patterns):
+                f.append(pos)
+                r.append(rev)
+        return f, reversed(r)

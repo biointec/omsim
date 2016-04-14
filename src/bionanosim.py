@@ -6,12 +6,12 @@ from bnx import bnx_header, bnx_entry
 from noise import knick_molecule, fisher_yates, strand
 
 ifname = sys.argv[1]
-pattern = sys.argv[2]
+patterns = [sys.argv[2]]
 min_mol_len = sys.argv[3] #kb
 ofile = open(ifname + ".bnx", 'w')
 bns_version = '0.1'
 bnx_version = '1.2'
-bnx_header(ofile, bns_version, bnx_version, pattern, min_mol_len)
+bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len)
 avg = 200000
 coverage = 100
 fprate = 1.0 #number of fp in 100kb
@@ -20,10 +20,7 @@ sd = 1500 #sd of knick position
 
 molecules = []
 for meta, seq in RF(ifname):
-        #this step might use some memory
-        fk = knicks(seq, pattern)
-        shift = len(seq) - len(pattern)
-        rck = reversed([shift - k for k in fk])
+        fk, rck = knicks(seq, patterns)
         c = 0
         size = 0
         while c < coverage:
