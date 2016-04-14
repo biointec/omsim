@@ -19,6 +19,8 @@ coverage = 100
 fprate = 1.0 #number of fp in 100kb
 fnrate = 0.15 #fn rate of true labels
 sd = 1500 #sd of knick position
+#TODO stretchfactor = .85
+#TODO bp per chip
 
 stats = [avg, coverage, fprate, fnrate, sd, min_mol_len]
 
