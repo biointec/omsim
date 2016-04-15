@@ -24,7 +24,9 @@ def false_positives(fprate, length):
         return fp
 
 def fragile_sites(molecule, length):
-        #TODO
+        # TODO
+        # note that this breaks molecules after the size has been sampled
+        # this might mess up the molecule size distribution ...
         return ([(molecule, length)])
 
 def generate_molecule(knicks, size, stats, circular = 0):
