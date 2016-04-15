@@ -21,11 +21,20 @@ def bnsim(settings):
                 meta = None
                 seq = None
         print('Generating reads...')
-        ofile = open(settings.ifname + ".bnx", 'w')
+        chip = 1
+        chip_size = 0
+        ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
         write_bnx_header(ofile, settings)
         for l, m in generate_molecules(seqLens, fks, rcks, settings):
                         moleculeID += 1
                         write_bnx_entry((moleculeID, l), m, ofile)
+                        chip_size += l
+                        if chip_size > settings.chip_size:
+                                chip += 1
+                                ofile.close()
+                                ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
+                                chip_size = 0
+        ofile.close()
         print('Finished.')
 
 def main(argv = None):

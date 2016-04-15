@@ -1,5 +1,6 @@
 import random
 from bisect import bisect_left
+from math import exp
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
@@ -15,6 +16,7 @@ def false_positive(fprate):
         return random.expovariate(fprate / 100000)
 
 def false_positives(fprate, length):
+        #TODO FP can be at TP position, this should not happen
         fp = []
         false_knick_pos = false_positive(fprate)
         while false_knick_pos < length:
@@ -23,10 +25,42 @@ def false_positives(fprate, length):
                 false_knick_pos += false_positive(fprate)
         return fp
 
-def fragile_sites(molecule, length): # TODO
-        # note that this breaks molecules after the size has been sampled
-        # this might mess up the molecule size distribution ...
-        return ([(molecule, length)])
+def sigmoid(m, f, x):
+        return 1 - 1 / (1 + exp((m - x) / f))
+
+def break_fragile(prev, curr, settings):
+        #TODO improve fragile site tolerance
+        if prev[1] == curr[1]:
+                cutoff = settings.fragile_same
+        else:
+                cutoff = settings.fragile_opposite
+        dist = curr[0] - prev[0]
+        if dist < cutoff - settings.fragile_treshold \
+           or cutoff + settings.fragile_treshold < dist \
+           or random.random() > sigmoid(cutoff, settings.fragile_factor, dist):
+                return False
+        else:
+                return True
+
+def fragile_sites(l, m, settings):
+        if len(m) == 0:
+                yield (l, m)
+                return
+        prev = m[0]
+        mol = [prev]
+        start = 0
+        idx = 1
+        while idx < len(m):
+                if break_fragile(prev, m[idx], settings):
+                        yield (prev[0] - start, mol[:-1])
+                        start = m[idx][0]
+                        prev = m[idx]
+                        mol = []
+                else:
+                        mol.append(m[idx])
+                        prev = m[idx]
+                idx += 1
+        yield (l - start, mol)
 
 def create_chimera(l1, m1, l2, m2):
         l1 = l1 #TODO what intermolecular distance should be added
@@ -61,7 +95,9 @@ def generate_molecule(knicks, size, settings):
                                 end -= size
                                 shift -= size
         res = []
-        for m, l in fragile_sites(molecule, length):
+        #TODO fragile site computation should happen before randomising the TP
+        #TODO how should we deal with fragile sites vs randomised molecule length?
+        for l , m in fragile_sites(length, molecule, settings):
                 if len(m) > 0:
                         res.append(([l], m))
         if len(res) > 0:
