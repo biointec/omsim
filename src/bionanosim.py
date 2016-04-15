@@ -4,48 +4,44 @@ from util import fasta_parse
 from knick import index_sequence
 from noise import generate_molecules
 from bnx import write_bnx_header, write_bnx_entry
+from settings import Settings
 
-ifname = sys.argv[1]
-patterns = [sys.argv[2]]
-min_mol_len = int(sys.argv[3]) #kb
-circular = int(sys.argv[4])
-if min_mol_len < 0:
-        min_mol_len = 0
-ofile = open(ifname + ".bnx", 'w')
-bns_version = '0.1'
-bnx_version = '1.2'
-avg = 200000
-coverage = 1
-fprate = 1.0 #number of fp in 100kb
-fnrate = 0.15 #fn rate of true labels
-sd = 1500 #sd of knick position
-#TODO stretchfactor = .85
-#TODO bp per chip
+def bnsim(settings):
+        moleculeID = 0
+        fks = []
+        rcks = []
+        seqLens = []
+        for meta, seq in fasta_parse(settings.ifname):
+                print('Indexing sequence: ' + meta)
+                seqLens.append(len(seq))
+                fk, rck = index_sequence(seq, settings)
+                print('Found ' + str(len(fk)) + ' knicks in ' + str(seqLens[-1]) + 'bp.')
+                fks.append(fk)
+                rcks.append(rck)
+                meta = None
+                seq = None
+        print('Generating reads...')
+        ofile = open(settings.ifname + ".bnx", 'w')
+        write_bnx_header(ofile, settings)
+        for l, m in generate_molecules(seqLens, fks, rcks, settings):
+                        moleculeID += 1
+                        write_bnx_entry((moleculeID, l), m, ofile)
+        print('Finished.')
 
-stats = [avg, coverage, fprate, fnrate, sd, min_mol_len]
+def main(argv = None):
+        if argv is None:
+                argv = sys.argv
+        settings = Settings()
+        settings.ifname = argv[1]
+        settings.patterns = [argv[2]]
+        settings.min_mol_len = int(argv[3]) #kb
+        settings.circular = int(argv[4])
+        if settings.min_mol_len < 0:
+                settings.min_mol_len = 0
+        bnsim(settings)
 
-moleculeID = 0
-fks = []
-rcks = []
-seqLens = []
-for meta, seq in fasta_parse(ifname):
-        print('Indexing sequence: ' + meta)
-        seqLens.append(len(seq))
-        fk, rck = index_sequence(seq, circular, patterns)
-        print('Found ' + str(len(fk)) + ' knicks in ' + str(seqLens[-1]) + 'bp.')
-        fks.append(fk)
-        rcks.append(rck)
-        meta = None
-        seq = None
-
-print('Generating reads...')
-write_bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len)
-for l, m in generate_molecules(seqLens, fks, rcks, stats, [circular] * len(fks)):
-                moleculeID += 1
-                write_bnx_entry((moleculeID, l), m, ofile)
-print('Finished.')
-
-
+if __name__ == "__main__":
+        sys.exit(main())
 '''
 import sys
 import getopt

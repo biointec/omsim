@@ -8,12 +8,12 @@ def knicks(seq, patterns):
                 r.append(rev)
         return f, list(reversed(r))
 
-def index_sequence(seq, circular, patterns):
-        max_pattern_len = max([len(p) for p in patterns])
+def index_sequence(seq, settings):
+        max_pattern_len = max([len(p) for p in settings.patterns])
         seqLen = len(seq)
-        if circular:
+        if settings.circular:
                 seq += seq[0:max_pattern_len]
-        fk, rck = knicks(seq, patterns)
+        fk, rck = knicks(seq, settings.patterns)
         #remove duplicate hits
         while fk[-1][0] >= seqLen:
                 fk.pop()

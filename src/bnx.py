@@ -1,14 +1,14 @@
-def write_bnx_header(ofile, bns_version, bnx_version, patterns, min_mol_len):
+def write_bnx_header(ofile, settings):
         '''
         Writes the bnx-header
         '''
-        ofile.write('# BNSim Version:\t' + bns_version + '\n')
-        ofile.write('# BNX File Version:\t' + bnx_version + '\n')
+        ofile.write('# BNSim Version:\t' + settings.bns_version + '\n')
+        ofile.write('# BNX File Version:\t' + settings.bnx_version + '\n')
         ofile.write('# Label Channels:\t' + '1' + '\n')
-        for i in range(len(patterns)):
-                ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + patterns[i] + '\n')
+        for i in range(len(settings.patterns)):
+                ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + settings.patterns[i] + '\n')
         ofile.write('# Bases per Pixel:\t' + '500' + '\n')
-        ofile.write('# Min Molecule Length (Kb):\t' + str(min_mol_len) + '\n')
+        ofile.write('# Min Molecule Length (Kb):\t' + str(settings.min_mol_len) + '\n')
         ofile.write('# Label SNR Filter Type:\t' + '\n')
         ofile.write('# Min Label SNR:\t' + '\n') #avg signal to noise ratio for new chip is ~12
         ofile.write('# Software Version:\t' + '\n')
