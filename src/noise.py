@@ -71,16 +71,13 @@ def generate_molecule(knicks, size, settings):
                 return ([-1], [])
 
 def generate_molecules(seqLens, fks, rcks, settings):
-        size = 0
         seqCount = len(seqLens)
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
         chimera = [False, -1, None]
+        size = 0
         while size < settings.coverage * cumSeqLens[-1]:
-                idx = seqCount
-                r = random.random() * cumSeqLens[-1]
-                while 0 < idx and r < cumSeqLens[idx - 1]:
-                        idx -= 1
-                i, m = generate_molecule([fks[idx], rcks[idx]][strand()], seqLens[idx], settings)
+                idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
+                i, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
                 l = i[0]
                 if chimera[0]:
                         l, m = create_chimera(chimera[1], chimera[2], l, m)
