@@ -51,6 +51,10 @@ def generate_molecule(knicks, size, stats, circular = 0):
                                 if 0 <= pos and pos <= length - 1:
                                         molecule.append(pos)
                         idx += 1
+                        if circular and idx == len(knicks):
+                                idx = 0
+                                end -= size
+                                shift -= size
         res = []
         for m, l in fragile_sites(molecule, length):
                 if len(m) > 0:

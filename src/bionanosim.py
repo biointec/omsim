@@ -15,7 +15,7 @@ ofile = open(ifname + ".bnx", 'w')
 bns_version = '0.1'
 bnx_version = '1.2'
 avg = 200000
-coverage = 100
+coverage = 1
 fprate = 1.0 #number of fp in 100kb
 fnrate = 0.15 #fn rate of true labels
 sd = 1500 #sd of knick position
@@ -32,7 +32,7 @@ for meta, seq in fasta_parse(ifname):
         print('Indexing sequence: ' + meta)
         seqLens.append(len(seq))
         fk, rck = index_sequence(seq, circular, patterns)
-        print(str(len(fk)) + ' knicks found.')
+        print('Found ' + str(len(fk)) + ' knicks in ' + str(seqLens[-1]) + 'bp.')
         fks.append(fk)
         rcks.append(rck)
         meta = None
