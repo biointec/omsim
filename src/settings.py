@@ -20,8 +20,11 @@
 
 class Settings:
         def __init__(self):
-                self.avg = 200000
-                self.coverage = 100
+                self.patterns = []
+                self.circular = False
+                self.min_mol_len = 0
+                self.avg_len = 200000
+                self.coverage = 1
                 self.fprate = 1.0 #number of fp in 100kb
                 self.bns_version = '0.1'
                 self.bnx_version = '1.2'
@@ -34,3 +37,24 @@ class Settings:
                 self.fragile_factor = 3
                 #TODO stretchfactor = .85
                 self.chip_size = 10000000000 # 10 Gbp
+
+        def __str__(self):
+                s = ''
+                s += 'BNS version: ' + self.bns_version + '\n'
+                s += 'BNX version: ' + self.bnx_version + '\n'
+                s += 'Patterns: ' + ' '.join(self.patterns) + '\n'
+                if self.circular:
+                        s += 'Circular genome.\n'
+                s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
+                s += 'Average molecule length: ' + str(self.avg_len) + ' bp\n'
+                s += 'Coverage: ' + str(self.coverage) + 'x\n'
+                s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
+                s += 'FN rate: ' + str(self.fnrate*100) + '%\n'
+                s += 'Chimera rate: ' + str(self.chimrate*100) + '%\n'
+                
+                return s
+
+
+
+
+

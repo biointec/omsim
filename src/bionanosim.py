@@ -20,6 +20,7 @@
 '''
 
 import sys
+import getopt
 from util import fasta_parse
 from knick import index_sequence
 from noise import generate_molecules
@@ -60,39 +61,33 @@ def bnsim(settings):
 def main(argv = None):
         if argv is None:
                 argv = sys.argv
+
+        try:
+                opts, args = getopt.getopt(argv[1:], 'hi:p:cl:', ['help', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn='])
+        except getopt.error:
+                print >>sys.stderr, 'For help use --help'
+                return 2
+
         settings = Settings()
-        settings.ifname = argv[1]
-        settings.patterns = [argv[2]]
-        settings.min_mol_len = int(argv[3]) #kb
-        settings.circular = int(argv[4])
-        if settings.min_mol_len < 0:
-                settings.min_mol_len = 0
+        for opt, val in opts:
+                if opt == '-h' or opt == '--help':
+                        print('Help message should come here.') #TODO
+                elif opt == '-i' or opt == '--input':
+                        settings.ifname = val
+                elif opt == '-p' or opt == '--pattern':
+                        settings.patterns.append(val)
+                elif opt == '-c' or opt == '--circular':
+                        settings.circular = True
+                elif opt == '-l' or opt == '--length':
+                        settings.min_mol_len = int(val)
+                elif opt == '--fp':
+                        settings.fprate = float(val)
+                elif opt == '--fn':
+                        settings.fnrate = float(val)
+                elif opt == '--chim':
+                        settings.chimrate = float(val)
+        print(settings)
         bnsim(settings)
 
 if __name__ == "__main__":
         sys.exit(main())
-'''
-import sys
-import getopt
-
-class Usage(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
-    try:
-        try:
-            opts, args = getopt.getopt(argv[1:], "h", ["help"])
-        except getopt.error, msg:
-             raise Usage(msg)
-    except Usage, err:
-        print >>sys.stderr, err.msg
-        print >>sys.stderr, "for help use --help"
-        return 2
-
-if __name__ == "__main__":
-    sys.exit(main())
-
-'''

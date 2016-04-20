@@ -92,7 +92,7 @@ def create_chimera(l1, m1, l2, m2):
 def generate_molecule(knicks, size, settings):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
-        length = randgeometric(settings.avg)
+        length = randgeometric(settings.avg_len)
         if length > size:
                 return  ([-1], [])
         end = shift + length
@@ -137,6 +137,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
                 l = i[0]
                 if chimera[0]:
                         l, m = create_chimera(chimera[1], chimera[2], l, m)
+                        
                 if random.random() < settings.chimrate:
                         chimera = [True, l, m]
                 else:
