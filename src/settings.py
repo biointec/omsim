@@ -38,6 +38,7 @@ class Settings:
                 #TODO stretchfactor = .85
                 self.chip_size = 10000000000 # 10 Gbp
                 self.min_knicks = 1
+                self.seed = 0
 
         def __str__(self):
                 s = ''

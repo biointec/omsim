@@ -26,6 +26,7 @@ from knick import index_sequence
 from noise import generate_molecules
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
+from random import seed
 
 def bnsim(settings):
         moleculeID = 0
@@ -87,6 +88,7 @@ def main(argv = None):
                 elif opt == '--chim':
                         settings.chimrate = float(val)
         print(settings)
+        seed(settings.seed)
         bnsim(settings)
 
 if __name__ == "__main__":
