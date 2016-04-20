@@ -28,9 +28,11 @@ def randgeometric(mu):
 def strand():
         return random.randint(0, 1)
 
-def knick_position(mu, sd):
-        pos = random.gauss(mu, sd)
-        return pos
+def knick_position(p, sd):
+        p = list(p)
+        if p[2]:
+                p[0] = random.gauss(p[0], sd)
+        return p
 
 def false_positive(fprate):
         return random.expovariate(fprate / 100000)
@@ -64,16 +66,17 @@ def break_fragile(prev, curr, settings):
 
 def fragile_sites(l, m, settings):
         if len(m) == 0:
-                yield (l, m)
-                return
+                #yield (l, m)
+                return False
         prev = m[0]
         idx = 1
         mol = [prev]
-        start = 0
+        #start = 0
         while idx < len(m):
                 if prev[2] and m[idx][2] and break_fragile(prev, m[idx], settings):
-                        yield (prev[0] - start, mol[:-1])
-                        start = m[idx][0]
+                        #yield (prev[0] - start, mol[:-1])
+                        return True
+                        #start = m[idx][0]
                         prev = m[idx]
                         mol = []
                 else:
@@ -81,7 +84,8 @@ def fragile_sites(l, m, settings):
                         if m[idx][2]:
                                 prev = m[idx]
                 idx += 1
-        yield (l - start, mol)
+        #yield (l - start, mol)
+        return False
 
 def create_chimera(l1, m1, l2, m2):
         l1 = l1 #TODO what intermolecular distance should be added
@@ -95,14 +99,14 @@ def generate_molecule(knicks, size, settings):
         shift = random.randint(0, size - 1)
         length = randgeometric(settings.avg_len)
         if length > size:
-                return  ([-1], [])
+                return  (-1, [])
         if random.random() < 0.5:
                 shift = shift - length
                 if settings.circular and shift < 0:
                         shift += size
         end = shift + length
         if not settings.circular and end >= size:
-                return  ([-1], [])
+                return  (-1, [])
         idx = bisect_left(knicks, (shift, None))
         molecule = []
         fp = false_positives(settings.fprate, length)
@@ -111,7 +115,7 @@ def generate_molecule(knicks, size, settings):
                         molecule.append(fp.pop(0))
                 else:
                         if random.random() < settings.fnrate:
-                                pos = knick_position(knicks[idx][0] - shift, settings.sd)
+                                pos = knicks[idx][0] - shift
                                 if 0 <= pos and pos <= length - 1:
                                         molecule.append((pos, knicks[idx][1], True))
                         idx += 1
@@ -119,14 +123,13 @@ def generate_molecule(knicks, size, settings):
                                 idx = 0
                                 end -= size
                                 shift -= size
-        res = []
-        #TODO fragile site computation should happen before randomising the TP
-        #TODO how should we deal with fragile sites vs randomised molecule length?
-        res = [([l], m) for l , m in fragile_sites(length, molecule, settings)]
-        if len(res) == 1 and len(res[0][1]) > settings.min_knicks:
-                return res[0]
+        if fragile_sites(length, molecule, settings):
+                return (-1, [])
+        molecule = [knick_position(p, settings.sd) for p in molecule]
+        if len(molecule) > settings.min_knicks:
+                return length, molecule
         else:
-                return ([-1], [])
+                return (-1, [])
 
 def generate_molecules(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
@@ -135,8 +138,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
         size = 0
         while size < settings.coverage * cumSeqLens[-1]:
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
-                i, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
-                l = i[0]
+                l, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
                 if chimera[0]:
                         l, m = create_chimera(chimera[1], chimera[2], l, m)
                 if random.random() < settings.chimrate:
