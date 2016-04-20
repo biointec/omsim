@@ -38,7 +38,7 @@ class Settings:
                 #TODO stretchfactor = .85
                 self.chip_size = 10000000000 # 10 Gbp
                 self.min_knicks = 1
-                self.seed = 0
+                self.seed = None
 
         def __str__(self):
                 s = ''
@@ -53,7 +53,8 @@ class Settings:
                 s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
                 s += 'FN rate: ' + str(self.fnrate*100) + '%\n'
                 s += 'Chimera rate: ' + str(self.chimrate*100) + '%\n'
-                s += 'Random seed: ' + str(self.seed) + '\n'
+                if self.seed is not None:
+                        s += 'Random seed: ' + str(self.seed) + '\n'
                 
                 return s
 

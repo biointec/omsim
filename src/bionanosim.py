@@ -64,7 +64,7 @@ def main(argv = None):
                 argv = sys.argv
 
         try:
-                opts, args = getopt.getopt(argv[1:], 'hi:p:cl:', ['help', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn='])
+                opts, args = getopt.getopt(argv[1:], 'hi:p:cl:', ['help', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
         except getopt.error:
                 print >>sys.stderr, 'For help use --help'
                 return 2
@@ -87,8 +87,10 @@ def main(argv = None):
                         settings.fnrate = float(val)
                 elif opt == '--chim':
                         settings.chimrate = float(val)
+                elif opt == '--seed':
+                        settings.seed = int(val)
+                        seed(settings.seed)
         print(settings)
-        seed(settings.seed)
         bnsim(settings)
 
 if __name__ == "__main__":
