@@ -24,7 +24,7 @@ class Settings:
                 self.circular = False
                 self.min_mol_len = 0
                 self.avg_len = 200000
-                self.coverage = 1
+                self.coverage = 1000
                 self.fprate = 1.0 #number of fp in 100kb
                 self.bns_version = '0.1'
                 self.bnx_version = '1.2'

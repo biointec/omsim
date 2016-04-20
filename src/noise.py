@@ -89,8 +89,7 @@ def fragile_sites(l, m, settings):
 
 def create_chimera(l1, m1, l2, m2):
         l1 = l1 #TODO what intermolecular distance should be added
-        for k in m2:
-                m1.append((l1 + k[0], k[1]))
+        m1 = m1 + [l1 + k for k in m2]
         l1 += l2
         return l1, m1
 
