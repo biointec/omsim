@@ -95,6 +95,10 @@ def generate_molecule(knicks, size, settings):
         length = randgeometric(settings.avg_len)
         if length > size:
                 return  ([-1], [])
+        if random.random() < 0.5:
+                shift = shift - length
+                if settings.circular and shift < 0:
+                        shift += size
         end = shift + length
         if not settings.circular and end >= size:
                 return  ([-1], [])
