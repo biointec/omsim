@@ -125,7 +125,8 @@ def generate_molecule(knicks, size, settings):
                                 shift -= size
         if fragile_sites(length, molecule, settings):
                 return (-1, [])
-        molecule = [knick_position(p, settings.sd) for p in molecule]
+        # remove strand and [T|F]P information and randomise TP
+        molecule = [knick_position(p, settings.sd)[0] for p in molecule]
         if len(molecule) > settings.min_knicks:
                 return length, molecule
         else:
@@ -147,8 +148,5 @@ def generate_molecules(seqLens, fks, rcks, settings):
                         chimera = [False, -1, None]
                         if l >= settings.min_mol_len:
                                 size += l
-                                if len(m) > 0:
-                                        # remove strand and [T|F]P information
-                                        m = zip(*m)[0]
                                 yield l, m
 
