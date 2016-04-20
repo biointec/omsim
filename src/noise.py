@@ -41,7 +41,7 @@ def false_positives(fprate, length):
         false_knick_pos = false_positive(fprate)
         while false_knick_pos < length:
                 #generate FP's on random strand
-                fp.append((false_knick_pos, strand()))
+                fp.append((false_knick_pos, strand(), False))
                 false_knick_pos += false_positive(fprate)
         return fp
 
@@ -67,18 +67,19 @@ def fragile_sites(l, m, settings):
                 yield (l, m)
                 return
         prev = m[0]
+        idx = 1
         mol = [prev]
         start = 0
-        idx = 1
         while idx < len(m):
-                if break_fragile(prev, m[idx], settings):
+                if prev[2] and m[idx][2] and break_fragile(prev, m[idx], settings):
                         yield (prev[0] - start, mol[:-1])
                         start = m[idx][0]
                         prev = m[idx]
                         mol = []
                 else:
                         mol.append(m[idx])
-                        prev = m[idx]
+                        if m[idx][2]:
+                                prev = m[idx]
                 idx += 1
         yield (l - start, mol)
 
@@ -112,7 +113,7 @@ def generate_molecule(knicks, size, settings):
                         if random.random() < settings.fnrate:
                                 pos = knick_position(knicks[idx][0] - shift, settings.sd)
                                 if 0 <= pos and pos <= length - 1:
-                                        molecule.append((pos, knicks[idx][1]))
+                                        molecule.append((pos, knicks[idx][1], True))
                         idx += 1
                         if settings.circular and idx == len(knicks):
                                 idx = 0
@@ -121,12 +122,9 @@ def generate_molecule(knicks, size, settings):
         res = []
         #TODO fragile site computation should happen before randomising the TP
         #TODO how should we deal with fragile sites vs randomised molecule length?
-        for l , m in fragile_sites(length, molecule, settings):
-                if len(m) > 0:
-                        res.append(([l], m))
-        if len(res) > 0:
-                idx = random.randint(0, len(res) - 1)
-                return res[idx]
+        res = [([l], m) for l , m in fragile_sites(length, molecule, settings)]
+        if len(res) == 1 and len(res[0][1]) > settings.min_knicks:
+                return res[0]
         else:
                 return ([-1], [])
 
@@ -141,14 +139,14 @@ def generate_molecules(seqLens, fks, rcks, settings):
                 l = i[0]
                 if chimera[0]:
                         l, m = create_chimera(chimera[1], chimera[2], l, m)
-                        
                 if random.random() < settings.chimrate:
                         chimera = [True, l, m]
                 else:
                         chimera = [False, -1, None]
                         if l >= settings.min_mol_len:
                                 size += l
-                                # remove strand information
-                                m = zip(*m)[0]
+                                if len(m) > 0:
+                                        # remove strand and [T|F]P information
+                                        m = zip(*m)[0]
                                 yield l, m
 
