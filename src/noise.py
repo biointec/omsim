@@ -21,9 +21,16 @@
 import random
 from bisect import bisect_left
 from math import exp
+import numpy as np
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
+
+def randnegbinom(mu, r):
+        mu = float(mu)
+        r = float(r)
+        p = 1 - mu/(r + mu)
+        return np.random.negative_binomial(r, p)
 
 def strand():
         return random.randint(0, 1)
@@ -96,7 +103,8 @@ def create_chimera(l1, m1, l2, m2):
 def generate_molecule(knicks, size, settings):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
-        length = randgeometric(settings.avg_len)
+#        length = randgeometric(settings.avg_len)
+        length = randnegbinom(settings.avg_len, settings.num_fails)
         if length > size:
                 return  (-1, [])
         if random.random() < 0.5:

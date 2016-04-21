@@ -23,7 +23,8 @@ class Settings:
                 self.patterns = []
                 self.circular = False
                 self.min_mol_len = 0
-                self.avg_len = 200000
+                self.avg_len = 200000.0
+                self.num_fails = 3.0
                 self.coverage = 1000
                 self.fprate = 1.0 #number of fp in 100kb
                 self.bns_version = '0.1'
@@ -49,6 +50,7 @@ class Settings:
                         s += 'Circular genome.\n'
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_len) + ' bp\n'
+                s += 'Number of failures for negative binomial length distribution: ' + str(self.num_fails) + '\n'
                 s += 'Coverage: ' + str(self.coverage) + 'x\n'
                 s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
                 s += 'FN rate: ' + str(self.fnrate*100) + '%\n'
