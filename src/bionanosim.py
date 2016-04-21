@@ -27,6 +27,7 @@ from noise import generate_molecules
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
+import numpy as np
 
 def bnsim(settings):
         moleculeID = 0
@@ -90,6 +91,7 @@ def main(argv = None):
                 elif opt == '--seed':
                         settings.seed = int(val)
                         seed(settings.seed)
+                        np.random.seed(settings.seed)
         print(settings)
         bnsim(settings)
 
