@@ -48,9 +48,8 @@ class Settings:
                 #TODO self.stretchfactor = .85
                 self.chip_size = 50 # 50 Gbp
 
-                self.patterns = []
-                self.fprate = 1.0 #number of fp in 100kb
-                self.fnrate = 0.15 #fn rate of true labels
+                self.enzymes = []
+                self.labels = []
 
                 self.seed = None
                 
@@ -62,15 +61,13 @@ class Settings:
                 s = ''
                 s += 'BNS version: ' + self.bns_version + '\n'
                 s += 'BNX version: ' + self.bnx_version + '\n'
-                s += 'Patterns: ' + ' '.join(self.patterns) + '\n'
+                s += 'Patterns: ' + ' '.join([str(enzyme) for enzyme in self.enzymes]) + '\n'
                 if self.circular:
                         s += 'Circular genome.\n'
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_mol_len) + ' bp\n'
                 s += 'Number of failures for negative binomial length distribution: ' + str(self.fail_mol_len) + '\n'
                 s += 'Minimal coverage: ' + str(self.coverage) + 'x\n'
-                s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
-                s += 'FN rate: ' + str(self.fnrate * 100) + '%\n'
                 s += 'Chimera rate: ' + str(self.chimera_rate * 100) + '%\n'
                 if self.seed is not None:
                         s += 'Random seed: ' + str(self.seed) + '\n'
@@ -81,18 +78,20 @@ class Settings:
                 GIGA = 1000 * 1000 * 1000
                 return self.chip_size * GIGA
 
-        def set_patterns(self, knicks):
-                for knick in self.knicks:
+        def set_patterns(self, enzymes):
+                for idx in range(len(self.enzymes)):
+                        enzyme = self.enzymes[idx]
                         found = False
-                        for k in knicks:
-                                if k['id'] == knick['id']:
-                                        k['label'] = knick['label']
-                                        knick = k
+                        for e in enzymes:
+                                if e['id'] == enzyme['id']:
+                                        e['label'] = enzyme['label']
+                                        if not enzyme['label'] in self.labels:
+                                                self.labels.append(enzyme['label'])
+                                        self.enzymes[idx] = e
                                         found = True
-                                        self.patterns.append(k['pattern'])
                                         break
                         if not found:
-                                print('Unkown knicking enzyme: ' + knick['id'])
+                                print('Unkown knicking enzyme: ' + enzyme['id'])
                                 exit()
 
 

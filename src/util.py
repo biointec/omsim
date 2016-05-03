@@ -74,4 +74,33 @@ def double_stranded_multi_KMP(seq, patterns):
                         if matchLen[i] == sizes[i]:
                                 yield (startPos[i], i < count / 2, i % (count / 2)), (reverses[i] - startPos[i], i < count / 2, i % (count / 2))
 
+def double_stranded_multi_KMP_(seq, enzymes):
+        patterns = [e['pattern'] for e in enzymes]
+        patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
+        count = len(patterns)
+        sizes = [len(pattern) for pattern in patterns]
+        reverses = [len(seq) - sizes[i] for i in range(count)]
+        # allow indexing into patterns
+        patterns = [list(pattern) for pattern in patterns]
+        # build table of shifts
+        shifts = []
+        shift = [1] * count
+        for i in range(count):
+                shifts.append([1] * (sizes[i] + 1))
+                for pos in range(sizes[i]):
+                        while shift[i] <= pos and patterns[i][pos] != patterns[i][pos - shift[i]]:
+                                shift[i] += shifts[i][pos - shift[i]]
+                        shifts[i][pos + 1] = shift[i]
+        # search for patterns
+        startPos = [0] * count
+        matchLen = [0] * count
+        for c in seq:
+                for i in range(count):
+                        while matchLen[i] == sizes[i] or matchLen[i] >= 0 and patterns[i][matchLen[i]] != c:
+                                startPos[i] += shifts[i][matchLen[i]]
+                                matchLen[i] -= shifts[i][matchLen[i]]
+                        matchLen[i] += 1
+                        if matchLen[i] == sizes[i]:
+                                yield (startPos[i], i < count / 2, enzymes[i % (count / 2)]), (reverses[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)])
+
 

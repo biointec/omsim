@@ -18,15 +18,16 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
-def write_bnx_header(ofile, settings):
+def write_bnx_header(ofile, settings, label):
         '''
         Writes the bnx-header
         '''
         ofile.write('# BNSim Version:\t' + settings.bns_version + '\n')
         ofile.write('# BNX File Version:\t' + settings.bnx_version + '\n')
         ofile.write('# Label Channels:\t' + '1' + '\n')
-        for i in range(len(settings.patterns)):
-                ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + settings.patterns[i] + '\n')
+        for i in range(len(settings.enzymes)):
+                if settings.enzymes[i]['label'] == label:
+                        ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + settings.enzymes[i]['pattern'] + '\n')
         ofile.write('# Bases per Pixel:\t' + '500' + '\n')
         ofile.write('# Min Molecule Length (Kb):\t' + str(settings.min_mol_len) + '\n')
         ofile.write('# Label SNR Filter Type:\t' + '\n')
@@ -67,7 +68,7 @@ def get_backbone_info(moleculeID, length, count):
         info.append(1)          #GlobalScanNumber       #12
         return info
 
-def write_bnx_entry(info, knicks, ofile):
+def write_bnx_entry(info, knicks, ofile, label):
         info = get_backbone_info(info[0], info[1], len(knicks))
         backbone = ''
         backbone += str(info[0]) + '\t'                         #backboneLabelChannel   0
@@ -87,9 +88,10 @@ def write_bnx_entry(info, knicks, ofile):
         q1 = 'QX11'
         q2 = 'QX12'
         for pos in knicks:
-                channel += '\t' + '{0:.2f}'.format(pos)
-                q1 += '\t' + '{0:.4f}'.format(sim_qx11())
-                q2 += '\t' + '{0:.4f}'.format(sim_qx12())
+                if pos[1]['label'] == label:
+                        channel += '\t' + '{0:.2f}'.format(pos[0])
+                        q1 += '\t' + '{0:.4f}'.format(sim_qx11())
+                        q2 += '\t' + '{0:.4f}'.format(sim_qx12())
         ofile.write(backbone + '\n')
         ofile.write(channel + '\n')
         ofile.write(q1 + '\n')

@@ -18,22 +18,22 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
-from util import double_stranded_multi_KMP
+from util import double_stranded_multi_KMP_
 
-def knicks(seq, patterns):
+def knicks(seq, enzymes):
         f = [];
         r = [];
-        for pos, rev in double_stranded_multi_KMP(seq, patterns):
+        for pos, rev in double_stranded_multi_KMP_(seq, enzymes):
                 f.append(pos)
                 r.append(rev)
         return f, list(reversed(r))
 
 def index_sequence(seq, settings):
-        max_pattern_len = max([len(p) for p in settings.patterns])
+        max_pattern_len = max([len(e['pattern']) for e in settings.enzymes])
         seqLen = len(seq)
         if settings.circular:
                 seq += seq[0:max_pattern_len]
-        fk, rck = knicks(seq, settings.patterns)
+        fk, rck = knicks(seq, settings.enzymes)
         #remove duplicate hits
         while fk[-1][0] >= seqLen:
                 fk.pop()

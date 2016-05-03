@@ -52,42 +52,49 @@ def bnsim(settings):
         chip_size = 0
         bedfile = open(settings.prefix + '.bed', 'w')
         while chip <= settings.chips:
-                ofile = open(settings.prefix + '.' + str(chip) + '.bnx', 'w')
-                write_bnx_header(ofile, settings)
+                ofile = {}
+                for label in settings.labels:
+                        ofile[label] = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
+                        write_bnx_header(ofile[label], settings, label)
                 for l, m, meta in generate_molecules(seq_lens, fks, rcks, settings):
                                 moleculeID += 1
                                 for mol in meta:
                                         bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
-                                write_bnx_entry((moleculeID, l), m, ofile)
+                                for label in settings.labels:
+                                        write_bnx_entry((moleculeID, l), m, ofile[label], label)
                                 chip_size += l
                 chip += 1
                 chip_size = 0
-                ofile.close()
+                for label in settings.labels:
+                        ofile[label].close()
         bedfile.close()
-        print('Finished.')
+        print('Finished.\n')
 
-def xml_knick_parse(xml_file):
-        knicks = []
+def xml_enzyme_parse(xml_file):
+        enzymes = []
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
-                knick = {}
+                enzyme = {}
                 for entry in child:
-                        knick[entry.tag] = entry.text
-                knicks.append(knick)
-        return knicks
+                        if entry.tag in ['id', 'pattern']:
+                                enzyme[entry.tag] = entry.text
+                        else:
+                                enzyme[entry.tag] = float(entry.text)
+                enzymes.append(enzyme)
+        return enzymes
 
 def xml_input_parse(xml_file):
         s = []
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
                 settings = {}
                 for entry in child:
-                        if entry.tag == 'knicks':
-                                knicks = []
-                                for k in entry:
-                                        knick = {}
-                                        for i in k:
-                                                knick[i.tag] = i.text
-                                        knicks.append(knick)
-                                settings[entry.tag] = knicks
+                        if entry.tag == 'enzymes':
+                                enzymes = []
+                                for e in entry:
+                                        enzyme = {}
+                                        for i in e:
+                                                enzyme[i.tag] = i.text
+                                        enzymes.append(enzyme)
+                                settings[entry.tag] = enzymes
                         elif entry.tag == 'files':
                                 files = []
                                 for file in entry:
@@ -106,26 +113,26 @@ def xml_input_parse(xml_file):
 
 
 def main(argv = None):
-        print('This is an experimental version of BNS, scripts and configuration files based on this version may not be compatible with future versions.')
+        print('This is an experimental version of BNS, scripts and configuration files based on this version might be incompatible with future versions.')
         if argv is None:
                 argv = sys.argv
 
         try:
-                opts, args = getopt.getopt(argv[1:], 'hk:x:i:p:cl:', ['help', 'knicks=', 'xml=', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
+                opts, args = getopt.getopt(argv[1:], 'he:x:i:p:cl:', ['help', 'enzymes=', 'xml=', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
         except getopt.error:
                 print >>sys.stderr, 'For help use --help'
                 return 2
 
         simulations = []
-        knicks = []
+        enzymes = []
         settings = Settings({})
         for opt, val in opts:
                 if opt == '-h' or opt == '--help':
                         print('Help message should come here.') #TODO
-                elif opt == '-k' or opt == '--knicks':
-                        for knick in xml_knick_parse(val):
-                                knicks.append(knick)
-                        if len(knicks) == 0:
+                elif opt == '-e' or opt == '--enzymes':
+                        for enzyme in xml_enzyme_parse(val):
+                                enzymes.append(enzyme)
+                        if len(enzymes) == 0:
                                 print('Invalid knicking enzyme file.')
                                 exit()
                 elif opt == '-x' or opt == '--xml':
@@ -141,15 +148,16 @@ def main(argv = None):
                         settings.seed = int(val)
                         seed(settings.seed)
                         np.random.seed(settings.seed)
-        if len(knicks) == 0:
+        if len(enzymes) == 0:
                 print('No knicking enzyme files were specified.')
-                exit()
+                return 1
         if len(settings.files) > 0:
                 simulations.append(settings)
         for settings in simulations:
-                settings.set_patterns(knicks)
+                settings.set_patterns(enzymes)
                 print(settings)
                 bnsim(settings)
+        return 0
 
 if __name__ == "__main__":
         sys.exit(main())

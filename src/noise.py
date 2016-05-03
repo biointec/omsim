@@ -47,12 +47,12 @@ def knick_position(p, sd):
 def false_positive(fprate):
         return random.expovariate(fprate / 100000)
 
-def false_positives(fprate, length):
+def false_positives(fprate, length, enzyme):
         fp = []
         false_knick_pos = false_positive(fprate)
         while false_knick_pos < length:
                 #generate FP's on random strand
-                fp.append((false_knick_pos, strand(), False))
+                fp.append((false_knick_pos, strand(), False, enzyme))
                 false_knick_pos += false_positive(fprate)
         return fp
 
@@ -88,13 +88,13 @@ def fragile_sites(l, m, settings):
         idx = 1
         while idx < len(m):
                 if break_fragile(m[idx - 1], m[idx], settings):
-                        return (1 + int(m[idx - 1][0]), m[:idx - 1])
+                        return [1 + int(m[idx - 1][0]), m[:idx - 1]]
                 idx += 1
         return (l, m)
 
 def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
         l1 = l1 + max(0, int(random.gauss(settings.chimera_mu, settings.chimera_sigma)))
-        m1 = m1 + [l1 + k for k in m2]
+        m1 = m1 + [[l1 + k[0], k[1]] for k in m2]
         l1 += l2
         return l1, m1, meta1 + meta2
 
@@ -115,16 +115,18 @@ def generate_molecule(knicks, size, settings):
                 return (-1, [], [-1, -1])
         idx = bisect_left(knicks, (shift, None))
         molecule = []
-        fp = false_positives(settings.fprate, length)
+        fp = []
+        for enzyme in settings.enzymes:
+                fp = fp + false_positives(enzyme['fp'], length, enzyme)
         while len(fp) > 0 or (idx < len(knicks) and knicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(knicks) or fp[0][0] < knicks[idx][0] - shift):
-                        pos = fp.pop(0)
-                        molecule.append(pos)
+                        knick = fp.pop(0)
+                        molecule.append(knick)
                 else:
-                        if random.random() < settings.fnrate:
+                        if random.random() < knicks[idx][2]['fn']:
                                 pos = knicks[idx][0] - shift
                                 if 0 <= pos and pos <= length - 1:
-                                        molecule.append((pos, knicks[idx][1], True))
+                                        molecule.append([pos, knicks[idx][1], True, knicks[idx][2]])
                         idx += 1
                         if settings.circular and idx == len(knicks):
                                 idx = 0
@@ -132,7 +134,7 @@ def generate_molecule(knicks, size, settings):
                                 shift -= size
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
-        molecule = [knick_position(p, settings.knick_sd)[0] for p in molecule]
+        molecule = [[knick_position(p, settings.knick_sd)[0], p[-1]] for p in molecule]
         if len(molecule) > settings.min_knicks:
                 return length, molecule, meta
         else:
@@ -140,11 +142,11 @@ def generate_molecule(knicks, size, settings):
 
 def cut_long_molecule(l, m, settings):
         idx = len(m)
-        while idx > 0 and m[idx - 1] > settings.max_mol_len:
+        while idx > 0 and m[idx - 1][0] > settings.max_mol_len:
                 idx -= 1
         if idx == 0:
                 return (-1, [], [-1, -1])
-        l = random.randint(int(m[idx - 1]), settings.max_mol_len) + (l % 1)
+        l = random.randint(int(m[idx - 1][0]) + 1, settings.max_mol_len) + (l % 1)
         return l, m[:idx - 1]
 
 def merge_labels(m, settings):
@@ -159,21 +161,21 @@ def merge_labels(m, settings):
                 if prev == None:
                         prev = curr
                         continue
-                if prev > curr:
+                if prev[0] > curr[0]:
                         temp = prev
                         prev = curr
                         curr = temp
-                dist = curr - prev
+                dist = curr[0] - prev[0]
                 if dist < mu - t:
                         #merge
-                        prev = random.randint(int(prev), int(curr)) + (prev % 1)
+                        prev[0] = random.randint(int(prev[0]), int(curr[0])) + (prev[0] % 1)
                 elif mu + t < dist:
                         #don't merge
                         mol.append(prev)
                         prev = curr
                 elif random.random() < sigmoid(mu, f, dist):
                         #merge
-                        prev = random.randint(int(prev), int(curr)) + (prev % 1)
+                        prev[0] = random.randint(int(prev[0]), int(curr[0])) + (prev[0] % 1)
                 else:
                         #don't merge
                         mol.append(prev)
