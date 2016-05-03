@@ -184,7 +184,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
         chimera = [False, -1, None]
         size = 0
-        while size < settings.coverage * cumSeqLens[-1]:
+        while size < settings.chip_size:
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
                 l, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
                 if chimera[0]:

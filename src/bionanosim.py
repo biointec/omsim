@@ -33,31 +33,31 @@ def bnsim(settings):
         moleculeID = 0
         fks = []
         rcks = []
-        seqLens = []
+        seq_lens = []
         for meta, seq in fasta_parse(settings.ifname):
                 print('Indexing sequence: ' + meta)
-                seqLens.append(len(seq))
+                seq_lens.append(len(seq))
                 fk, rck = index_sequence(seq, settings)
-                print('Found ' + str(len(fk)) + ' knicks in ' + str(seqLens[-1]) + 'bp.')
+                print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
                 fks.append(fk)
                 rcks.append(rck)
                 meta = None
                 seq = None
-        print('Generating reads...')
+        if settings.coverage != 0:
+                settings.chips = 1 + int(sum(seq_lens) * settings.coverage / settings.chip_size)
+        print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
         chip_size = 0
-        ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
-        write_bnx_header(ofile, settings)
-        for l, m in generate_molecules(seqLens, fks, rcks, settings):
-                        moleculeID += 1
-                        write_bnx_entry((moleculeID, l), m, ofile)
-                        chip_size += l
-                        if chip_size > settings.chip_size:
-                                chip += 1
-                                ofile.close()
-                                ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
-                                chip_size = 0
-        ofile.close()
+        while chip <= settings.chips:
+                ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
+                write_bnx_header(ofile, settings)
+                for l, m in generate_molecules(seq_lens, fks, rcks, settings):
+                                moleculeID += 1
+                                write_bnx_entry((moleculeID, l), m, ofile)
+                                chip_size += l
+                chip += 1
+                chip_size = 0
+                ofile.close()
         print('Finished.')
 
 def main(argv = None):

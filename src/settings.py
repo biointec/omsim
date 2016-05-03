@@ -22,11 +22,12 @@ class Settings:
         def __init__(self):
                 self.patterns = []
                 self.circular = False
-                self.min_mol_len = 0
+                self.min_mol_len = 20000
                 self.max_mol_len = 2500000
                 self.avg_len = 200000.0
                 self.num_fails = 3.0
-                self.coverage = 1000
+                self.coverage = 0
+                self.chips = 1
                 self.fprate = 1.0 #number of fp in 100kb
                 self.bns_version = '0.1'
                 self.bnx_version = '1.2'
@@ -43,7 +44,7 @@ class Settings:
                 self.label_treshold = 500
                 self.label_factor = 100
                 #TODO stretchfactor = .85
-                self.chip_size = 10000000000 # 10 Gbp
+                self.chip_size = 50000000000 # 50 Gbp
                 self.min_knicks = 1
                 self.seed = None
 
@@ -57,10 +58,10 @@ class Settings:
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_len) + ' bp\n'
                 s += 'Number of failures for negative binomial length distribution: ' + str(self.num_fails) + '\n'
-                s += 'Coverage: ' + str(self.coverage) + 'x\n'
+                s += 'Minimal coverage: ' + str(self.coverage) + 'x\n'
                 s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
-                s += 'FN rate: ' + str(self.fnrate*100) + '%\n'
-                s += 'Chimera rate: ' + str(self.chimera_rate*100) + '%\n'
+                s += 'FN rate: ' + str(self.fnrate * 100) + '%\n'
+                s += 'Chimera rate: ' + str(self.chimera_rate * 100) + '%\n'
                 if self.seed is not None:
                         s += 'Random seed: ' + str(self.seed) + '\n'
                 
