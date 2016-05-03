@@ -80,21 +80,12 @@ def fragile_sites(l, m, settings):
         '''
         if len(m) == 0:
                 return (l, m)
-        prev = m[0]
         idx = 1
-        mol = [prev]
-        start = 0
         while idx < len(m):
-                if break_fragile(prev, m[idx], settings):
-                        return (prev[0] - start, mol[:-1])
-                        start = m[idx][0]
-                        prev = m[idx]
-                        mol = []
-                else:
-                        mol.append(m[idx])
-                        prev = m[idx]
+                if break_fragile(m[idx - 1], m[idx], settings):
+                        return (m[idx - 1][0], m[:idx - 1])
                 idx += 1
-        return (l - start, mol)
+        return (l, m)
 
 def create_chimera(l1, m1, l2, m2):
         l1 = l1 #TODO what intermolecular distance should be added
