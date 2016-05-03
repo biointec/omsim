@@ -23,6 +23,7 @@ class Settings:
                 self.patterns = []
                 self.circular = False
                 self.min_mol_len = 0
+                self.max_mol_len = 2500000
                 self.avg_len = 200000.0
                 self.num_fails = 3.0
                 self.coverage = 1000

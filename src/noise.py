@@ -129,6 +129,15 @@ def generate_molecule(knicks, size, settings):
         else:
                 return (-1, [])
 
+def cut_long_molecule(l, m, settings):
+        idx = len(m)
+        while idx > 0 and m[idx - 1] > settings.max_mol_len:
+                idx -= 1
+        if idx == 0:
+                return (-1, [])
+        l = random.randint(int(m[idx - 1]), settings.max_mol_len) + (l % 1)
+        return l, m[:idx - 1]
+
 def generate_molecules(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
@@ -143,7 +152,9 @@ def generate_molecules(seqLens, fks, rcks, settings):
                         chimera = [True, l, m]
                 else:
                         chimera = [False, -1, None]
-                        if l >= settings.min_mol_len:
+                        if settings.max_mol_len < l:
+                                l, m = cut_long_molecule(l, m, settings)
+                        if settings.min_mol_len <= l:
                                 size += l
                                 yield l, m
 
