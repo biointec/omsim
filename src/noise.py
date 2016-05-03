@@ -55,6 +55,9 @@ def false_positives(fprate, length):
         return fp
 
 def sigmoid(m, f, x):
+        '''
+        computes the value of a sigmoid around m at position x, with factor f
+        '''
         return 1 - 1 / (1 + exp((m - x) / f))
 
 def break_fragile(prev, curr, settings):
@@ -72,6 +75,9 @@ def break_fragile(prev, curr, settings):
                 return True
 
 def fragile_sites(l, m, settings):
+        '''
+        fragile sites are independent of label and pattern
+        '''
         if len(m) == 0:
                 #yield (l, m)
                 return False
