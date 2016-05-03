@@ -88,29 +88,31 @@ def fragile_sites(l, m, settings):
         idx = 1
         while idx < len(m):
                 if break_fragile(m[idx - 1], m[idx], settings):
-                        return (m[idx - 1][0], m[:idx - 1])
+                        return (1 + int(m[idx - 1][0]), m[:idx - 1])
                 idx += 1
         return (l, m)
 
-def create_chimera(l1, m1, l2, m2, settings):
-        l1 = l1 + max(0, random.gauss(settings.chimera_mu, settings.chimera_sigma))
+def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
+        l1 = l1 + max(0, int(random.gauss(settings.chimera_mu, settings.chimera_sigma)))
         m1 = m1 + [l1 + k for k in m2]
         l1 += l2
-        return l1, m1
+        return l1, m1, meta1 + meta2
 
 def generate_molecule(knicks, size, settings):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
         length = randnegbinom(settings.avg_len, settings.num_fails)
+        meta = [-1, -1]
         if length > size:
-                return  (-1, [])
+                return (-1, [], [-1, -1])
         if random.random() < 0.5:
                 shift = shift - length
                 if settings.circular and shift < 0:
                         shift += size
+        meta[1] = shift
         end = shift + length
-        if not settings.circular and end >= size:
-                return  (-1, [])
+        if shift < 0  or (not settings.circular and end >= size):
+                return (-1, [], [-1, -1])
         idx = bisect_left(knicks, (shift, None))
         molecule = []
         fp = false_positives(settings.fprate, length)
@@ -132,16 +134,16 @@ def generate_molecule(knicks, size, settings):
         # remove strand and [T|F]P information and randomise TP
         molecule = [knick_position(p, settings.sd)[0] for p in molecule]
         if len(molecule) > settings.min_knicks:
-                return length, molecule
+                return length, molecule, meta
         else:
-                return (-1, [])
+                return (-1, [], [-1, -1])
 
 def cut_long_molecule(l, m, settings):
         idx = len(m)
         while idx > 0 and m[idx - 1] > settings.max_mol_len:
                 idx -= 1
         if idx == 0:
-                return (-1, [])
+                return (-1, [], [-1, -1])
         l = random.randint(int(m[idx - 1]), settings.max_mol_len) + (l % 1)
         return l, m[:idx - 1]
 
@@ -182,21 +184,25 @@ def merge_labels(m, settings):
 def generate_molecules(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
-        chimera = [False, -1, None]
+        chimera = [False, -1, None, [[-1, -1]]]
         size = 0
         while size < settings.chip_size:
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
-                l, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
+                l = -1
+                while l < 0:
+                        l, m, meta = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
+                meta[0] = idx
+                meta = [meta]
                 if chimera[0]:
-                        l, m = create_chimera(chimera[1], chimera[2], l, m, settings)
+                        l, m, meta = create_chimera(chimera[1], chimera[2], chimera[3], l, m, meta, settings)
                 if random.random() < settings.chimera_rate:
-                        chimera = [True, l, m]
+                        chimera = [True, l, m, meta]
                 else:
-                        chimera = [False, -1, None]
+                        chimera = [False, -1, None, [[-1, -1]]]
                         m = merge_labels(m, settings)
                         if settings.max_mol_len < l:
                                 l, m = cut_long_molecule(l, m, settings)
                         if settings.min_mol_len <= l:
                                 size += l
-                                yield l, m
+                                yield l, m, meta
 

@@ -33,9 +33,11 @@ def bnsim(settings):
         moleculeID = 0
         fks = []
         rcks = []
+        seqs = []
         seq_lens = []
         for meta, seq in fasta_parse(settings.ifname):
                 print('Indexing sequence: ' + meta)
+                seqs.append(meta)
                 seq_lens.append(len(seq))
                 fk, rck = index_sequence(seq, settings)
                 print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
@@ -48,16 +50,20 @@ def bnsim(settings):
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
         chip_size = 0
+        bedfile = open(settings.ifname + '.bed', 'w')
         while chip <= settings.chips:
                 ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
                 write_bnx_header(ofile, settings)
-                for l, m in generate_molecules(seq_lens, fks, rcks, settings):
+                for l, m, meta in generate_molecules(seq_lens, fks, rcks, settings):
                                 moleculeID += 1
+                                for mol in meta:
+                                        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
                                 write_bnx_entry((moleculeID, l), m, ofile)
                                 chip_size += l
                 chip += 1
                 chip_size = 0
                 ofile.close()
+        bedfile.close()
         print('Finished.')
 
 def main(argv = None):
