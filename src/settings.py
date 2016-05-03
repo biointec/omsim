@@ -39,6 +39,9 @@ class Settings:
                 self.fragile_opposite = 150
                 self.fragile_treshold = 25
                 self.fragile_factor = 3
+                self.label_mu = 1500
+                self.label_treshold = 500
+                self.label_factor = 100
                 #TODO stretchfactor = .85
                 self.chip_size = 10000000000 # 10 Gbp
                 self.min_knicks = 1

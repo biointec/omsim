@@ -38,7 +38,10 @@ def strand():
 def knick_position(p, sd):
         p = list(p)
         if p[2]:
-                p[0] = random.gauss(p[0], sd)
+                temp = random.gauss(p[0], sd)
+                while temp < 0:
+                        temp = random.gauss(p[0], sd)
+                p[0] = temp
         return p
 
 def false_positive(fprate):
@@ -113,7 +116,8 @@ def generate_molecule(knicks, size, settings):
         fp = false_positives(settings.fprate, length)
         while len(fp) > 0 or (idx < len(knicks) and knicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(knicks) or fp[0][0] < knicks[idx][0] - shift):
-                        molecule.append(fp.pop(0))
+                        pos = fp.pop(0)
+                        molecule.append(pos)
                 else:
                         if random.random() < settings.fnrate:
                                 pos = knicks[idx][0] - shift
@@ -141,6 +145,40 @@ def cut_long_molecule(l, m, settings):
         l = random.randint(int(m[idx - 1]), settings.max_mol_len) + (l % 1)
         return l, m[:idx - 1]
 
+def merge_labels(m, settings):
+        if len(m) == 0:
+                return m
+        mol = []
+        mu = settings.label_mu
+        t = settings.label_treshold
+        f = settings.label_factor
+        prev = None
+        for curr in m:
+                if prev == None:
+                        prev = curr
+                        continue
+                if prev > curr:
+                        temp = prev
+                        prev = curr
+                        curr = temp
+                dist = curr - prev
+                if dist < mu - t:
+                        #merge
+                        prev = random.randint(int(prev), int(curr)) + (prev % 1)
+                elif mu + t < dist:
+                        #don't merge
+                        mol.append(prev)
+                        prev = curr
+                elif random.random() < sigmoid(mu, f, dist):
+                        #merge
+                        prev = random.randint(int(prev), int(curr)) + (prev % 1)
+                else:
+                        #don't merge
+                        mol.append(prev)
+                        prev = curr
+        mol.append(prev)
+        return mol
+
 def generate_molecules(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
@@ -155,6 +193,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
                         chimera = [True, l, m]
                 else:
                         chimera = [False, -1, None]
+                        m = merge_labels(m, settings)
                         if settings.max_mol_len < l:
                                 l, m = cut_long_molecule(l, m, settings)
                         if settings.min_mol_len <= l:
