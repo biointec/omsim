@@ -36,20 +36,17 @@ def bnsim(settings):
         rcks = []
         seqs = []
         seq_lens = []
-        if settings.prefix == None:
-                settings.prefix = settings.file
-        for meta, seq in fasta_parse(settings.file):
-                print('Indexing sequence: ' + meta)
-                seqs.append(meta)
-                seq_lens.append(len(seq))
-                fk, rck = index_sequence(seq, settings)
-                print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
-                fks.append(fk)
-                rcks.append(rck)
-                meta = None
-                seq = None
+        for file in settings.files:
+                for meta, seq in fasta_parse(file):
+                        print('Indexing sequence: ' + meta)
+                        seqs.append(meta)
+                        seq_lens.append(len(seq))
+                        fk, rck = index_sequence(seq, settings)
+                        print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
+                        fks.append(fk)
+                        rcks.append(rck)
         if settings.coverage != 0:
-                settings.chips = 1 + int(sum(seq_lens) * settings.coverage / settings.chip_size)
+                settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.get_chip_size()))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
         chip_size = 0
@@ -91,7 +88,12 @@ def xml_input_parse(xml_file):
                                                 knick[i.tag] = i.text
                                         knicks.append(knick)
                                 settings[entry.tag] = knicks
-                        elif entry.tag in ['name', 'file']:
+                        elif entry.tag == 'files':
+                                files = []
+                                for file in entry:
+                                        files.append(file.text)
+                                settings[entry.tag] = files
+                        elif entry.tag in ['name', 'file', 'prefix']:
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
                                 settings[entry.tag] = True
@@ -104,6 +106,7 @@ def xml_input_parse(xml_file):
 
 
 def main(argv = None):
+        print('This is an experimental version of BNS, scripts and configuration files based on this version may not be compatible with future versions.')
         if argv is None:
                 argv = sys.argv
 
@@ -129,19 +132,11 @@ def main(argv = None):
                         for s in xml_input_parse(val):
                                 simulations.append(s)
                 elif opt == '-i' or opt == '--input':
-                        settings.file = val
+                        settings.files.append(val)
                 elif opt == '-p' or opt == '--pattern':
                         settings.patterns.append(val)
                 elif opt == '-c' or opt == '--circular':
                         settings.circular = True
-                elif opt == '-l' or opt == '--length':
-                        settings.min_mol_len = int(val)
-                elif opt == '--fp':
-                        settings.fprate = float(val)
-                elif opt == '--fn':
-                        settings.fnrate = float(val)
-                elif opt == '--chim':
-                        settings.chimera_rate = float(val)
                 elif opt == '--seed':
                         settings.seed = int(val)
                         seed(settings.seed)
@@ -149,7 +144,7 @@ def main(argv = None):
         if len(knicks) == 0:
                 print('No knicking enzyme files were specified.')
                 exit()
-        if settings.file != None:
+        if len(settings.files) > 0:
                 simulations.append(settings)
         for settings in simulations:
                 settings.set_patterns(knicks)

@@ -101,7 +101,7 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
 def generate_molecule(knicks, size, settings):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
-        length = randnegbinom(settings.avg_len, settings.num_fails)
+        length = randnegbinom(settings.avg_mol_len, settings.fail_mol_len)
         meta = [-1, -1]
         if length > size:
                 return (-1, [], [-1, -1])
@@ -132,7 +132,7 @@ def generate_molecule(knicks, size, settings):
                                 shift -= size
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
-        molecule = [knick_position(p, settings.sd)[0] for p in molecule]
+        molecule = [knick_position(p, settings.knick_sd)[0] for p in molecule]
         if len(molecule) > settings.min_knicks:
                 return length, molecule, meta
         else:
@@ -186,7 +186,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
         chimera = [False, -1, None, [[-1, -1]]]
         size = 0
-        while size < settings.chip_size:
+        while size < settings.get_chip_size():
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
                 l = -1
                 while l < 0:
