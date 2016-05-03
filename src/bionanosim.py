@@ -28,6 +28,7 @@ from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
 import numpy as np
+import xml.etree.ElementTree
 
 def bnsim(settings):
         moleculeID = 0
@@ -35,7 +36,7 @@ def bnsim(settings):
         rcks = []
         seqs = []
         seq_lens = []
-        for meta, seq in fasta_parse(settings.ifname):
+        for meta, seq in fasta_parse(settings.file):
                 print('Indexing sequence: ' + meta)
                 seqs.append(meta)
                 seq_lens.append(len(seq))
@@ -50,9 +51,9 @@ def bnsim(settings):
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
         chip_size = 0
-        bedfile = open(settings.ifname + '.bed', 'w')
+        bedfile = open(settings.file + '.bed', 'w')
         while chip <= settings.chips:
-                ofile = open(settings.ifname + '.' + str(chip) + '.bnx', 'w')
+                ofile = open(settings.file + '.' + str(chip) + '.bnx', 'w')
                 write_bnx_header(ofile, settings)
                 for l, m, meta in generate_molecules(seq_lens, fks, rcks, settings):
                                 moleculeID += 1
@@ -66,22 +67,67 @@ def bnsim(settings):
         bedfile.close()
         print('Finished.')
 
+def xml_knick_parse(xml_file):
+        knicks = []
+        for child in xml.etree.ElementTree.parse(xml_file).getroot():
+                knick = {}
+                for entry in child:
+                        knick[entry.tag] = entry.text
+                knicks.append(knick)
+        return knicks
+
+def xml_input_parse(xml_file):
+        s = []
+        for child in xml.etree.ElementTree.parse(xml_file).getroot():
+                settings = {}
+                for entry in child:
+                        if entry.tag == 'knicks':
+                                knicks = []
+                                for k in entry:
+                                        knick = {}
+                                        for i in k:
+                                                knick[i.tag] = i.text
+                                        knicks.append(knick)
+                                settings[entry.tag] = knicks
+                        elif entry.tag in ['name', 'file']:
+                                settings[entry.tag] = entry.text
+                        elif entry.tag == 'circular':
+                                settings[entry.tag] = True
+                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate']:
+                                settings[entry.tag] = float(entry.text)
+                        else:
+                                settings[entry.tag] = int(entry.text)
+                s.append(Settings(settings))
+        return s
+
+
 def main(argv = None):
         if argv is None:
                 argv = sys.argv
 
         try:
-                opts, args = getopt.getopt(argv[1:], 'hi:p:cl:', ['help', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
+                opts, args = getopt.getopt(argv[1:], 'hk:x:i:p:cl:', ['help', 'knicks=', 'xml=', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
         except getopt.error:
                 print >>sys.stderr, 'For help use --help'
                 return 2
 
-        settings = Settings()
+        simulations = []
+        knicks = []
+        settings = Settings({})
         for opt, val in opts:
                 if opt == '-h' or opt == '--help':
                         print('Help message should come here.') #TODO
+                elif opt == '-k' or opt == '--knicks':
+                        for knick in xml_knick_parse(val):
+                                knicks.append(knick)
+                        if len(knicks) == 0:
+                                print('Invalid knicking enzyme file.')
+                                exit()
+                elif opt == '-x' or opt == '--xml':
+                        for s in xml_input_parse(val):
+                                simulations.append(s)
                 elif opt == '-i' or opt == '--input':
-                        settings.ifname = val
+                        settings.file = val
                 elif opt == '-p' or opt == '--pattern':
                         settings.patterns.append(val)
                 elif opt == '-c' or opt == '--circular':
@@ -98,8 +144,15 @@ def main(argv = None):
                         settings.seed = int(val)
                         seed(settings.seed)
                         np.random.seed(settings.seed)
-        print(settings)
-        bnsim(settings)
+        if len(knicks) == 0:
+                print('No knicking enzymes were specified.')
+                exit()
+        if settings.file != None:
+                simulations.append(settings)
+        for settings in simulations:
+                settings.set_patterns(knicks)
+                print(settings)
+                bnsim(settings)
 
 if __name__ == "__main__":
         sys.exit(main())

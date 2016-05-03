@@ -19,22 +19,20 @@
 '''
 
 class Settings:
-        def __init__(self):
-                self.patterns = []
-                self.circular = False
-                self.min_mol_len = 20000
-                self.max_mol_len = 2500000
-                self.avg_len = 200000.0
-                self.num_fails = 3.0
-                self.coverage = 0
-                self.chips = 1
-                self.fprate = 1.0 #number of fp in 100kb
+        def __init__(self, args):
                 self.bns_version = '0.1'
                 self.bnx_version = '1.2'
-                self.fnrate = 0.15 #fn rate of true labels
-                self.chimera_rate = 0.01 #rate of chimeric reads
-                self.chimera_mu = 1500 #mean of chimera insert distribution
-                self.chimera_sigma = 500 #sd of chimera insert distribution
+
+                self.file = None
+                self.prefix = None
+                self.circular = False
+                self.coverage = 0
+                self.chips = 1
+                self.avg_len = 200000.0
+                self.num_fails = 3.0
+                self.min_mol_len = 20000
+                self.max_mol_len = 2500000
+                self.min_knicks = 1
                 self.sd = 50 #sd of knick position
                 self.fragile_same = 50
                 self.fragile_opposite = 150
@@ -43,10 +41,18 @@ class Settings:
                 self.label_mu = 1500
                 self.label_treshold = 500
                 self.label_factor = 100
-                #TODO stretchfactor = .85
+                self.chimera_rate = 0.01 #rate of chimeric reads
+                self.chimera_mu = 1500 #mean of chimera insert distribution
+                self.chimera_sigma = 500 #sd of chimera insert distribution
+                #TODO self.stretchfactor = .85
                 self.chip_size = 50000000000 # 50 Gbp
-                self.min_knicks = 1
+
+                self.patterns = []
+                self.fprate = 1.0 #number of fp in 100kb
+                self.fnrate = 0.15 #fn rate of true labels
+
                 self.seed = None
+                self.__dict__.update(args)
 
         def __str__(self):
                 s = ''
@@ -67,7 +73,18 @@ class Settings:
                 
                 return s
 
-
-
+        def set_patterns(self, knicks):
+                for knick in self.knicks:
+                        found = False
+                        for k in knicks:
+                                if k['id'] == knick['id']:
+                                        k['label'] = knick['label']
+                                        knick = k
+                                        found = True
+                                        self.patterns.append(k['pattern'])
+                                        break
+                        if not found:
+                                print('Unkown knicking enzyme: ' + knick['id'])
+                                exit()
 
 
