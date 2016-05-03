@@ -36,6 +36,8 @@ def bnsim(settings):
         rcks = []
         seqs = []
         seq_lens = []
+        if settings.prefix == None:
+                settings.prefix = settings.file
         for meta, seq in fasta_parse(settings.file):
                 print('Indexing sequence: ' + meta)
                 seqs.append(meta)
@@ -51,9 +53,9 @@ def bnsim(settings):
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
         chip_size = 0
-        bedfile = open(settings.file + '.bed', 'w')
+        bedfile = open(settings.prefix + '.bed', 'w')
         while chip <= settings.chips:
-                ofile = open(settings.file + '.' + str(chip) + '.bnx', 'w')
+                ofile = open(settings.prefix + '.' + str(chip) + '.bnx', 'w')
                 write_bnx_header(ofile, settings)
                 for l, m, meta in generate_molecules(seq_lens, fks, rcks, settings):
                                 moleculeID += 1
@@ -145,7 +147,7 @@ def main(argv = None):
                         seed(settings.seed)
                         np.random.seed(settings.seed)
         if len(knicks) == 0:
-                print('No knicking enzymes were specified.')
+                print('No knicking enzyme files were specified.')
                 exit()
         if settings.file != None:
                 simulations.append(settings)
