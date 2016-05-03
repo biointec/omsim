@@ -66,12 +66,15 @@ def break_fragile(prev, curr, settings):
         else:
                 cutoff = settings.fragile_opposite
         dist = curr[0] - prev[0]
-        if dist < cutoff - settings.fragile_treshold \
-           or cutoff + settings.fragile_treshold < dist \
-           or random.random() > sigmoid(cutoff, settings.fragile_factor, dist):
+        if dist < cutoff - settings.fragile_treshold:
+                #don't break, knicks are so close that molecule does not become fragile
+                return False
+        elif cutoff + settings.fragile_treshold < dist:
+                #don't break, knicks are too far apart for molecule to become fragile
                 return False
         else:
-                return True
+                #break if roll is smaller than chance
+                return random.random() < sigmoid(cutoff, settings.fragile_factor, dist)
 
 def fragile_sites(l, m, settings):
         '''
