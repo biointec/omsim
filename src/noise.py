@@ -79,17 +79,15 @@ def fragile_sites(l, m, settings):
         fragile sites are independent of label and pattern
         '''
         if len(m) == 0:
-                #yield (l, m)
-                return False
+                return (l, m)
         prev = m[0]
         idx = 1
         mol = [prev]
-        #start = 0
+        start = 0
         while idx < len(m):
                 if prev[2] and m[idx][2] and break_fragile(prev, m[idx], settings):
-                        #yield (prev[0] - start, mol[:-1])
-                        return True
-                        #start = m[idx][0]
+                        return (prev[0] - start, mol[:-1])
+                        start = m[idx][0]
                         prev = m[idx]
                         mol = []
                 else:
@@ -97,8 +95,7 @@ def fragile_sites(l, m, settings):
                         if m[idx][2]:
                                 prev = m[idx]
                 idx += 1
-        #yield (l - start, mol)
-        return False
+        return (l - start, mol)
 
 def create_chimera(l1, m1, l2, m2):
         l1 = l1 #TODO what intermolecular distance should be added
@@ -136,8 +133,7 @@ def generate_molecule(knicks, size, settings):
                                 idx = 0
                                 end -= size
                                 shift -= size
-        if fragile_sites(length, molecule, settings):
-                return (-1, [])
+        length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
         molecule = [knick_position(p, settings.sd)[0] for p in molecule]
         if len(molecule) > settings.min_knicks:
