@@ -72,6 +72,6 @@ def double_stranded_multi_KMP(seq, patterns):
                                 matchLen[i] -= shifts[i][matchLen[i]]
                         matchLen[i] += 1
                         if matchLen[i] == sizes[i]:
-                                yield (startPos[i], i < count / 2), (reverses[i] - startPos[i], i < count / 2)
+                                yield (startPos[i], i < count / 2, i % (count / 2)), (reverses[i] - startPos[i], i < count / 2, i % (count / 2))
 
 

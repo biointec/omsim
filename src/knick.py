@@ -35,6 +35,7 @@ def index_sequence(seq, settings):
                 seq += seq[0:max_pattern_len]
         fk, rck = knicks(seq, settings.patterns)
         #remove duplicate hits
+        print(fk[-1])
         while fk[-1][0] >= seqLen:
                 fk.pop()
         while rck[-1][0] >= seqLen:
