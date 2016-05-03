@@ -87,7 +87,7 @@ def main(argv = None):
                 elif opt == '--fn':
                         settings.fnrate = float(val)
                 elif opt == '--chim':
-                        settings.chimrate = float(val)
+                        settings.chimera_rate = float(val)
                 elif opt == '--seed':
                         settings.seed = int(val)
                         seed(settings.seed)

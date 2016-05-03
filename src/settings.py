@@ -30,7 +30,9 @@ class Settings:
                 self.bns_version = '0.1'
                 self.bnx_version = '1.2'
                 self.fnrate = 0.15 #fn rate of true labels
-                self.chimrate = 0.01 #rate of chimeric reads
+                self.chimera_rate = 0.01 #rate of chimeric reads
+                self.chimera_mu = 1500 #mean of chimera insert distribution
+                self.chimera_sigma = 500 #sd of chimera insert distribution
                 self.sd = 50 #sd of knick position
                 self.fragile_same = 50
                 self.fragile_opposite = 150
@@ -54,7 +56,7 @@ class Settings:
                 s += 'Coverage: ' + str(self.coverage) + 'x\n'
                 s += 'FP rate: ' + str(self.fprate) + ' / 100 kbp\n'
                 s += 'FN rate: ' + str(self.fnrate*100) + '%\n'
-                s += 'Chimera rate: ' + str(self.chimrate*100) + '%\n'
+                s += 'Chimera rate: ' + str(self.chimera_rate*100) + '%\n'
                 if self.seed is not None:
                         s += 'Random seed: ' + str(self.seed) + '\n'
                 

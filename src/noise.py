@@ -45,7 +45,6 @@ def false_positive(fprate):
         return random.expovariate(fprate / 100000)
 
 def false_positives(fprate, length):
-        #TODO FP can be at TP position, this should not happen
         fp = []
         false_knick_pos = false_positive(fprate)
         while false_knick_pos < length:
@@ -87,8 +86,8 @@ def fragile_sites(l, m, settings):
                 idx += 1
         return (l, m)
 
-def create_chimera(l1, m1, l2, m2):
-        l1 = l1 #TODO what intermolecular distance should be added
+def create_chimera(l1, m1, l2, m2, settings):
+        l1 = l1 + max(0, random.gauss(settings.chimera_mu, settings.chimera_sigma))
         m1 = m1 + [l1 + k for k in m2]
         l1 += l2
         return l1, m1
@@ -96,7 +95,6 @@ def create_chimera(l1, m1, l2, m2):
 def generate_molecule(knicks, size, settings):
         knicks = list(knicks)
         shift = random.randint(0, size - 1)
-#        length = randgeometric(settings.avg_len)
         length = randnegbinom(settings.avg_len, settings.num_fails)
         if length > size:
                 return  (-1, [])
@@ -140,8 +138,8 @@ def generate_molecules(seqLens, fks, rcks, settings):
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
                 l, m = generate_molecule(fks[idx] if strand() else rcks[idx], seqLens[idx], settings)
                 if chimera[0]:
-                        l, m = create_chimera(chimera[1], chimera[2], l, m)
-                if random.random() < settings.chimrate:
+                        l, m = create_chimera(chimera[1], chimera[2], l, m, settings)
+                if random.random() < settings.chimera_rate:
                         chimera = [True, l, m]
                 else:
                         chimera = [False, -1, None]
