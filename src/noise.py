@@ -85,15 +85,14 @@ def fragile_sites(l, m, settings):
         mol = [prev]
         start = 0
         while idx < len(m):
-                if prev[2] and m[idx][2] and break_fragile(prev, m[idx], settings):
+                if break_fragile(prev, m[idx], settings):
                         return (prev[0] - start, mol[:-1])
                         start = m[idx][0]
                         prev = m[idx]
                         mol = []
                 else:
                         mol.append(m[idx])
-                        if m[idx][2]:
-                                prev = m[idx]
+                        prev = m[idx]
                 idx += 1
         return (l - start, mol)
 
