@@ -45,7 +45,7 @@ def bnsim(settings):
                         print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
                         fks.append(fk)
                         rcks.append(rck)
-        if settings.coverage != 0:
+        if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.get_chip_size()))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
         chip = 1
@@ -118,7 +118,7 @@ def main(argv = None):
                 argv = sys.argv
 
         try:
-                opts, args = getopt.getopt(argv[1:], 'he:x:i:p:cl:', ['help', 'enzymes=', 'xml=', 'input=', 'pattern=', 'circular', 'length=', 'fp=', 'fn=', 'seed='])
+                opts, args = getopt.getopt(argv[1:], 'he:x:i:p:c', ['help', 'enzymes=', 'xml=', 'input=', 'enzyme=', 'circular', 'seed='])
         except getopt.error:
                 print >>sys.stderr, 'For help use --help'
                 return 2
@@ -140,8 +140,9 @@ def main(argv = None):
                                 simulations.append(s)
                 elif opt == '-i' or opt == '--input':
                         settings.files.append(val)
-                elif opt == '-p' or opt == '--pattern':
-                        settings.patterns.append(val)
+                elif opt == '-p' or opt == '--enzyme':
+                        enzyme = {'id' : val, 'label' : 'default'}
+                        settings.enzymes.append(enzyme)
                 elif opt == '-c' or opt == '--circular':
                         settings.circular = True
                 elif opt == '--seed':

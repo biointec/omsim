@@ -135,10 +135,7 @@ def generate_molecule(knicks, size, settings):
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
         molecule = [[knick_position(p, settings.knick_sd)[0], p[-1]] for p in molecule]
-        if len(molecule) > settings.min_knicks:
-                return length, molecule, meta
-        else:
-                return (-1, [], [-1, -1])
+        return length, molecule, meta
 
 def cut_long_molecule(l, m, settings):
         idx = len(m)
@@ -204,7 +201,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
                         m = merge_labels(m, settings)
                         if settings.max_mol_len < l:
                                 l, m = cut_long_molecule(l, m, settings)
-                        if settings.min_mol_len <= l:
+                        if settings.min_mol_len <= l and settings.min_knicks <= len(m):
                                 size += l
                                 yield l, m, meta
 
