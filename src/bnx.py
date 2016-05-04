@@ -22,7 +22,7 @@ def write_bnx_header(ofile, settings, label):
         '''
         Writes the bnx-header
         '''
-        ofile.write('# BNSim Version:\t' + settings.bns_version + '\n')
+        ofile.write('# omsim Version:\t' + settings.version + '\n')
         ofile.write('# BNX File Version:\t' + settings.bnx_version + '\n')
         ofile.write('# Label Channels:\t' + '1' + '\n')
         for i in range(len(settings.enzymes)):

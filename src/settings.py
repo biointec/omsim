@@ -20,12 +20,12 @@
 
 class Settings:
         def __init__(self, args):
-                self.bns_version = '0.1'
+                self.version = '0.1'
                 self.bnx_version = '1.2'
 
                 self.name = 'Unnamed'#
                 self.files = []#
-                self.prefix = 'bns_output'#
+                self.prefix = 'omsim_output'#
                 self.circular = False#
                 self.coverage = 0#
                 self.chips = 1#
@@ -59,7 +59,7 @@ class Settings:
 
         def __str__(self):
                 s = ''
-                s += 'BNS version: ' + self.bns_version + '\n'
+                s += 'Version: ' + self.version + '\n'
                 s += 'BNX version: ' + self.bnx_version + '\n'
                 s += 'Patterns: ' + ' '.join([str(enzyme) for enzyme in self.enzymes]) + '\n'
                 if self.circular:

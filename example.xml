@@ -66,14 +66,13 @@
                 <!--The seed used for all pseudo random number generators-->
                 <seed>0</seed>
         </input>
+        
+        <!--Minimal example, specifying 1 non-circular input file and 1 enzyme-->
         <input>
                 <name>Bacteria Minimal</name>
                 <files>
                         <file>data/bacteria.fasta</file>
                 </files>
-                <prefix>data/bacteria_minimal</prefix>
-                <circular/>
-                <chips>1</chips>
                 <enzymes>
                         <enzyme>
                                 <id>BspQI</id>
@@ -84,6 +83,5 @@
                                 <label>1</label>
                         </enzyme>
                 </enzymes>
-                <seed>0</seed>
         </input>
 </simulation>

@@ -30,7 +30,7 @@ from random import seed
 import numpy as np
 import xml.etree.ElementTree
 
-def bnsim(settings):
+def omsim(settings):
         moleculeID = 0
         fks = []
         rcks = []
@@ -47,7 +47,8 @@ def bnsim(settings):
                         rcks.append(rck)
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.get_chip_size()))
-        print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + '.')
+        settings.estimated_coverage = int(settings.get_chip_size() * settings.chips / float(sum(seq_lens)))
+        print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
         chip = 1
         chip_size = 0
         bedfile = open(settings.prefix + '.bed', 'w')
@@ -113,7 +114,7 @@ def xml_input_parse(xml_file):
 
 
 def main(argv = None):
-        print('This is an experimental version of BNS, scripts and configuration files based on this version might be incompatible with future versions.')
+        print('This is an experimental version of omsim, scripts and configuration files based on this version might be incompatible with future versions.')
         if argv is None:
                 argv = sys.argv
 
@@ -157,7 +158,7 @@ def main(argv = None):
         for settings in simulations:
                 settings.set_patterns(enzymes)
                 print(settings)
-                bnsim(settings)
+                omsim(settings)
         return 0
 
 if __name__ == "__main__":
