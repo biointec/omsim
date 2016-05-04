@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all knicking enzymes-->
+<knicks>
+        <!--properties of the knicking enzyme-->
+        <knick>
+                <!--id, used to specify when this enzyme should be used-->
+                <id>BspQI</id>
+                <!--knicking pattern-->
+                <pattern>GCTCTTC</pattern>
+                <!--number of false positive knicks per 100kbp-->
+                <fp>1.0</fp>
+                <!--rate of false negatives-->
+                <fn>0.15</fn>
+        </knick>
+        <knick>
+                <id>BssSI</id>
+                <pattern>CACGAG</pattern>
+                <fp>1.5</fp>
+                <fn>0.20</fn>
+        </knick>
+</knicks>

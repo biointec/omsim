@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all simulations to run-->
+<simulation>
+        <!--input defining a single simulation-->
+        <input>
+                <!--Name of the data set-->
+                <name>Bacteria</name>
+                <!---->
+                <files>
+                        <!--Location of the data set, absolute, or relative to the current directory-->
+                        <file>data/bacteria.fasta</file>
+                        <file>/home/gmiclott/Documents/Projects/BioNanoSim/data/bacteria.fasta</file>
+                </files>
+                <!--Prefix of the output, relative to the current directory-->
+                <prefix>data/bacteria</prefix>
+                <!--The sequences in the data set are circular-->
+                <circular/>
+                <!--Minimal desired coverage-->
+                <coverage>1</coverage>
+                <!--Number of chips that will be used, this takes precedence over coverage-->
+                <chips>1</chips>
+                <!--Chip size in Gbp-->
+                <chip_size>50</chip_size>
+                <!--Average molecule length-->
+                <avg_mol_len>200000</avg_mol_len>
+                <!--Additional parameter for the molecule length distribution-->
+                <fail_mol_len>3</fail_mol_len>
+                <!--Minimal molecule length-->
+                <min_mol_len>20000</min_mol_len>
+                <!--Maximal molecule length-->
+                <max_mol_len>2500000</max_mol_len>
+                <!---->
+                <min_knicks>1</min_knicks>
+                <!---->
+                <knick_sd>50</knick_sd>
+                <!---->
+                <fragile_same>50</fragile_same>
+                <!---->
+                <fragile_opposite>150</fragile_opposite>
+                <!---->
+                <fragile_treshold>25</fragile_treshold>
+                <!---->
+                <fragile_factor>3</fragile_factor>
+                <!---->
+                <label_mu>1500</label_mu>
+                <!---->
+                <label_treshold>500</label_treshold>
+                <!---->
+                <label_factor>100</label_factor>
+                <!---->
+                <chimera_rate>0.01</chimera_rate>
+                <!---->
+                <chimera_mu>1500</chimera_mu>
+                <!---->
+                <chimera_sigma>500</chimera_sigma>
+                <!--The enzymes and their labels to use-->
+                <enzymes>
+                        <!--Specification of one enzyme and its label-->
+                        <enzyme>
+                                <!--id of the enzyme-->
+                                <id>BspQI</id>
+                                <!--label-->
+                                <label>0</label>
+                        </enzyme>
+                </enzymes>
+                <!--The seed used for all pseudo random number generators-->
+                <seed>0</seed>
+        </input>
+        <input>
+                <name>Bacteria Minimal</name>
+                <files>
+                        <file>data/bacteria.fasta</file>
+                </files>
+                <prefix>data/bacteria_minimal</prefix>
+                <circular/>
+                <chips>1</chips>
+                <enzymes>
+                        <enzyme>
+                                <id>BspQI</id>
+                                <label>0</label>
+                        </enzyme>
+                        <enzyme>
+                                <id>BssSI</id>
+                                <label>1</label>
+                        </enzyme>
+                </enzymes>
+                <seed>0</seed>
+        </input>
+</simulation>
