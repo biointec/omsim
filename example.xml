@@ -4,15 +4,14 @@
         <!--input defining a single simulation-->
         <input>
                 <!--Name of the data set-->
-                <name>Bacteria</name>
+                <name>Genome name</name>
                 <!---->
                 <files>
                         <!--Location of the data set, absolute, or relative to the current directory-->
-                        <file>data/bacteria.fasta</file>
-                        <file>/home/gmiclott/Documents/Projects/BioNanoSim/data/bacteria.fasta</file>
+                        <file>genome.fasta</file>
                 </files>
                 <!--Prefix of the output, relative to the current directory-->
-                <prefix>data/bacteria</prefix>
+                <prefix>genome</prefix>
                 <!--The sequences in the data set are circular-->
                 <circular/>
                 <!--Minimal desired coverage-->
@@ -69,9 +68,9 @@
         
         <!--Minimal example, specifying 1 non-circular input file and 1 enzyme-->
         <input>
-                <name>Bacteria Minimal</name>
+                <name>Genome Minimal</name>
                 <files>
-                        <file>data/bacteria.fasta</file>
+                        <file>genome.fasta</file>
                 </files>
                 <enzymes>
                         <enzyme>
