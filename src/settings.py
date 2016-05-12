@@ -56,6 +56,7 @@ class Settings:
                 self.__dict__.update(args)
                 self.avg_mol_len = float(self.avg_mol_len)
                 self.fail_mol_len = float(self.fail_mol_len)
+                self.set_patterns()
 
         def __str__(self):
                 s = ''
@@ -78,11 +79,11 @@ class Settings:
                 GIGA = 1000 * 1000 * 1000
                 return self.chip_size * GIGA
 
-        def set_patterns(self, enzymes):
+        def set_patterns(self):
                 for idx in range(len(self.enzymes)):
                         enzyme = self.enzymes[idx]
                         found = False
-                        for e in enzymes:
+                        for e in self.enzyme_xml:
                                 if e['id'] == enzyme['id']:
                                         e['label'] = enzyme['label']
                                         if not enzyme['label'] in self.labels:

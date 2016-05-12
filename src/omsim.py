@@ -20,7 +20,6 @@
 '''
 
 import sys
-import getopt
 from util import fasta_parse
 from knick import index_sequence
 from noise import generate_molecules
@@ -31,11 +30,16 @@ import numpy as np
 import xml.etree.ElementTree
 
 def omsim(settings):
+        #set seeds
+        seed(settings.seed)
+        np.random.seed(settings.seed)
+        #initialise variables
         moleculeID = 0
         fks = []
         rcks = []
         seqs = []
         seq_lens = []
+        #process input
         for file in settings.files:
                 for meta, seq in fasta_parse(file):
                         print('Indexing sequence: ' + meta)
@@ -52,6 +56,7 @@ def omsim(settings):
         chip = 1
         chip_size = 0
         bedfile = open(settings.prefix + '.bed', 'w')
+        #generate reads
         while chip <= settings.chips:
                 ofile = {}
                 for label in settings.labels:
@@ -69,7 +74,7 @@ def omsim(settings):
                 for label in settings.labels:
                         ofile[label].close()
         bedfile.close()
-        print('Finished.\n')
+        print('Finished processing ' + settings.name + '.\n')
 
 def xml_enzyme_parse(xml_file):
         enzymes = []
@@ -90,11 +95,19 @@ def xml_input_parse(xml_file):
                 for entry in child:
                         if entry.tag == 'enzymes':
                                 enzymes = []
+                                enzyme_xml = []
                                 for e in entry:
-                                        enzyme = {}
-                                        for i in e:
-                                                enzyme[i.tag] = i.text
-                                        enzymes.append(enzyme)
+                                        if e.tag == 'enzyme':
+                                                enzyme = {}
+                                                for i in e:
+                                                        enzyme[i.tag] = i.text
+                                                enzymes.append(enzyme)
+                                        elif e.tag == 'file':
+                                                for enzyme in xml_enzyme_parse(e.text):
+                                                        enzyme_xml.append(enzyme)
+                                                if len(enzyme_xml) == 0:
+                                                        print('Invalid knicking enzyme file.')
+                                                settings['enzyme_xml'] = enzyme_xml
                                 settings[entry.tag] = enzymes
                         elif entry.tag == 'files':
                                 files = []
@@ -112,51 +125,26 @@ def xml_input_parse(xml_file):
                 s.append(Settings(settings))
         return s
 
+def print_welcome():
+        print('This is an experimental version of omsim, scripts and configuration files based on this version might be incompatible with future versions. Some default settings may not have reasonable values yet.')
+
+def print_usage():
+        print('Usage: omsim.py file.xml' + '\n' + 'Example xml-files: example.xml (all options) and minimal.xml (required options).' + '\n' + 'Enzyme properties are specified in enzymes.xml.')
 
 def main(argv = None):
-        print('This is an experimental version of omsim, scripts and configuration files based on this version might be incompatible with future versions.')
+        print_welcome()
         if argv is None:
                 argv = sys.argv
-
-        try:
-                opts, args = getopt.getopt(argv[1:], 'he:x:i:p:c', ['help', 'enzymes=', 'xml=', 'input=', 'enzyme=', 'circular', 'seed='])
-        except getopt.error:
-                print >>sys.stderr, 'For help use --help'
-                return 2
-
+        print(' '.join(argv))
         simulations = []
-        enzymes = []
-        settings = Settings({})
-        for opt, val in opts:
+        for i in range(1, len(argv)):
+                opt = argv[i]
                 if opt == '-h' or opt == '--help':
-                        print('Help message should come here.') #TODO
-                elif opt == '-e' or opt == '--enzymes':
-                        for enzyme in xml_enzyme_parse(val):
-                                enzymes.append(enzyme)
-                        if len(enzymes) == 0:
-                                print('Invalid knicking enzyme file.')
-                                exit()
-                elif opt == '-x' or opt == '--xml':
-                        for s in xml_input_parse(val):
+                        print_usage()
+                else:
+                        for s in xml_input_parse(opt):
                                 simulations.append(s)
-                elif opt == '-i' or opt == '--input':
-                        settings.files.append(val)
-                elif opt == '-p' or opt == '--enzyme':
-                        enzyme = {'id' : val, 'label' : 'default'}
-                        settings.enzymes.append(enzyme)
-                elif opt == '-c' or opt == '--circular':
-                        settings.circular = True
-                elif opt == '--seed':
-                        settings.seed = int(val)
-                        seed(settings.seed)
-                        np.random.seed(settings.seed)
-        if len(enzymes) == 0:
-                print('No knicking enzyme files were specified.')
-                return 1
-        if len(settings.files) > 0:
-                simulations.append(settings)
         for settings in simulations:
-                settings.set_patterns(enzymes)
                 print(settings)
                 omsim(settings)
         return 0

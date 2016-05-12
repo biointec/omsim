@@ -12,7 +12,7 @@
                 </files>
                 <!--Prefix of the output, relative to the current directory-->
                 <prefix>genome</prefix>
-                <!--The sequences in the data set are circular-->
+                <!--Add this tag if the sequences in the data set are circular, leave it out if they are not-->
                 <circular/>
                 <!--Minimal desired coverage-->
                 <coverage>1</coverage>
@@ -22,13 +22,13 @@
                 <chip_size>50</chip_size>
                 <!--Average molecule length-->
                 <avg_mol_len>200000</avg_mol_len>
-                <!--Additional parameter for the molecule length distribution-->
+                <!--Additional parameter for the molecule length distribution, will be changed to sd or variance-->
                 <fail_mol_len>3</fail_mol_len>
                 <!--Minimal molecule length-->
                 <min_mol_len>20000</min_mol_len>
                 <!--Maximal molecule length-->
                 <max_mol_len>2500000</max_mol_len>
-                <!---->
+                <!--Minimal number of labels required per read-->
                 <min_knicks>1</min_knicks>
                 <!---->
                 <knick_sd>50</knick_sd>
@@ -54,33 +54,23 @@
                 <chimera_sigma>500</chimera_sigma>
                 <!--The enzymes and their labels to use-->
                 <enzymes>
+                        <!--Location of the enzymes file-->
+                        <file>enzymes.xml</file>
                         <!--Specification of one enzyme and its label-->
                         <enzyme>
                                 <!--id of the enzyme-->
                                 <id>BspQI</id>
                                 <!--label-->
-                                <label>0</label>
+                                <label>label_0</label>
+                        </enzyme>
+                        <!--Multiple enzymes can be specified, possibly with different labels-->
+                        <enzyme>
+                                <id>BssSI</id>
+                                <label>label_1</label>
                         </enzyme>
                 </enzymes>
                 <!--The seed used for all pseudo random number generators-->
                 <seed>0</seed>
         </input>
-        
-        <!--Minimal example, specifying 1 non-circular input file and 1 enzyme-->
-        <input>
-                <name>Genome Minimal</name>
-                <files>
-                        <file>genome.fasta</file>
-                </files>
-                <enzymes>
-                        <enzyme>
-                                <id>BspQI</id>
-                                <label>0</label>
-                        </enzyme>
-                        <enzyme>
-                                <id>BssSI</id>
-                                <label>1</label>
-                        </enzyme>
-                </enzymes>
-        </input>
+        <!--More simulations can be added here-->
 </simulation>
