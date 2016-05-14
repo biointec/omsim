@@ -62,12 +62,12 @@ class Settings:
                 s = ''
                 s += 'Version: ' + self.version + '\n'
                 s += 'BNX version: ' + self.bnx_version + '\n'
-                s += 'Patterns: ' + ' '.join([str(enzyme) for enzyme in self.enzymes]) + '\n'
+                #s += 'Patterns: ' + ' '.join([str(enzyme) for enzyme in self.enzymes]) + '\n'
                 if self.circular:
                         s += 'Circular genome.\n'
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_mol_len) + ' bp\n'
-                s += 'Number of failures for negative binomial length distribution: ' + str(self.fail_mol_len) + '\n'
+                #s += 'Number of failures for negative binomial length distribution: ' + str(self.fail_mol_len) + '\n'
                 s += 'Minimal coverage: ' + str(self.coverage) + 'x\n'
                 s += 'Chimera rate: ' + str(self.chimera_rate * 100) + '%\n'
                 if self.seed is not None:
