@@ -49,9 +49,9 @@
                 <!--Maximal molecule length-->
                 <max_mol_len>2500000</max_mol_len>
                 <!--Minimal number of labels required per read-->
-                <min_knicks>1</min_knicks>
+                <min_nicks>1</min_nicks>
                 <!--Additional normal noise-->
-                <knick_sd>50</knick_sd>
+                <nick_sd>50</nick_sd>
                 <!--Distance at which fragile sites on one strand have 50% chance to break-->
                 <fragile_same>50</fragile_same>
                 <!--Distance at which fragile sites on opposite strands have 50% chance to break-->

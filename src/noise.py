@@ -35,7 +35,7 @@ def randnegbinom(mu, r):
 def strand():
         return random.randint(0, 1)
 
-def knick_position(p, sd):
+def nick_position(p, sd):
         p = list(p)
         if p[2]:
                 temp = random.gauss(p[0], sd)
@@ -49,11 +49,11 @@ def false_positive(fprate):
 
 def false_positives(fprate, length, enzyme):
         fp = []
-        false_knick_pos = false_positive(fprate)
-        while false_knick_pos < length:
+        false_nick_pos = false_positive(fprate)
+        while false_nick_pos < length:
                 #generate FP's on random strand
-                fp.append((false_knick_pos, strand(), False, enzyme))
-                false_knick_pos += false_positive(fprate)
+                fp.append((false_nick_pos, strand(), False, enzyme))
+                false_nick_pos += false_positive(fprate)
         return fp
 
 def sigmoid(m, f, x):
@@ -70,10 +70,10 @@ def break_fragile(prev, curr, settings):
                 cutoff = settings.fragile_opposite
         dist = curr[0] - prev[0]
         if dist < cutoff - settings.fragile_treshold:
-                #don't break, knicks are so close that molecule does not become fragile
+                #don't break, nicks are so close that molecule does not become fragile
                 return False
         elif cutoff + settings.fragile_treshold < dist:
-                #don't break, knicks are too far apart for molecule to become fragile
+                #don't break, nicks are too far apart for molecule to become fragile
                 return False
         else:
                 #break if roll is smaller than chance
@@ -98,8 +98,8 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
         l1 += l2
         return l1, m1, meta1 + meta2
 
-def generate_molecule(knicks, size, settings):
-        knicks = list(knicks)
+def generate_molecule(nicks, size, settings):
+        nicks = list(nicks)
         shift = random.randint(0, size - 1)
         length = randnegbinom(settings.avg_mol_len, settings.fail_mol_len)
         meta = [-1, -1]
@@ -113,28 +113,28 @@ def generate_molecule(knicks, size, settings):
         end = shift + length
         if shift < 0  or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
-        idx = bisect_left(knicks, (shift, None))
+        idx = bisect_left(nicks, (shift, None))
         molecule = []
         fp = []
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
-        while len(fp) > 0 or (idx < len(knicks) and knicks[idx][0] < end):
-                if len(fp) != 0 and (idx >= len(knicks) or fp[0][0] < knicks[idx][0] - shift):
-                        knick = fp.pop(0)
-                        molecule.append(knick)
+        while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
+                if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
+                        nick = fp.pop(0)
+                        molecule.append(nick)
                 else:
-                        if random.random() < knicks[idx][2]['fn']:
-                                pos = knicks[idx][0] - shift
+                        if random.random() < nicks[idx][2]['fn']:
+                                pos = nicks[idx][0] - shift
                                 if 0 <= pos and pos <= length - 1:
-                                        molecule.append([pos, knicks[idx][1], True, knicks[idx][2]])
+                                        molecule.append([pos, nicks[idx][1], True, nicks[idx][2]])
                         idx += 1
-                        if settings.circular and idx == len(knicks):
+                        if settings.circular and idx == len(nicks):
                                 idx = 0
                                 end -= size
                                 shift -= size
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
-        molecule = [[knick_position(p, settings.knick_sd)[0], p[-1]] for p in molecule]
+        molecule = [[nick_position(p, settings.nick_sd)[0], p[-1]] for p in molecule]
         return length, molecule, meta
 
 def cut_long_molecule(l, m, settings):
@@ -201,7 +201,7 @@ def generate_molecules(seqLens, fks, rcks, settings):
                         m = merge_labels(m, settings)
                         if settings.max_mol_len < l:
                                 l, m = cut_long_molecule(l, m, settings)
-                        if settings.min_mol_len <= l and settings.min_knicks <= len(m):
+                        if settings.min_mol_len <= l and settings.min_nicks <= len(m):
                                 size += l
                                 yield l, m, meta
 

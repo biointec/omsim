@@ -20,7 +20,7 @@
 
 from util import double_stranded_multi_KMP_
 
-def knicks(seq, enzymes):
+def nicks(seq, enzymes):
         f = [];
         r = [];
         for pos, rev in double_stranded_multi_KMP_(seq, enzymes):
@@ -33,7 +33,7 @@ def index_sequence(seq, settings):
         seqLen = len(seq)
         if settings.circular:
                 seq += seq[0:max_pattern_len]
-        fk, rck = knicks(seq, settings.enzymes)
+        fk, rck = nicks(seq, settings.enzymes)
         #remove duplicate hits
         while fk[-1][0] >= seqLen:
                 fk.pop()

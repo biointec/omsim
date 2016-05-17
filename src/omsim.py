@@ -21,7 +21,7 @@
 
 import sys
 from util import fasta_parse
-from knick import index_sequence
+from nick import index_sequence
 from noise import generate_molecules
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
@@ -46,7 +46,7 @@ def omsim(settings):
                         seqs.append(meta)
                         seq_lens.append(len(seq))
                         fk, rck = index_sequence(seq, settings)
-                        print('Found ' + str(len(fk)) + ' knicks in ' + str(seq_lens[-1]) + 'bp.')
+                        print('Found ' + str(len(fk)) + ' nicks in ' + str(seq_lens[-1]) + 'bp.')
                         fks.append(fk)
                         rcks.append(rck)
         if settings.coverage != 0 and settings.chips != 1:
@@ -106,7 +106,7 @@ def xml_input_parse(xml_file):
                                                 for enzyme in xml_enzyme_parse(e.text):
                                                         enzyme_xml.append(enzyme)
                                                 if len(enzyme_xml) == 0:
-                                                        print('Invalid knicking enzyme file.')
+                                                        print('Invalid nicking enzyme file.')
                                                 settings['enzyme_xml'] = enzyme_xml
                                 settings[entry.tag] = enzymes
                         elif entry.tag == 'files':

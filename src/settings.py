@@ -33,8 +33,8 @@ class Settings:
                 self.fail_mol_len = 3#
                 self.min_mol_len = 20000#
                 self.max_mol_len = 2500000#
-                self.min_knicks = 1#
-                self.knick_sd = 50 #sd of knick position
+                self.min_nicks = 1#
+                self.nick_sd = 50 #sd of nick position
                 self.fragile_same = 50#
                 self.fragile_opposite = 150#
                 self.fragile_treshold = 25#
@@ -92,7 +92,7 @@ class Settings:
                                         found = True
                                         break
                         if not found:
-                                print('Unkown knicking enzyme: ' + enzyme['id'])
+                                print('Unkown nicking enzyme: ' + enzyme['id'])
                                 exit()
 
 

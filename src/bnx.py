@@ -68,8 +68,8 @@ def get_backbone_info(moleculeID, length, count):
         info.append(1)          #GlobalScanNumber       #12
         return info
 
-def write_bnx_entry(info, knicks, ofile, label):
-        info = get_backbone_info(info[0], info[1], len(knicks))
+def write_bnx_entry(info, nicks, ofile, label):
+        info = get_backbone_info(info[0], info[1], len(nicks))
         backbone = ''
         backbone += str(info[0]) + '\t'                         #backboneLabelChannel   0
         backbone += str(info[1]) + '\t'                         #ID                     1
@@ -87,7 +87,7 @@ def write_bnx_entry(info, knicks, ofile, label):
         channel = '1'
         q1 = 'QX11'
         q2 = 'QX12'
-        for pos in knicks:
+        for pos in nicks:
                 if pos[1]['label'] == label:
                         channel += '\t' + '{0:.2f}'.format(pos[0])
                         q1 += '\t' + '{0:.4f}'.format(sim_qx11())
