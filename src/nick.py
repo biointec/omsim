@@ -35,8 +35,10 @@ def index_sequence(seq, settings):
                 seq += seq[0:max_pattern_len]
         fk, rck = nicks(seq, settings.enzymes)
         #remove duplicate hits
-        while fk[-1][0] >= seqLen:
-                fk.pop()
-        while rck[-1][0] >= seqLen:
-                rck.pop()
+        if len(fk) > 0:
+                while fk[-1][0] >= seqLen:
+                        fk.pop()
+        if len(fk) > 0:
+                while rck[-1][0] >= seqLen:
+                        rck.pop()
         return fk, rck
