@@ -20,7 +20,7 @@
 
 class Settings:
         def __init__(self, args):
-                self.version = '0.1'
+                self.version = 'v0.1'
                 self.bnx_version = '1.2'
 
                 self.name = 'Unnamed'#
@@ -31,9 +31,11 @@ class Settings:
                 self.chips = 1#
                 self.avg_mol_len = 200000#
                 self.fail_mol_len = 3#
-                self.min_mol_len = 20000#
+                self.min_mol_len = 1#
                 self.max_mol_len = 2500000#
                 self.min_nicks = 1#
+                self.label_snr_filter_type = 'Static'
+                self.min_label_SNR = 0.0#
                 self.nick_sd = 50 #sd of nick position
                 self.fragile_same = 50#
                 self.fragile_opposite = 150#
