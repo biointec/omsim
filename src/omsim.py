@@ -55,7 +55,7 @@ def omsim(settings):
         bedfile = open(settings.prefix + '.bed', 'w')
         #generate reads
         for chip in range(1, settings.chips + 1):
-                chip_settings = {'size' : 0, 'scans' : 0, 'chip_id' : 'omsim_chip_' + str(chip), 'run_id' : str(chip), 'flowcell' : 1, 'molecule_count' : 0, 'bpp' : 425, 'stretch_factor' : 0.85}
+                chip_settings = {'size' : 0, 'scans' : 0, 'chip_id' : 'unknown', 'run_id' : str(chip), 'flowcell' : 1, 'molecule_count' : 0, 'bpp' : 425, 'stretch_factor' : 0.85}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
                 chip_settings['scans'] += 1 #TODO fix number of scans in advance?
                 molecules = []
@@ -69,7 +69,7 @@ def omsim(settings):
                                 molecules.append((l, m))
                                 chip_settings['molecule_count'] += 1
                                 chip_settings['size'] += l
-                
+                chip_settings['scans'] = settings.scans_per_chip
                 #write output - per label
                 ofile = {}
                 for label in settings.labels:

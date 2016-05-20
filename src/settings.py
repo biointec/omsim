@@ -29,6 +29,7 @@ class Settings:
                 self.circular = False#
                 self.coverage = 0#
                 self.chips = 1#
+                self.scans_per_chip = 50#
                 self.avg_mol_len = 200000#
                 self.fail_mol_len = 3#
                 self.min_mol_len = 1#
