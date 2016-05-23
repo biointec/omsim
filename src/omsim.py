@@ -125,7 +125,7 @@ def xml_input_parse(xml_file):
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
                                 settings[entry.tag] = True
-                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate']:
+                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd']:
                                 settings[entry.tag] = float(entry.text)
                         else:
                                 settings[entry.tag] = int(entry.text)
