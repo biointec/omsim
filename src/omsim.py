@@ -26,6 +26,7 @@ from noise import generate_scan
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
+from util import double_stranded_multi_KMP_from_fasta as KMP
 import numpy as np
 import xml.etree.ElementTree
 
@@ -34,20 +35,24 @@ def omsim(settings):
         seed(settings.seed)
         np.random.seed(settings.seed)
         #initialise variables
-        fks = []
-        rcks = []
-        seqs = []
-        seq_lens = []
+#        fks = []
+#        rcks = []
+#        seqs = []
+#        seq_lens = []
         #process input
-        for file in settings.files:
-                for meta, seq in fasta_parse(file):
-                        print('Indexing sequence: ' + meta)
-                        seqs.append(meta)
-                        seq_lens.append(len(seq))
-                        fk, rck = index_sequence(seq, settings)
-                        print('Found ' + str(len(fk)) + ' nicks in ' + str(seq_lens[-1]) + 'bp.')
-                        fks.append(fk)
-                        rcks.append(rck)
+#        for fasta in settings.files:
+#                for meta, seq in fasta_parse(file):
+#                        print('Indexing sequence: ' + meta)
+#                        seqs.append(meta)
+#                        seq_lens.append(len(seq))
+#                        fk, rck = index_sequence(seq, settings)
+#                        print('Found ' + str(len(fk)) + ' nicks in ' + str(seq_lens[-1]) + 'bp.')
+#                        fks.append(fk)
+#                        rcks.append(rck)
+        seqs, seq_lens, fks, rcks = KMP(settings)
+#                        for idx in range(0, len(metas)):
+#                                print('Indexing sequence: ' + meta)
+#                                print('Found ' + str(len(fk)) + ' nicks in ' + str(seq_lens[-1]) + 'bp.')
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
