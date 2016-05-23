@@ -21,7 +21,6 @@
 
 import sys
 from util import fasta_parse
-from nick import index_sequence
 from noise import generate_scan
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
