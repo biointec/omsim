@@ -116,10 +116,16 @@ def double_stranded_multi_KMP_from_fasta(settings):
                 seq = ''
                 while c:
                         if c == '>':
+                                '''
+                                        start of a new sequence
+                                '''
                                 meta = ifile.readline().rstrip().split()[0]
                                 metas.append(meta)
                                 print('Indexing sequence: ' + meta)
                         elif c != '\n':
+                                '''
+                                        process next character of the sequence
+                                '''
                                 if settings.circular and seq_len < max_pattern_len:
                                         seq += c
                                 seq_len += 1
@@ -129,10 +135,13 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                 matchLen[i] -= shifts[i][matchLen[i]]
                                         matchLen[i] += 1
                                         if matchLen[i] == sizes[i]:
-                                                f.append([startPos[i], i < count / 2, enzymes[i % (count / 2)]])
-                                                rc.append([- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]])
+                                                f.append((startPos[i], i < count / 2, enzymes[i % (count / 2)]))
+                                                rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]))
                         c = ifile.read(1)
                         if seq_len > 0 and (not c or c == '>'):
+                                '''
+                                        we reached the end of the sequence
+                                '''
                                 for cc in seq:
                                         for i in range(count):
                                                 while matchLen[i] == sizes[i] or matchLen[i] >= 0 and patterns[i][matchLen[i]] != cc:
@@ -140,13 +149,12 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                         matchLen[i] -= shifts[i][matchLen[i]]
                                                 matchLen[i] += 1
                                                 if matchLen[i] == sizes[i]:
-                                                        f.append([startPos[i], i < count / 2, enzymes[i % (count / 2)]])
-                                                        rc.append([- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]])
+                                                        f.append((startPos[i], i < count / 2, enzymes[i % (count / 2)]))
+                                                        rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]))
                                 if len(f) > 0:
                                         while f[-1][0] >= seq_len:
                                                 f.pop()
-                                for pos in rc:
-                                        pos[0] += seq_len
+                                rc = list(reversed([(pos[0] + seq_len, pos[1], pos[2]) for pos in rc]))
                                 if len(rc) > 0:
                                         while rc[-1][0] >= seq_len:
                                                 rc.pop()
