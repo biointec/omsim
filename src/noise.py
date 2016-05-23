@@ -206,3 +206,9 @@ def generate_scan(seqLens, fks, rcks, settings):
                                 size += l
                                 yield l, m, meta
 
+def chip_stretch_factor(settings):
+        return random.gauss(settings.stretch_factor, settings.stretch_chip_sd)
+
+def scan_stretch_factor(chip_stretch, settings):
+        return random.gauss(chip_stretch, settings.stretch_scan_sd)
+
