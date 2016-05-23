@@ -39,8 +39,10 @@
                 <coverage>1</coverage>
                 <!--Number of chips that will be used, this takes precedence over coverage-->
                 <chips>1</chips>
-                <!--Chip size in Gbp-->
-                <chip_size>50</chip_size>
+                <!--Number of scans taken per chip-->
+                <scans_per_chip>30</scans_per_chip>
+                <!--Scan size in Mbp-->
+                <scan_size>1500</scan_size>
                 <!--Average molecule length-->
                 <avg_mol_len>200000</avg_mol_len>
                 <!--Additional parameter for the molecule length distribution, will be changed to sd or variance-->
