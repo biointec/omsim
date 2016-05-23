@@ -118,6 +118,7 @@ def generate_molecule(nicks, size, settings):
         fp = []
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
+        fp.sort(key = lambda x: x[0], reverse = False)
         while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
                         nick = fp.pop(0)
