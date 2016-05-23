@@ -101,7 +101,7 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
         shift = random.randint(0, size - 1)
-        length = randnegbinom(settings.avg_mol_len, settings.fail_mol_len)
+        length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.fail_mol_len)
         meta = [-1, -1]
         if length > size:
                 return (-1, [], [-1, -1])
