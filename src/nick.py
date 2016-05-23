@@ -18,7 +18,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
-from util import double_stranded_multi_KMP_
+from util import double_stranded_multi_KMP
 
 def nicks(seq, enzymes):
         f = [];
