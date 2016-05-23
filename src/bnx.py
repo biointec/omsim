@@ -48,8 +48,7 @@ def write_bnx_header(ofile, settings, label, chip_settings):
         rh += 'BasesPerPixel\t' #500 with stretch .85, so about 425 / stretchfactor
         run_data += str(chip_settings['bpp']) + '\t'
         rh += 'NumberofScans\t'
-        run_data += str(1) + '\t'
-        #run_data += str(chip_settings['scans']) + '\t'
+        run_data += str(chip_settings['scans']) + '\t'
         rh += 'ChipId\t'
         run_data += str(chip_settings['chip_id']) + '\t'
         rh += 'FlowCell\t'
@@ -99,6 +98,7 @@ def write_bnx_entry(info, nicks, ofile, label, chip_settings):
                         q2 += '\t' + '{0:.4f}'.format(val)
         moleculeID = info[0]
         length = info[1]
+        scan = info[2]
         Q1 = Q1 / count if count > 0 else 0
         Q2 = Q2 / count if count > 0 else 0
         channel += '\t' + '{0:.2f}'.format(length)
@@ -110,7 +110,7 @@ def write_bnx_entry(info, nicks, ofile, label, chip_settings):
         backbone += str('{0:.2f}'.format(Q2)) + '\t'            #SNR                    10.00
         backbone += str(count) + '\t'                           #NumberofLabels         count
         backbone += str(moleculeID) + '\t'                      #OriginalMoleculeId     1
-        backbone += str(1) + '\t'                               #ScanNumber             1
+        backbone += str(scan) + '\t'                               #ScanNumber             1
         backbone += str(-1) + '\t'                              #ScanDirection          -1
         backbone += str(chip_settings['chip_id']) + '\t'        #ChipId                 unknown
         backbone += str(1) + '\t'                               #Flowcell               1

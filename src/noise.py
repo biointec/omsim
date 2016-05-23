@@ -180,12 +180,12 @@ def merge_labels(m, settings):
         mol.append(prev)
         return mol
 
-def generate_molecules(seqLens, fks, rcks, settings):
+def generate_scan(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
         cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
         chimera = [False, -1, None, [[-1, -1]]]
         size = 0
-        while size < settings.get_chip_size():
+        while size < settings.get_scan_size():
                 idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
                 l = -1
                 while l < 0:

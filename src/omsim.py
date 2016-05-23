@@ -22,7 +22,7 @@
 import sys
 from util import fasta_parse
 from nick import index_sequence
-from noise import generate_molecules
+from noise import generate_scan
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
@@ -49,36 +49,39 @@ def omsim(settings):
                         fks.append(fk)
                         rcks.append(rck)
         if settings.coverage != 0 and settings.chips != 1:
-                settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.get_chip_size()))
-        settings.estimated_coverage = int(settings.get_chip_size() * settings.chips / float(sum(seq_lens)))
+                settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
+        settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
         bedfile = open(settings.prefix + '.bed', 'w')
         #generate reads
         for chip in range(1, settings.chips + 1):
-                chip_settings = {'size' : 0, 'scans' : 0, 'chip_id' : 'unknown', 'run_id' : str(chip), 'flowcell' : 1, 'molecule_count' : 0, 'bpp' : 425, 'stretch_factor' : 0.85}
+                chip_settings = {'size' : 0, 'scans' : 0, \
+                                 'chip_id' : 'unknown', 'run_id' : str(chip), \
+                                 'flowcell' : 1, 'molecule_count' : 0, \
+                                 'bpp' : 425, 'stretch_factor' : 0.85}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
-                chip_settings['scans'] += 1 #TODO fix number of scans in advance?
                 molecules = []
                 
                 #generate reads - label agnostic
                 moleculeID = 0
-                for l, m, meta in generate_molecules(seq_lens, fks, rcks, settings):
-                                moleculeID += 1
-                                for mol in meta:
-                                        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
-                                molecules.append((l, m))
-                                chip_settings['molecule_count'] += 1
-                                chip_settings['size'] += l
-                chip_settings['scans'] = settings.scans_per_chip
+                for scan in range(1, settings.scans_per_chip + 1):
+                        chip_settings['scans'] += 1
+                        for l, m, meta in generate_scan(seq_lens, fks, rcks, settings):
+                                        moleculeID += 1
+                                        for mol in meta:
+                                                bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
+                                        molecules.append((l, m, chip_settings['scans']))
+                                        chip_settings['molecule_count'] += 1
+                                        chip_settings['size'] += l
                 #write output - per label
                 ofile = {}
                 for label in settings.labels:
                         moleculeID = 0
                         ofile[label] = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
                         write_bnx_header(ofile[label], settings, label, chip_settings)
-                        for l, m in molecules:
+                        for l, m, s in molecules:
                                 moleculeID += 1
-                                write_bnx_entry((moleculeID, l), m, ofile[label], label, chip_settings)
+                                write_bnx_entry((moleculeID, l, s), m, ofile[label], label, chip_settings)
                         ofile[label].close()
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')

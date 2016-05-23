@@ -29,7 +29,8 @@ class Settings:
                 self.circular = False#
                 self.coverage = 0#
                 self.chips = 1#
-                self.scans_per_chip = 50#
+                self.scans_per_chip = 30#
+                self.scan_size = 1500 # 1 Gbp
                 self.avg_mol_len = 200000#
                 self.fail_mol_len = 3#
                 self.min_mol_len = 1#
@@ -49,7 +50,6 @@ class Settings:
                 self.chimera_mu = 1500 #mean of chimera insert distribution
                 self.chimera_sigma = 500 #sd of chimera insert distribution
                 #TODO self.stretchfactor = .85
-                self.chip_size = 50 # 50 Gbp
 
                 self.enzymes = []
                 self.labels = []
@@ -78,9 +78,9 @@ class Settings:
                 
                 return s
 
-        def get_chip_size(self):
-                GIGA = 1000 * 1000 * 1000
-                return self.chip_size * GIGA
+        def get_scan_size(self):
+                MEGA = 1000 * 1000
+                return self.scan_size * MEGA
 
         def set_patterns(self):
                 for idx in range(len(self.enzymes)):
