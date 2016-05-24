@@ -202,7 +202,7 @@ def generate_scan(seqLens, fks, rcks, settings):
                         m = merge_labels(m, settings)
                         if settings.max_mol_len < l:
                                 l, m = cut_long_molecule(l, m, settings)
-                        if settings.min_mol_len <= l and settings.min_nicks <= len(m):
+                        if settings.min_mol_len <= l:
                                 size += l
                                 yield l, m, meta
 

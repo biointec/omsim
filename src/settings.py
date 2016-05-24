@@ -49,7 +49,7 @@ class Settings:
                 self.chimera_rate = 0.01 #rate of chimeric reads
                 self.chimera_mu = 1500 #mean of chimera insert distribution
                 self.chimera_sigma = 500 #sd of chimera insert distribution
-                #TODO self.stretchfactor = .85
+                self.stretch_factor = .85
 
                 self.enzymes = []
                 self.labels = []
