@@ -79,7 +79,7 @@ def sim_qx11():#TODO
 def sim_qx12():#TODO
         return 10
 
-def write_bnx_entry(info, nicks, ofile, chip_settings):
+def write_bnx_entry(info, nicks, ofile, chip_settings, stretch):
         count = 0
         channel = '1'
         Q1 = 0
@@ -88,7 +88,7 @@ def write_bnx_entry(info, nicks, ofile, chip_settings):
         q2 = 'QX12'
         for pos in nicks:
                 count += 1
-                channel += '\t' + '{0:.2f}'.format(pos)
+                channel += '\t' + '{0:.2f}'.format(pos * stretch)
                 val = sim_qx11()
                 Q1 += val
                 q1 += '\t' + '{0:.4f}'.format(val)
@@ -96,7 +96,7 @@ def write_bnx_entry(info, nicks, ofile, chip_settings):
                 Q2 += val
                 q2 += '\t' + '{0:.4f}'.format(val)
         moleculeID = info[0]
-        length = info[1]
+        length = info[1] * stretch
         scan = info[2]
         Q1 = Q1 / count if count > 0 else 0
         Q2 = Q2 / count if count > 0 else 0

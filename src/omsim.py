@@ -21,8 +21,7 @@
 
 import sys
 from util import fasta_parse
-from nick import index_sequence
-from noise import generate_scan
+from noise import generate_scan, chip_stretch_factor, scan_stretch_factor
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
@@ -46,15 +45,17 @@ def omsim(settings):
                 chip_settings = {'size' : 0, 'scans' : 0, \
                                  'chip_id' : 'unknown', 'run_id' : str(chip), \
                                  'flowcell' : 1, 'molecule_count' : 0, \
-                                 'bpp' : 425, 'stretch_factor' : settings.stretch_factor}
+                                 'bpp' : 425, 'stretch_factor' : chip_stretch_factor(settings)}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
                 molecules = {}
                 for label in settings.labels:
                         molecules[label] = []
                 #generate reads
                 moleculeID = 0
+                stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
+                        stretch.append(scan_stretch_factor(chip_settings['stretch_factor'], settings))
                         for l, m, meta in generate_scan(seq_lens, fks, rcks, settings):
                                         moleculeID += 1
                                         for mol in meta:
@@ -77,7 +78,7 @@ def omsim(settings):
                         write_bnx_header(ofile[label], settings, label, chip_settings)
                         for l, m, s in molecules[label]:
                                 moleculeID += 1
-                                write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings)
+                                write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, stretch[s - 1])
                         ofile[label].close()
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
@@ -124,7 +125,7 @@ def xml_input_parse(xml_file):
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
                                 settings[entry.tag] = True
-                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate']:
+                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd']:
                                 settings[entry.tag] = float(entry.text)
                         else:
                                 settings[entry.tag] = int(entry.text)

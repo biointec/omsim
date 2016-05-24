@@ -50,6 +50,12 @@
                 <min_mol_len>20000</min_mol_len>
                 <!--Maximal molecule length-->
                 <max_mol_len>2500000</max_mol_len>
+                <!--Average stretch factor-->
+                <stretch_factor>0.85</stretch_factor>
+                <!--Standard deviation of stretch factor per chip-->
+                <stretch_chip_sd>0.01</stretch_chip_sd>
+                <!--Standard deviation of stretch factor per scan-->
+                <stretch_scan_sd>0.001</stretch_scan_sd>
                 <!--Minimal number of labels required per read-->
                 <min_nicks>1</min_nicks>
                 <!--Additional normal noise-->

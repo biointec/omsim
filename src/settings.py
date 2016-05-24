@@ -50,6 +50,8 @@ class Settings:
                 self.chimera_mu = 1500 #mean of chimera insert distribution
                 self.chimera_sigma = 500 #sd of chimera insert distribution
                 self.stretch_factor = .85
+                self.stretch_chip_sd = 0.01
+                self.stretch_scan_sd = 0.001
 
                 self.enzymes = []
                 self.labels = []
