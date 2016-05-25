@@ -135,8 +135,8 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                 matchLen[i] -= shifts[i][matchLen[i]]
                                         matchLen[i] += 1
                                         if matchLen[i] == sizes[i]:
-                                                f.append((startPos[i], i < count / 2, enzymes[i % (count / 2)]))
-                                                rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]))
+                                                f.append((startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
+                                                rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
                         c = ifile.read(1)
                         if seq_len > 0 and (not c or c == '>'):
                                 '''
@@ -149,8 +149,8 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                         matchLen[i] -= shifts[i][matchLen[i]]
                                                 matchLen[i] += 1
                                                 if matchLen[i] == sizes[i]:
-                                                        f.append((startPos[i], i < count / 2, enzymes[i % (count / 2)]))
-                                                        rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)]))
+                                                        f.append((startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
+                                                        rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
                                 if len(f) > 0:
                                         while f[-1][0] >= seq_len:
                                                 f.pop()
