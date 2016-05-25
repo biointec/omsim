@@ -113,7 +113,7 @@ def generate_molecule(nicks, size, settings):
         end = shift + length
         if shift < 0  or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
-        idx = bisect_left(nicks, (shift, None))
+        idx = bisect_left(nicks, (shift,))
         molecule = []
         fp = []
         for enzyme in settings.enzymes:
