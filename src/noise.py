@@ -156,7 +156,7 @@ def merge_labels(m, settings):
         f = settings.label_factor
         prev = None
         for curr in m:
-                if prev == None:
+                if prev is None:
                         prev = curr
                         continue
                 if prev[0] > curr[0]:
