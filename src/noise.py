@@ -23,17 +23,21 @@ from bisect import bisect_left
 from math import exp
 import numpy as np
 
+
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
+
 
 def randnegbinom(mu, r):
         mu = float(mu)
         r = float(r)
-        p = 1 - mu/(r + mu)
+        p = 1 - mu / (r + mu)
         return np.random.negative_binomial(r, p)
+
 
 def strand():
         return random.randint(0, 1)
+
 
 def nick_position(p, sd):
         p = list(p)
@@ -44,17 +48,20 @@ def nick_position(p, sd):
                 p[0] = temp
         return p
 
+
 def false_positive(fprate):
         return random.expovariate(fprate / 100000)
+
 
 def false_positives(fprate, length, enzyme):
         fp = []
         false_nick_pos = false_positive(fprate)
         while false_nick_pos < length:
-                #generate FP's on random strand
+                # generate FP's on random strand
                 fp.append((false_nick_pos, strand(), False, enzyme))
                 false_nick_pos += false_positive(fprate)
         return fp
+
 
 def sigmoid(m, f, x):
         '''
@@ -62,22 +69,23 @@ def sigmoid(m, f, x):
         '''
         return 1 - 1 / (1 + exp((m - x) / f))
 
+
 def break_fragile(prev, curr, settings):
-        #TODO improve fragile site tolerance
         if prev[1] == curr[1]:
                 cutoff = settings.fragile_same
         else:
                 cutoff = settings.fragile_opposite
         dist = curr[0] - prev[0]
         if dist < cutoff - settings.fragile_treshold:
-                #don't break, nicks are so close that molecule does not become fragile
+                # don't break, nicks are so close that molecule does not become fragile
                 return False
         elif cutoff + settings.fragile_treshold < dist:
-                #don't break, nicks are too far apart for molecule to become fragile
+                # don't break, nicks are too far apart for molecule to become fragile
                 return False
         else:
-                #break if roll is smaller than chance
+                # break if roll is smaller than chance
                 return random.random() < sigmoid(cutoff, settings.fragile_factor, dist)
+
 
 def fragile_sites(l, m, settings):
         '''
@@ -92,11 +100,13 @@ def fragile_sites(l, m, settings):
                 idx += 1
         return (l, m)
 
+
 def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
         l1 = l1 + max(0, int(random.gauss(settings.chimera_mu, settings.chimera_sigma)))
         m1 = m1 + [[l1 + k[0], k[1]] for k in m2]
         l1 += l2
         return l1, m1, meta1 + meta2
+
 
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
@@ -111,14 +121,14 @@ def generate_molecule(nicks, size, settings):
                         shift += size
         meta[1] = shift
         end = shift + length
-        if shift < 0  or (not settings.circular and end >= size):
+        if shift < 0 or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
         idx = bisect_left(nicks, (shift,))
         molecule = []
         fp = []
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
-        fp.sort(key = lambda x: x[0], reverse = False)
+        fp.sort(key=lambda x: x[0], reverse=False)
         while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
                         nick = fp.pop(0)
@@ -138,6 +148,7 @@ def generate_molecule(nicks, size, settings):
         molecule = [[nick_position(p, settings.nick_sd)[0], p[-1]] for p in molecule]
         return length, molecule, meta
 
+
 def cut_long_molecule(l, m, settings):
         idx = len(m)
         while idx > 0 and m[idx - 1][0] > settings.max_mol_len:
@@ -146,6 +157,7 @@ def cut_long_molecule(l, m, settings):
                 return (-1, [], [-1, -1])
         l = random.randint(int(m[idx - 1][0]) + 1, settings.max_mol_len) + (l % 1)
         return l, m[:idx - 1]
+
 
 def merge_labels(m, settings):
         if len(m) == 0:
@@ -165,21 +177,22 @@ def merge_labels(m, settings):
                         curr = temp
                 dist = curr[0] - prev[0]
                 if dist < mu - t:
-                        #merge
+                        # merge
                         prev[0] = random.randint(int(prev[0]), int(curr[0])) + (prev[0] % 1)
                 elif mu + t < dist:
-                        #don't merge
+                        # don't merge
                         mol.append(prev)
                         prev = curr
                 elif random.random() < sigmoid(mu, f, dist):
-                        #merge
+                        # merge
                         prev[0] = random.randint(int(prev[0]), int(curr[0])) + (prev[0] % 1)
                 else:
-                        #don't merge
+                        # don't merge
                         mol.append(prev)
                         prev = curr
         mol.append(prev)
         return mol
+
 
 def generate_scan(seqLens, fks, rcks, settings):
         seqCount = len(seqLens)
@@ -206,9 +219,10 @@ def generate_scan(seqLens, fks, rcks, settings):
                                 size += l
                                 yield l, m, meta
 
+
 def chip_stretch_factor(settings):
         return random.gauss(settings.stretch_factor, settings.stretch_chip_sd)
 
+
 def scan_stretch_factor(chip_stretch, settings):
         return random.gauss(chip_stretch, settings.stretch_scan_sd)
-

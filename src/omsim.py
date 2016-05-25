@@ -29,28 +29,29 @@ from util import double_stranded_multi_KMP_from_fasta as KMP
 import numpy as np
 import xml.etree.ElementTree
 
+
 def omsim(settings):
-        #set seeds
+        # set seeds
         seed(settings.seed)
         np.random.seed(settings.seed)
-        #process input
+        # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
         bedfile = open(settings.prefix + '.bed', 'w')
-        #generate reads
+        # generate reads
         for chip in range(1, settings.chips + 1):
-                chip_settings = {'size' : 0, 'scans' : 0, \
-                                 'chip_id' : 'unknown', 'run_id' : str(chip), \
-                                 'flowcell' : 1, 'molecule_count' : 0, \
-                                 'bpp' : 425, 'stretch_factor' : chip_stretch_factor(settings)}
+                chip_settings = {'size': 0, 'scans': 0,
+                                 'chip_id': 'unknown', 'run_id': str(chip),
+                                 'flowcell': 1, 'molecule_count': 0,
+                                 'bpp': 425, 'stretch_factor': chip_stretch_factor(settings)}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
                 molecules = {}
                 for label in settings.labels:
                         molecules[label] = []
-                #generate reads
+                # generate reads
                 moleculeID = 0
                 stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
@@ -70,7 +71,7 @@ def omsim(settings):
                                                         molecules[label].append((l, molecule[label], chip_settings['scans']))
                                         chip_settings['molecule_count'] += 1
                                         chip_settings['size'] += l
-                #write output
+                # write output
                 ofile = {}
                 for label in settings.labels:
                         moleculeID = 0
@@ -83,6 +84,7 @@ def omsim(settings):
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
 
+
 def xml_enzyme_parse(xml_file):
         enzymes = []
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
@@ -94,6 +96,7 @@ def xml_enzyme_parse(xml_file):
                                 enzyme[entry.tag] = float(entry.text)
                 enzymes.append(enzyme)
         return enzymes
+
 
 def xml_input_parse(xml_file):
         s = []
@@ -132,13 +135,16 @@ def xml_input_parse(xml_file):
                 s.append(Settings(settings))
         return s
 
+
 def print_welcome():
         print('This is an experimental version of omsim, scripts and configuration files based on this version might be incompatible with future versions. Some default settings may not have reasonable values yet.')
+
 
 def print_usage():
         print('Usage: omsim.py file.xml' + '\n' + 'Example xml-files: example.xml (all options) and minimal.xml (required options).' + '\n' + 'Enzyme properties are specified in enzymes.xml.')
 
-def main(argv = None):
+
+def main(argv=None):
         print_welcome()
         if argv is None:
                 argv = sys.argv

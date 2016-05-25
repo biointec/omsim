@@ -18,6 +18,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
+
 def fasta_parse(ifname):
         infile = open(ifname)
         key = ''
@@ -32,14 +33,13 @@ def fasta_parse(ifname):
         if key:
                 yield key, val
 
-
-
-
 base_complements = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
+
 def complement_list(seq):
-        bases = list(seq) 
+        bases = list(seq)
         return [base_complements.get(base, base) for base in bases]
+
 
 def complement(seq):
         return ''.join(complement_list(seq))
@@ -47,6 +47,7 @@ def complement(seq):
 
 def reverse_complement(seq):
         return ''.join(reversed(complement_list(seq)))
+
 
 def double_stranded_multi_KMP(seq, enzymes):
         patterns = [e['pattern'] for e in enzymes]
@@ -77,6 +78,7 @@ def double_stranded_multi_KMP(seq, enzymes):
                         if matchLen[i] == sizes[i]:
                                 yield (startPos[i], i < count / 2, enzymes[i % (count / 2)]), (reverses[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)])
 
+
 def double_stranded_multi_KMP_from_fasta(settings):
         '''
                 this is truly a monster worth refactoring, probably to a separate class
@@ -87,7 +89,7 @@ def double_stranded_multi_KMP_from_fasta(settings):
         patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
         count = len(patterns)
         sizes = [len(pattern) for pattern in patterns]
-#        reverses = [len(seq) - sizes[i] for i in range(count)]
+        # reverses = [len(seq) - sizes[i] for i in range(count)]
         # allow indexing into patterns
         patterns = [list(pattern) for pattern in patterns]
         # build table of shifts
@@ -99,7 +101,7 @@ def double_stranded_multi_KMP_from_fasta(settings):
                         while shift[i] <= pos and patterns[i][pos] != patterns[i][pos - shift[i]]:
                                 shift[i] += shifts[i][pos - shift[i]]
                         shifts[i][pos + 1] = shift[i]
-        #output containers
+        # output containers
         metas = []
         seq_lens = []
         fs = []
@@ -169,4 +171,3 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                 seq_len = 0
                                 seq = ''
         return [metas, seq_lens, fs, rcs]
-
