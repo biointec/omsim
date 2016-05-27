@@ -44,8 +44,8 @@
                 <scan_size>1500</scan_size>
                 <!--Average molecule length-->
                 <avg_mol_len>200000</avg_mol_len>
-                <!--Additional parameter for the molecule length distribution, will be changed to sd or variance-->
-                <fail_mol_len>3</fail_mol_len>
+                <!--Standard deviation of the molecule length-->
+                <sd_mol_len>150000</sd_mol_len>
                 <!--Minimal molecule length-->
                 <min_mol_len>20000</min_mol_len>
                 <!--Maximal molecule length-->
