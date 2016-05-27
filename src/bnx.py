@@ -120,7 +120,7 @@ def write_bnx_entry(info, nicks, ofile, chip_settings, stretch):
         backbone += str(chip_settings['chip_id']) + '\t'        # ChipId                 unknown
         backbone += str(1) + '\t'                               # Flowcell               1
         backbone += str(1) + '\t'                               # RunId                  1
-        backbone += str(1)                                      # GlobalScanNumber       1
+        backbone += str(scan)                                   # GlobalScanNumber       1
         ofile.write(backbone + '\n')
         ofile.write(channel + '\n')
         ofile.write(q1 + '\n')
