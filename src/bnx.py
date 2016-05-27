@@ -74,16 +74,21 @@ def write_bnx_header(ofile, settings, label, chip_settings):
         ofile.write('# Quality Score QX11: Label SNR for channel 1' + '\n')
         ofile.write('# Quality Score QX12: Label Intensity for channel 1' + '\n')
 
-
-def sim_qx11():
+def sim_average_intensity():
         # TODO
         return 10
 
-
-def sim_qx12():
+def sim_backbone_SNR():
         # TODO
         return 10
 
+def sim_label_SNR():
+        # TODO
+        return 10
+
+def sim_label_intensity():
+        # TODO
+        return 10
 
 def write_bnx_entry(info, nicks, ofile, chip_settings, stretch):
         count = 0
@@ -95,32 +100,28 @@ def write_bnx_entry(info, nicks, ofile, chip_settings, stretch):
         for pos in nicks:
                 count += 1
                 channel += '\t' + '{0:.2f}'.format(pos * stretch)
-                val = sim_qx11()
-                Q1 += val
+                val = sim_label_SNR()
                 q1 += '\t' + '{0:.4f}'.format(val)
-                val = sim_qx12()
-                Q2 += val
+                val = sim_label_intensity()
                 q2 += '\t' + '{0:.4f}'.format(val)
         moleculeID = info[0]
         length = info[1] * stretch
         scan = info[2]
-        Q1 = Q1 / count if count > 0 else 0
-        Q2 = Q2 / count if count > 0 else 0
         channel += '\t' + '{0:.2f}'.format(length)
         backbone = ''
-        backbone += str(0) + '\t'                               # backboneLabelChannel   0
-        backbone += str(moleculeID) + '\t'                      # ID                     1
-        backbone += str('{0:.2f}'.format(length)) + '\t'        # length                 x.00
-        backbone += str('{0:.2f}'.format(Q1)) + '\t'            # avgIntensity           10.00
-        backbone += str('{0:.2f}'.format(Q2)) + '\t'            # SNR                    10.00
-        backbone += str(count) + '\t'                           # NumberofLabels         count
-        backbone += str(moleculeID) + '\t'                      # OriginalMoleculeId     1
-        backbone += str(scan) + '\t'                            # ScanNumber             1
-        backbone += str(-1) + '\t'                              # ScanDirection          -1
-        backbone += str(chip_settings['chip_id']) + '\t'        # ChipId                 unknown
-        backbone += str(1) + '\t'                               # Flowcell               1
-        backbone += str(1) + '\t'                               # RunId                  1
-        backbone += str(scan)                                   # GlobalScanNumber       1
+        backbone += str(0) + '\t'                                       # backboneLabelChannel   0
+        backbone += str(moleculeID) + '\t'                              # ID                     1
+        backbone += str('{0:.2f}'.format(length)) + '\t'                # length                 x.00
+        backbone += str('{0:.2f}'.format(sim_average_intensity())) + '\t' # avgIntensity           10.00
+        backbone += str('{0:.2f}'.format(sim_backbone_SNR())) + '\t'      # SNR                    10.00
+        backbone += str(count) + '\t'                                   # NumberofLabels         count
+        backbone += str(moleculeID) + '\t'                              # OriginalMoleculeId     1
+        backbone += str(scan) + '\t'                                    # ScanNumber             1
+        backbone += str(-1) + '\t'                                      # ScanDirection          -1
+        backbone += str(chip_settings['chip_id']) + '\t'                # ChipId                 unknown
+        backbone += str(1) + '\t'                                       # Flowcell               1
+        backbone += str(1) + '\t'                                       # RunId                  1
+        backbone += str(scan)                                           # GlobalScanNumber       1
         ofile.write(backbone + '\n')
         ofile.write(channel + '\n')
         ofile.write(q1 + '\n')
