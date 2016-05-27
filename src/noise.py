@@ -20,19 +20,101 @@
 
 import random
 from bisect import bisect_left
-from math import exp
-import numpy as np
+from math import exp, sqrt, log, fabs, floor, pi
+try:
+        import numpy as np
+        HAS_NUMPY = True
+except ImportError:
+        HAS_NUMPY = False
 
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
+def randpoisson(lambd):
+        if lambd > 10:
+                return randpoisson_1(lambd)
+        elif lambd == 0:
+                return 0
+        else:
+                return randpoisson_2(lambd)
 
-def randnegbinom(mu, r):
+def randpoisson_1(lambd):
+        ls2pi = 0.91893853320467267
+        twelfth = 0.083333333333333333333333
+        slambd = sqrt(lambd)
+        loglambd = log(lambd)
+        b = 0.931 + 2.53 * slambd
+        a = -0.059 + 0.02483 * b
+        invalpha = 1.1239 + 1.1328 / (b - 3.4)
+        vr = 0.9277 - 3.6224 / (b - 2)
+        while(True):
+                U = random.random() - 0.5
+                V = random.random()
+                us = 0.5 - fabs(U)
+                k = floor((2 * a / us + b) * U + lambd + 0.43)
+                if us >= 0.07 and V <= vr:
+                        return k
+                if (k < 0) or (us < 0.013 and V > us):
+                        continue
+                if log(V) + log(invalpha) - log(a / (us * us) + b) \
+                                <= -lambd + k * loglambd - loggam(k + 1):
+                        return k
+
+
+def randpoisson_2(lambd):
+        enlambd = exp(-lambd)
+        X = 0
+        prod = 1.0
+        while(True):
+                U = random.random()
+                prod *= U
+                if prod > enlambd:
+                        X += 1
+                else:
+                        return X
+
+
+def loggam(x):
+        '''
+        log-gamma function to support some of these distributions. The
+        algorithm comes from SPECFUN by Shanjie Zhang and Jianming Jin and their
+        book "Computation of Special Functions", 1996, John Wiley & Sons, Inc.
+        '''
+        a = [8.333333333333333e-02,-2.777777777777778e-03,
+             7.936507936507937e-04,-5.952380952380952e-04,
+             8.417508417508418e-04,-1.917526917526918e-03,
+             6.410256410256410e-03,-2.955065359477124e-02,
+             1.796443723688307e-01,-1.39243221690590e+00]
+        x0 = x
+        n = 0
+        if x == 1.0 or x == 2.0:
+                return 0.0
+        elif x <= 7.0:
+                n = 7 - x
+                x0 = x + n
+        x2 = 1.0 / (x0 * x0)
+        xp = 2 * pi
+        gl0 = a[9]
+        for k in range(8, 0, -1):
+                gl0 *= x2
+                gl0 += a[k]
+        gl = gl0 / x0 + 0.5 * log(xp) + (x0 - 0.5) * log(x0) - x0
+        if x <= 7.0:
+                for k in range(1, n, 1):
+                        gl -= log(x0 - 1.0)
+                        x0 -= 1.0
+        return gl;
+
+def randnegbinom(mu, sd):
         mu = float(mu)
-        r = float(r)
+        sd = float(sd)
+        r = (mu * mu) / (sd * sd - mu)
         p = 1 - mu / (r + mu)
-        return np.random.negative_binomial(r, p)
+        if HAS_NUMPY:
+                return np.random.negative_binomial(r, p)
+        else:
+                return randpoisson(1 - p) / p * random.gammavariate(r, 1)
 
 
 def strand():
@@ -111,7 +193,7 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
         shift = random.randint(0, size - 1)
-        length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.fail_mol_len)
+        length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.sd_mol_len)
         meta = [-1, -1]
         if length > size:
                 return (-1, [], [-1, -1])

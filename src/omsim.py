@@ -26,14 +26,18 @@ from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
 from random import seed
 from util import double_stranded_multi_KMP_from_fasta as KMP
-import numpy as np
 import xml.etree.ElementTree
-
+try:
+        import numpy as np
+        HAS_NUMPY = True
+except ImportError:
+        HAS_NUMPY = False
 
 def omsim(settings):
         # set seeds
         seed(settings.seed)
-        np.random.seed(settings.seed)
+        if HAS_NUMPY:
+                np.random.seed(settings.seed)
         # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
         if settings.coverage != 0 and settings.chips != 1:
