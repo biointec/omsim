@@ -20,7 +20,7 @@
 
 from datetime import datetime
 from os import path
-
+from noise import sim_average_intensity, sim_backbone_SNR, sim_label_SNR, sim_label_intensity
 
 def write_bnx_header(ofile, settings, label, chip_settings):
         '''
@@ -74,21 +74,6 @@ def write_bnx_header(ofile, settings, label, chip_settings):
         ofile.write('# Quality Score QX11: Label SNR for channel 1' + '\n')
         ofile.write('# Quality Score QX12: Label Intensity for channel 1' + '\n')
 
-def sim_average_intensity():
-        # TODO
-        return 10
-
-def sim_backbone_SNR():
-        # TODO
-        return 10
-
-def sim_label_SNR():
-        # TODO
-        return 10
-
-def sim_label_intensity():
-        # TODO
-        return 10
 
 def write_bnx_entry(info, nicks, ofile, chip_settings, stretch):
         count = 0

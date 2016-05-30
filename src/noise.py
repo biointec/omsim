@@ -21,12 +21,12 @@
 import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
-try:
-        import numpy as np
-        HAS_NUMPY = True
-except ImportError:
-        HAS_NUMPY = False
-
+HAS_NUMPY = False
+#try:
+#        import numpy as np
+#        HAS_NUMPY = True
+#except ImportError:
+#        HAS_NUMPY = False
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
@@ -308,3 +308,30 @@ def chip_stretch_factor(settings):
 
 def scan_stretch_factor(chip_stretch, settings):
         return random.gauss(chip_stretch, settings.stretch_scan_sd)
+
+
+def intensity(mu, sigma):
+        result = -1
+        while result < 0 or result > 1:
+                result = random.gauss(float(mu), float(sigma))
+        return result
+
+
+def sim_average_intensity():
+        return intensity(.3, .2)
+
+
+def sim_label_intensity():
+        return intensity(0.07, 0.04)
+
+
+def SNR(mu, sigma):
+        return randnegbinom(float(mu), float(sigma))
+
+
+def sim_backbone_SNR():
+        return SNR(15, 75)
+
+
+def sim_label_SNR():
+        return SNR(14, 11)
