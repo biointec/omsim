@@ -21,13 +21,7 @@
 import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
-HAS_NUMPY = False
-try:
-        import numpy as np
-        HAS_NUMPY = True
-except ImportError:
-        HAS_NUMPY = False
-from scipy.stats import invgamma
+from scipy.stats import invgamma, nbinom
 
 def randgamma(mu, sd):
         a = (mu * mu) / (sd * sd)
@@ -120,10 +114,7 @@ def randnegbinom(mu, sd):
         sd = float(sd)
         r = (mu * mu) / (sd * sd - mu)
         p = 1 - mu / (r + mu)
-        if HAS_NUMPY:
-                return np.random.negative_binomial(r, p)
-        else:
-                return randpoisson((1 - p) / p * random.gammavariate(r, 1))
+        return nbinom.rvs(r, p)
 
 
 def strand():
