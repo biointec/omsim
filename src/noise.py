@@ -27,6 +27,11 @@ try:
         HAS_NUMPY = True
 except ImportError:
         HAS_NUMPY = False
+def randgamma(mu, sd):
+        a = (mu * mu) / (sd * sd)
+        b = (sd * sd) / mu
+        return random.gammavariate(a, b)
+
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
