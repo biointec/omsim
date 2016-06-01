@@ -31,6 +31,7 @@ HAS_NUMPY = False
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
 
+
 def randpoisson(lambd):
         if lambd > 10:
                 return randpoisson_1(lambd)
@@ -38,6 +39,7 @@ def randpoisson(lambd):
                 return 0
         else:
                 return randpoisson_2(lambd)
+
 
 def randpoisson_1(lambd):
         ls2pi = 0.91893853320467267
