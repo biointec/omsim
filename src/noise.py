@@ -114,7 +114,7 @@ def randnegbinom(mu, sd):
         if HAS_NUMPY:
                 return np.random.negative_binomial(r, p)
         else:
-                return randpoisson(1 - p) / p * random.gammavariate(r, 1)
+                return randpoisson((1 - p) / p * random.gammavariate(r, 1))
 
 
 def strand():
