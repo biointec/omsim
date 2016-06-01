@@ -22,11 +22,11 @@ import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
 HAS_NUMPY = False
-#try:
-#        import numpy as np
-#        HAS_NUMPY = True
-#except ImportError:
-#        HAS_NUMPY = False
+try:
+        import numpy as np
+        HAS_NUMPY = True
+except ImportError:
+        HAS_NUMPY = False
 
 def randgeometric(mu):
         return int(random.expovariate(1.0 / mu))
