@@ -20,14 +20,15 @@
 '''
 
 import sys
+from random import seed
+import xml.etree.ElementTree
+import numpy as np
+
 from util import fasta_parse
+from util import double_stranded_multi_KMP_from_fasta as KMP
 from noise import generate_scan, chip_stretch_factor, scan_stretch_factor
 from bnx import write_bnx_header, write_bnx_entry
 from settings import Settings
-from random import seed
-from util import double_stranded_multi_KMP_from_fasta as KMP
-import xml.etree.ElementTree
-import numpy as np
 
 def omsim(settings):
         # set seeds
