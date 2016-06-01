@@ -135,8 +135,35 @@ def generate_molecule(nicks, size, settings):
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
         fp.sort(key=lambda x: x[0], reverse=False)
+        #determine true positives
+        '''
+        tp = []
+        while idx < len(nicks) and nicks[idx][0] < end:
+                r = random.random()
+                fn_rate = nicks[idx][2]['fn']
+                if r > fn_rate:
+                        pos = nicks[idx][0] - shift
+                        tp.append([pos, nicks[idx][1], True, nicks[idx][2]])
+                idx += 1
+                if idx == len(nicks) and settings.circular:
+                        idx = 0
+                        shift -= size
+                        end -= size
+        '''
         #sort labels
         molecule = []
+        '''
+        while len(fp) > 0 or len(tp) > 0:
+                if len(fp) == 0:
+                        molecule.append(tp.pop(0))
+                elif len(tp) == 0:
+                        molecule.append(fp.pop(0))
+                else:
+                        if fp[0][0] < tp[0][0]:
+                                molecule.append(fp.pop(0))
+                        else:
+                                molecule.append(tp.pop(0))
+        '''
         while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
                         nick = fp.pop(0)
