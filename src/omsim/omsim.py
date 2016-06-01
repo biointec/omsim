@@ -161,6 +161,3 @@ def main(argv=None):
                 print(settings)
                 omsim(settings)
         return 0
-
-if __name__ == "__main__":
-        sys.exit(main())
