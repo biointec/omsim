@@ -27,6 +27,8 @@ try:
         HAS_NUMPY = True
 except ImportError:
         HAS_NUMPY = False
+from scipy.stats import invgamma
+
 def randgamma(mu, sd):
         a = (mu * mu) / (sd * sd)
         b = (sd * sd) / mu
@@ -333,7 +335,10 @@ def sim_label_intensity():
 
 
 def SNR(mu, sigma):
-        return randnegbinom(float(mu), float(sigma))
+        t = (mu * mu) / (sigma * sigma)
+        a = 2 + t
+        b = mu * (1 + t)
+        return invgamma.rvs(a, scale = b)
 
 
 def sim_backbone_SNR():
