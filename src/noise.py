@@ -91,7 +91,7 @@ def loggam(x):
         if x == 1.0 or x == 2.0:
                 return 0.0
         elif x <= 7.0:
-                n = 7 - x
+                n = int(7 - x)
                 x0 = x + n
         x2 = 1.0 / (x0 * x0)
         xp = 2 * pi
