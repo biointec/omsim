@@ -130,25 +130,29 @@ def generate_molecule(nicks, size, settings):
         if shift < 0 or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
         idx = bisect_left(nicks, (shift,))
-        molecule = []
+        #generate false positives
         fp = []
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
         fp.sort(key=lambda x: x[0], reverse=False)
+        #sort labels
+        molecule = []
         while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
                 if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
                         nick = fp.pop(0)
                         molecule.append(nick)
                 else:
-                        if random.random() < nicks[idx][2]['fn']:
+                        r = random.random() 
+                        if r > nicks[idx][2]['fn']:
                                 pos = nicks[idx][0] - shift
-                                if 0 <= pos and pos <= length - 1:
-                                        molecule.append([pos, nicks[idx][1], True, nicks[idx][2]])
+                                molecule.append([pos, nicks[idx][1], True, nicks[idx][2]])
                         idx += 1
                         if settings.circular and idx == len(nicks):
                                 idx = 0
                                 end -= size
                                 shift -= size
+        
+        #break at fragile sites
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
         molecule = [[nick_position(p, settings.nick_sd)[0], p[-1]] for p in molecule]
