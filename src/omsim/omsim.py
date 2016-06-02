@@ -75,7 +75,7 @@ def omsim(settings):
                         bnx.write_bnx_header(ofile[label], label, chip_settings)
                         for l, m, s in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, stretch[s - 1])
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings)
                         ofile[label].close()
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
