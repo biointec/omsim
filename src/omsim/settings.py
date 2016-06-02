@@ -52,6 +52,15 @@ class Settings:
                 self.stretch_factor = .85
                 self.stretch_chip_sd = 0.01
                 self.stretch_scan_sd = 0.001
+                self.molecule_AI_mu = 0.3
+                self.molecule_AI_sd = 0.2
+                self.label_AI_mu = 0.07
+                self.label_AI_sd = 0.04
+                self.molecule_SNR_mu = 15.0
+                self.molecule_SNR_sd = 75.0
+                self.label_SNR_mu = 14.0
+                self.label_SNR_sd = 11.0
+                self.sim_batch_size = 100000
                 self.enzymes = []
                 self.labels = []
                 self.seed = None

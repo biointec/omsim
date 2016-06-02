@@ -20,20 +20,15 @@
 '''
 
 import sys
-from random import seed
 import xml.etree.ElementTree
-import numpy as np
 
-from util import fasta_parse
 from util import double_stranded_multi_KMP_from_fasta as KMP
-from noise import generate_scan, chip_stretch_factor, scan_stretch_factor
-from bnx import write_bnx_header, write_bnx_entry
+from noise import Noise
+from bnx import BNX
 from settings import Settings
 
 def omsim(settings):
-        # set seeds
-        seed(settings.seed)
-        np.random.seed(settings.seed)
+        noise = Noise(settings)
         # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
         if settings.coverage != 0 and settings.chips != 1:
@@ -41,12 +36,13 @@ def omsim(settings):
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
         bedfile = open(settings.prefix + '.bed', 'w')
+        bnx = BNX(settings, noise)
         # generate reads
         for chip in range(1, settings.chips + 1):
                 chip_settings = {'size': 0, 'scans': 0,
                                  'chip_id': 'unknown', 'run_id': str(chip),
                                  'flowcell': 1, 'molecule_count': 0,
-                                 'bpp': 425, 'stretch_factor': chip_stretch_factor(settings)}
+                                 'bpp': 425, 'stretch_factor': noise.chip_stretch_factor()}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
                 molecules = {}
                 for label in settings.labels:
@@ -56,8 +52,8 @@ def omsim(settings):
                 stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
-                        stretch.append(scan_stretch_factor(chip_settings['stretch_factor'], settings))
-                        for l, m, meta in generate_scan(seq_lens, fks, rcks, settings):
+                        stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']))
+                        for l, m, meta in noise.generate_scan(seq_lens, fks, rcks):
                                         moleculeID += 1
                                         for mol in meta:
                                                 bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
@@ -76,10 +72,10 @@ def omsim(settings):
                 for label in settings.labels:
                         moleculeID = 0
                         ofile[label] = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
-                        write_bnx_header(ofile[label], settings, label, chip_settings)
+                        bnx.write_bnx_header(ofile[label], label, chip_settings)
                         for l, m, s in molecules[label]:
                                 moleculeID += 1
-                                write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, stretch[s - 1])
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, stretch[s - 1])
                         ofile[label].close()
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
