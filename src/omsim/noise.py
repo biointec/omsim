@@ -116,6 +116,7 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
 
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
+        #determine read position
         shift = random.randint(0, size - 1)
         length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.sd_mol_len / settings.stretch_factor)
         meta = [-1, -1]
@@ -129,15 +130,14 @@ def generate_molecule(nicks, size, settings):
         end = shift + length
         if shift < 0 or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
-        idx = bisect_left(nicks, (shift,))
         #generate false positives
         fp = []
         for enzyme in settings.enzymes:
                 fp = fp + false_positives(enzyme['fp'], length, enzyme)
         fp.sort(key=lambda x: x[0], reverse=False)
         #determine true positives
-        '''
         tp = []
+        idx = bisect_left(nicks, (shift,))
         while idx < len(nicks) and nicks[idx][0] < end:
                 r = random.random()
                 fn_rate = nicks[idx][2]['fn']
@@ -149,36 +149,25 @@ def generate_molecule(nicks, size, settings):
                         idx = 0
                         shift -= size
                         end -= size
-        '''
+        
         #sort labels
         molecule = []
-        '''
-        while len(fp) > 0 or len(tp) > 0:
-                if len(fp) == 0:
-                        molecule.append(tp.pop(0))
-                elif len(tp) == 0:
-                        molecule.append(fp.pop(0))
+        t_idx = 0
+        f_idx = 0
+        while f_idx < len(fp) or t_idx < len(tp):
+                if f_idx == len(fp):
+                        molecule.append(tp[t_idx])
+                        t_idx += 1
+                elif t_idx == len(tp):
+                        molecule.append(fp[f_idx])
+                        f_idx += 1
                 else:
                         if fp[0][0] < tp[0][0]:
-                                molecule.append(fp.pop(0))
+                                molecule.append(fp[f_idx])
+                                f_idx += 1
                         else:
-                                molecule.append(tp.pop(0))
-        '''
-        while len(fp) > 0 or (idx < len(nicks) and nicks[idx][0] < end):
-                if len(fp) != 0 and (idx >= len(nicks) or fp[0][0] < nicks[idx][0] - shift):
-                        nick = fp.pop(0)
-                        molecule.append(nick)
-                else:
-                        r = random.random() 
-                        if r > nicks[idx][2]['fn']:
-                                pos = nicks[idx][0] - shift
-                                molecule.append([pos, nicks[idx][1], True, nicks[idx][2]])
-                        idx += 1
-                        if settings.circular and idx == len(nicks):
-                                idx = 0
-                                end -= size
-                                shift -= size
-        
+                                molecule.append(tp[t_idx])
+                                t_idx += 1
         #break at fragile sites
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
