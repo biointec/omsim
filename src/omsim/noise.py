@@ -150,8 +150,10 @@ def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
         #determine read position
         shift, length, end = read_position(size, settings)
+        #abort if improper read position
         if length > size or shift < 0 or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
+        #set meta for bed file
         meta = [-1, shift]
         #generate false positives
         fp = []
