@@ -32,7 +32,8 @@ class Settings:
                 self.scans_per_chip = 30
                 self.scan_size = 1500
                 self.avg_mol_len = 200000
-                self.fail_mol_len = 3
+                self.sd_mol_len = 150000
+                self.fragile_correction = .75
                 self.min_mol_len = 1
                 self.max_mol_len = 2500000
                 self.min_nicks = 1
@@ -52,12 +53,21 @@ class Settings:
                 self.stretch_factor = .85
                 self.stretch_chip_sd = 0.01
                 self.stretch_scan_sd = 0.001
+                self.molecule_AI_mu = 0.3
+                self.molecule_AI_sd = 0.2
+                self.label_AI_mu = 0.07
+                self.label_AI_sd = 0.04
+                self.molecule_SNR_mu = 15.0
+                self.molecule_SNR_sd = 75.0
+                self.label_SNR_mu = 14.0
+                self.label_SNR_sd = 11.0
+                self.sim_batch_size = 100000
                 self.enzymes = []
                 self.labels = []
                 self.seed = None
                 self.__dict__.update(args)
                 self.avg_mol_len = float(self.avg_mol_len)
-                self.fail_mol_len = float(self.fail_mol_len)
+                self.sd_mol_len = float(self.sd_mol_len)
                 self.set_patterns()
 
         def __str__(self):
@@ -69,7 +79,7 @@ class Settings:
                         s += 'Circular genome.\n'
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_mol_len) + ' bp\n'
-                # s += 'Number of failures for negative binomial length distribution: ' + str(self.fail_mol_len) + '\n'
+                s += 'Standard deviation of molecule length: ' + str(self.sd_mol_len) + '\n'
                 s += 'Minimal coverage: ' + str(self.coverage) + 'x\n'
                 s += 'Chimera rate: ' + str(self.chimera_rate * 100) + '%\n'
                 if self.seed is not None:
