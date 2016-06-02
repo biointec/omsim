@@ -114,6 +114,17 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
         return l1, m1, meta1 + meta2
 
 
+def read_position(size, settings):
+        shift = random.randint(0, size - 1)
+        length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.sd_mol_len / settings.stretch_factor)
+        if random.random() < 0.5:
+                shift = shift - length
+                if settings.circular and shift < 0:
+                        shift += size
+        end = shift + length
+        return shift, length, end
+
+
 def sort_labels(fp, tp):
         molecule = []
         t_idx = 0
@@ -138,19 +149,10 @@ def sort_labels(fp, tp):
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
         #determine read position
-        shift = random.randint(0, size - 1)
-        length = randnegbinom(settings.avg_mol_len / settings.stretch_factor, settings.sd_mol_len / settings.stretch_factor)
-        meta = [-1, -1]
-        if length > size:
+        shift, length, end = read_position(size, settings)
+        if length > size or shift < 0 or (not settings.circular and end >= size):
                 return (-1, [], [-1, -1])
-        if random.random() < 0.5:
-                shift = shift - length
-                if settings.circular and shift < 0:
-                        shift += size
-        meta[1] = shift
-        end = shift + length
-        if shift < 0 or (not settings.circular and end >= size):
-                return (-1, [], [-1, -1])
+        meta = [-1, shift]
         #generate false positives
         fp = []
         for enzyme in settings.enzymes:
