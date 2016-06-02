@@ -175,7 +175,7 @@ def generate_molecule(nicks, size, settings):
                         shift -= size
                         end -= size
         #sort labels
-        sort_labels(fp, tp)
+        molecule = sort_labels(fp, tp)
         #break at fragile sites
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
