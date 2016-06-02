@@ -114,6 +114,27 @@ def create_chimera(l1, m1, meta1, l2, m2, meta2, settings):
         return l1, m1, meta1 + meta2
 
 
+def sort_labels(fp, tp):
+        molecule = []
+        t_idx = 0
+        f_idx = 0
+        while f_idx < len(fp) or t_idx < len(tp):
+                if f_idx == len(fp):
+                        molecule.append(tp[t_idx])
+                        t_idx += 1
+                elif t_idx == len(tp):
+                        molecule.append(fp[f_idx])
+                        f_idx += 1
+                else:
+                        if fp[0][0] < tp[0][0]:
+                                molecule.append(fp[f_idx])
+                                f_idx += 1
+                        else:
+                                molecule.append(tp[t_idx])
+                                t_idx += 1
+        return molecule
+
+
 def generate_molecule(nicks, size, settings):
         nicks = list(nicks)
         #determine read position
@@ -149,25 +170,8 @@ def generate_molecule(nicks, size, settings):
                         idx = 0
                         shift -= size
                         end -= size
-        
         #sort labels
-        molecule = []
-        t_idx = 0
-        f_idx = 0
-        while f_idx < len(fp) or t_idx < len(tp):
-                if f_idx == len(fp):
-                        molecule.append(tp[t_idx])
-                        t_idx += 1
-                elif t_idx == len(tp):
-                        molecule.append(fp[f_idx])
-                        f_idx += 1
-                else:
-                        if fp[0][0] < tp[0][0]:
-                                molecule.append(fp[f_idx])
-                                f_idx += 1
-                        else:
-                                molecule.append(tp[t_idx])
-                                t_idx += 1
+        sort_labels(fp, tp)
         #break at fragile sites
         length, molecule = fragile_sites(length, molecule, settings)
         # remove strand and [T|F]P information and randomise TP
