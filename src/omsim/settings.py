@@ -33,6 +33,7 @@ class Settings:
                 self.scan_size = 1500
                 self.avg_mol_len = 200000
                 self.sd_mol_len = 150000
+                self.fragile_correction = .75
                 self.min_mol_len = 1
                 self.max_mol_len = 2500000
                 self.min_nicks = 1

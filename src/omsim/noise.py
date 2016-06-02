@@ -308,7 +308,9 @@ class Noise:
         def next_m_size(self):
                 self.m_size_idx += 1
                 if self.m_size_idx == self.m_size_len:
-                        self.m_size = self.randnegbinom(self.settings.avg_mol_len / self.settings.stretch_factor, self.settings.sd_mol_len / self.settings.stretch_factor, self.settings.sim_batch_size)
+                        self.m_size = self.randnegbinom(self.settings.avg_mol_len / self.settings.stretch_factor / self.settings.fragile_correction,
+                                                        self.settings.sd_mol_len / self.settings.stretch_factor / self.settings.fragile_correction,
+                                                        self.settings.sim_batch_size)
                         self.m_size_idx = 0
                         self.m_size_len = len(self.m_size)
                 return self.m_size[self.m_size_idx]
