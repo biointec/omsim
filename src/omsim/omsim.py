@@ -40,7 +40,7 @@ def omsim(settings):
         # generate reads
         for chip in range(1, settings.chips + 1):
                 chip_settings = {'size': 0, 'scans': 0,
-                                 'chip_id': 'unknown', 'run_id': str(chip),
+                                 'chip_id': '20249,11843,07/17/2014,840014289', 'run_id': str(chip),
                                  'flowcell': 1, 'molecule_count': 0,
                                  'bpp': 425, 'stretch_factor': noise.chip_stretch_factor()}
                 chip_settings['bpp'] /= chip_settings['stretch_factor']
