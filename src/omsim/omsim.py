@@ -122,7 +122,14 @@ def import_input(settings):
 
 def omsim(settings):
         # process input
-        seqs, seq_lens, fks, rcks = KMP(settings)
+        seqs, seq_lens, fks, rcks, imported = import_input(settings)
+        if imported:
+                print('Imported ' + str(sum(len(f) for f in fks)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
+        else:
+                seqs, seq_lens, fks, rcks = KMP(settings)
+        # write processed input
+        write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=('imported' if imported else ''))
+        #estimate coverage
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
