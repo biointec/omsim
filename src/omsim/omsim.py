@@ -20,12 +20,14 @@
 '''
 
 import sys
+import os
 import xml.etree.ElementTree
 
 from util import double_stranded_multi_KMP_from_fasta as KMP
 from noise import Noise
 from bnx import BNX
 from settings import Settings
+import struct
 
 def omsim(settings):
         # process input
