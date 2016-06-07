@@ -28,7 +28,6 @@ from bnx import BNX
 from settings import Settings
 
 def omsim(settings):
-        noise = Noise(settings)
         # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
         if settings.coverage != 0 and settings.chips != 1:
@@ -36,6 +35,7 @@ def omsim(settings):
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
         #bedfile = open(settings.prefix + '.bed', 'w')
+        noise = Noise(settings)
         bnx = BNX(settings, noise)
         # generate reads
         for chip in range(1, settings.chips + 1):
