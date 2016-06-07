@@ -29,6 +29,31 @@ from bnx import BNX
 from settings import Settings
 import struct
 
+def write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=''):
+        prefix = settings.prefix + mod
+        for idx in range(len(fks)):
+                names = ['seqs', 'lens', 'fns', 'rcns']
+                meta_file = open(prefix + '.' + str(idx) + '.meta.byte', 'w')
+                for j in range(4):
+                        array = [seqs, seq_lens, fks, rcks][j][idx]
+                        if j in [0, 1]:
+                                file = open(prefix + '.' + str(idx) + '.' + names[j] + '.byte', 'w')
+                                file.write(str(array))
+                                file.close()
+                        else:
+                                arrays = {}
+                                for enzyme in settings.enzymes:
+                                        arrays[enzyme['id']] = [[], []]
+                                for pos in array:
+                                        arrays[pos[2]['id']][int(pos[1])].append(pos[0])
+                                for enzyme in settings.enzymes:
+                                        for b in [0, 1]:
+                                                file_name = prefix + '.' + str(idx) + '.' + names[j] + '.' + enzyme['id'] + '.' + str(b) + '.byte'
+                                                file = open(file_name, 'wb')
+                                                file.write(struct.pack('i' * len(arrays[enzyme['id']][b]), *(arrays[enzyme['id']][b])))
+                                                meta_file.write(enzyme['id'] + '\t' + str(b) + '\t' + str(len(arrays[enzyme['id']][b])) + '\t' + names[j] + '\t' + file_name + '\n')
+                                                file.close()
+                meta_file.close()
 def omsim(settings):
         # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
