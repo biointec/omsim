@@ -109,7 +109,7 @@ def import_input(settings):
                                                 if idxs[e['id']][b] >= len(temp[e['id']][b]):
                                                         continue
                                                 if m is None or temp[e['id']][b][idxs[e['id']][b]] < m[0]:
-                                                        m = [temp[e['id']][b][idxs[e['id']][b]], b, e]
+                                                        m = (temp[e['id']][b][idxs[e['id']][b]], b, e)
                                 if m is not None:
                                         tn.append(m)
                                         idxs[m[2]['id']][m[1]] += 1
