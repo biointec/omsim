@@ -54,6 +54,72 @@ def write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=''):
                                                 meta_file.write(enzyme['id'] + '\t' + str(b) + '\t' + str(len(arrays[enzyme['id']][b])) + '\t' + names[j] + '\t' + file_name + '\n')
                                                 file.close()
                 meta_file.close()
+
+def import_input(settings):
+        imported = False
+        idx = 0
+        seqs = []
+        seq_lens = []
+        fks = []
+        rcks = []
+        while os.path.isfile(settings.prefix + '.' + str(idx) + '.meta.byte'):
+                infile = open(settings.prefix + '.' + str(idx) + '.seqs.byte')
+                for line in infile:
+                        seqs.append(line)
+                infile.close()
+                infile = open(settings.prefix + '.' + str(idx) + '.lens.byte')
+                for line in infile:
+                        seq_lens.append(int(line))
+                infile.close()
+                enzymes = {}
+                for e in settings.enzymes:
+                        enzymes[e['id']] = e
+                infile = open(settings.prefix + '.' + str(idx) + '.meta.byte')
+                temp_fns = {}
+                temp_rcns = {}
+                for line in infile:
+                        e, b, l, name, file_name = line.split()
+                        if not e in temp_fns:
+                                temp_fns[e] = {False:{}, True:{}}
+                                temp_rcns[e] = {False:{}, True:{}}
+                        b = int(b)
+                        if name == 'fns':
+                                fns_file = open(file_name)
+                                temp_fns[e][bool(b)] = struct.unpack('i' * int(l), fns_file.read())
+                                fns_file.close()
+                        elif name == 'rcns':
+                                rcns_file = open(settings.prefix + '.' + str(idx) + '.' + 'rcns' + '.' + e + '.' + str(b) + '.byte')
+                                temp_rcns[e][bool(b)] = struct.unpack('i' * int(l), rcns_file.read())
+                                rcns_file.close()
+                for i in [0, 1]:
+                        idxs = {}
+                        for e in settings.enzymes:
+                                if not e['id'] in idxs:
+                                        idxs[e['id']] = {False:{}, True:{}}
+                                for b in [True, False]:
+                                        idxs[e['id']][b] = 0
+                        temp = [temp_fns, temp_rcns][i]
+                        tn = []
+                        done = False
+                        while not done:
+                                m = None
+                                done = True
+                                for e in settings.enzymes:
+                                        for b in [True, False]:
+                                                if idxs[e['id']][b] >= len(temp[e['id']][b]):
+                                                        continue
+                                                if m is None or temp[e['id']][b][idxs[e['id']][b]] < m[0]:
+                                                        m = [temp[e['id']][b][idxs[e['id']][b]], b, e]
+                                if m is not None:
+                                        tn.append(m)
+                                        idxs[m[2]['id']][m[1]] += 1
+                                        done = False
+                        [fks, rcks][i].append(tn)
+                infile.close()
+                imported = True
+                idx += 1
+        return seqs, seq_lens, fks, rcks, imported
+
 def omsim(settings):
         # process input
         seqs, seq_lens, fks, rcks = KMP(settings)
