@@ -49,10 +49,10 @@ def omsim(settings):
                         molecules[label] = []
                 # generate reads
                 moleculeID = 0
-                stretch = []
+                relative_stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
-                        stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']))
+                        relative_stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']) / chip_settings['stretch_factor'])
                         for l, m, meta in noise.generate_scan(seq_lens, fks, rcks):
                                         moleculeID += 1
                                         for mol in meta:
@@ -75,7 +75,7 @@ def omsim(settings):
                         bnx.write_bnx_header(ofile[label], label, chip_settings)
                         for l, m, s in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings)
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, relative_stretch[s - 1])
                         ofile[label].close()
         bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
