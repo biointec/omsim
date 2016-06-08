@@ -282,11 +282,11 @@ class Noise:
         def intensity(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
-                result = -1
-                while result < 0 or result > 1:
-                        result = random.gauss(float(mu), float(sd))
-                return [result]
+      result = norm.rvs(mu, scale=sd, size=size)
+                #print('norm', describe(result))
+                return result
         
+         
         
         def SNR(self, mu, sd, size):
                 mu = float(mu)
@@ -340,7 +340,11 @@ class Noise:
                         self.m_AI = self.intensity(self.settings.molecule_AI_mu, self.settings.molecule_AI_sd, self.settings.sim_batch_size)
                         self.m_AI_idx = 0
                         self.m_AI_len = len(self.m_AI)
-                return self.m_AI[self.m_AI_idx]
+                result = self.m_AI[self.m_AI_idx]
+                if result < 0 or 1 < result:
+                        return self.next_m_AI()
+                else:
+                        return result
         
         
         def next_l_AI(self):
@@ -349,4 +353,8 @@ class Noise:
                         self.l_AI = self.intensity(self.settings.label_AI_mu, self.settings.label_AI_sd, 10 * self.settings.sim_batch_size)
                         self.l_AI_idx = 0
                         self.l_AI_len = len(self.l_AI)
-                return self.l_AI[self.l_AI_idx]
+                result = self.l_AI[self.l_AI_idx]
+                if result < 0 or 1 < result:
+                        return self.next_l_AI()
+                else:
+                        return result
