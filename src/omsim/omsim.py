@@ -120,6 +120,19 @@ def import_input(settings):
                 idx += 1
         return seqs, seq_lens, fks, rcks, imported
 
+
+def get_rcns(settings, fks, seq_lens):
+        rcns = []
+        for idx in range(len(fks)):
+                f = fks[idx]
+                l = seq_lens[idx]
+                e = {}
+                for en in settings.enzymes:
+                        e[en['id']] = en 
+                rcns.append(list(reversed([(l - pos[0] - len(e[pos[2]['id']]['pattern']), pos[1], pos[2]) for pos in f])))
+        return rcns
+
+
 def omsim(settings):
         # process input
         seqs, seq_lens, fks, rcks, imported = import_input(settings)
@@ -127,6 +140,7 @@ def omsim(settings):
                 print('Imported ' + str(sum(len(f) for f in fks)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
         else:
                 seqs, seq_lens, fks, rcks = KMP(settings)
+        rcks = get_rcns(settings, fks, seq_lens)
         # write processed input
         write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=('imported' if imported else ''))
         #estimate coverage
