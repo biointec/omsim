@@ -18,6 +18,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
+from cmap import Cmap, Nicks
 
 def fasta_parse(ifname):
         infile = open(ifname)
@@ -79,50 +80,60 @@ def double_stranded_multi_KMP(seq, enzymes):
                                 yield (startPos[i], i < count / 2, enzymes[i % (count / 2)]), (reverses[i] - startPos[i], i < count / 2, enzymes[i % (count / 2)])
 
 
-def double_stranded_multi_KMP_from_fasta(settings):
+def double_stranded_multi_KMP_from_fasta(settings, cmaps):
         '''
                 this is truly a monster worth refactoring, probably to a separate class
         '''
-        enzymes = settings.enzymes
-        patterns = [e['pattern'] for e in enzymes]
-        max_pattern_len = max([len(pattern) for pattern in patterns])
-        patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
-        count = len(patterns)
-        sizes = [len(pattern) for pattern in patterns]
-        # reverses = [len(seq) - sizes[i] for i in range(count)]
-        # allow indexing into patterns
-        patterns = [list(pattern) for pattern in patterns]
-        # build table of shifts
-        shifts = []
-        shift = [1] * count
-        for i in range(count):
-                shifts.append([1] * (sizes[i] + 1))
-                for pos in range(sizes[i]):
-                        while shift[i] <= pos and patterns[i][pos] != patterns[i][pos - shift[i]]:
-                                shift[i] += shifts[i][pos - shift[i]]
-                        shifts[i][pos + 1] = shift[i]
         # output containers
         metas = []
         seq_lens = []
-        fs = []
-        rcs = []
-        # search for patterns
         for iname in settings.files:
                 ifile = open(iname)
                 c = ifile.read(1)
-                f = []
-                rc = []
+                imported = iname in cmaps
+                if not imported:
+                        cmaps[iname] = Cmap(iname)
+                enzymes = []
+                patterns = []
+                for eid in settings.enzymes.keys():
+                        e = settings.enzymes[eid]
+                        if not e['id'] in cmaps[iname].enzymes:
+                                enzymes.append(e['id'])
+                                patterns.append(e['pattern'])
+                                cmaps[iname].add_enzyme(e['id'])
+                if len(enzymes) == 0:
+                        continue
+                max_pattern_len = max([len(pattern) for pattern in patterns])
+                patterns = [pattern for pattern in patterns] + [reverse_complement(pattern) for pattern in patterns]
+                count = len(patterns)
+                sizes = [len(pattern) for pattern in patterns]
+                # allow indexing into patterns
+                patterns = [list(pattern) for pattern in patterns]
+                # build table of shifts
+                shifts = []
+                shift = [1] * count
+                for i in range(count):
+                        shifts.append([1] * (sizes[i] + 1))
+                        for pos in range(sizes[i]):
+                                while shift[i] <= pos and patterns[i][pos] != patterns[i][pos - shift[i]]:
+                                        shift[i] += shifts[i][pos - shift[i]]
+                                shifts[i][pos + 1] = shift[i]
+                #init variables
                 startPos = [0] * count
                 matchLen = [0] * count
                 seq_len = 0
                 seq = ''
+                meta = None
+                nick_count = cmaps[iname].count()
+                meta_count = 0
+                # search for patterns
                 while c:
                         if c == '>':
                                 '''
                                         start of a new sequence
                                 '''
                                 meta = ifile.readline().rstrip().split()[0]
-                                metas.append(meta)
+                                cmaps[iname].add_nick(meta_count)
                                 print('Indexing sequence: ' + meta)
                         elif c != '\n':
                                 '''
@@ -137,8 +148,8 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                 matchLen[i] -= shifts[i][matchLen[i]]
                                         matchLen[i] += 1
                                         if matchLen[i] == sizes[i]:
-                                                f.append((startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
-                                                rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
+                                                e = enzymes[i % int(count / 2)]
+                                                cmaps[iname].add_nick(meta_count, e, i < count / 2, startPos[i])
                         c = ifile.read(1)
                         if seq_len > 0 and (not c or c == '>'):
                                 '''
@@ -151,23 +162,15 @@ def double_stranded_multi_KMP_from_fasta(settings):
                                                         matchLen[i] -= shifts[i][matchLen[i]]
                                                 matchLen[i] += 1
                                                 if matchLen[i] == sizes[i]:
-                                                        f.append((startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
-                                                        rc.append((- sizes[i] - startPos[i], i < count / 2, enzymes[i % int(count / 2)]))
-                                if len(f) > 0:
-                                        while f[-1][0] >= seq_len:
-                                                f.pop()
-                                rc = list(reversed([(pos[0] + seq_len, pos[1], pos[2]) for pos in rc]))
-                                if len(rc) > 0:
-                                        while rc[-1][0] >= seq_len:
-                                                rc.pop()
-                                print('Found ' + str(len(f)) + ' nicks in ' + str(seq_len) + 'bp.')
-                                seq_lens.append(seq_len)
-                                fs.append(f)
-                                rcs.append(rc)
-                                f = []
-                                rc = []
+                                                        e = enzymes[i % int(count / 2)]
+                                                        cmaps[iname].add_nick(meta_count, e, i < count / 2, startPos[i])
+                                if not imported:
+                                        cmaps[iname].add_meta(meta_count, meta, seq_len)
+                                meta_count += 1
                                 startPos = [0] * count
                                 matchLen = [0] * count
                                 seq_len = 0
                                 seq = ''
-        return [metas, seq_lens, fs, rcs]
+                cmaps[iname].check()
+                print('Found ' + str(cmaps[iname].count() - nick_count) + ' nicks in ' + str(cmaps[iname].seq_len()) + 'bp.')
+        return cmaps

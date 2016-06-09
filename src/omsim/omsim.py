@@ -28,121 +28,136 @@ from noise import Noise
 from bnx import BNX
 from settings import Settings
 import struct
+from cmap import Cmap, Nicks
 
-def write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=''):
+def write_processed_input(settings, cmaps, mod=''):
         prefix = settings.prefix + mod
-        for idx in range(len(fks)):
-                names = ['seqs', 'lens', 'fns', 'rcns']
-                meta_file = open(prefix + '.' + str(idx) + '.meta.byte', 'w')
-                for j in range(4):
-                        array = [seqs, seq_lens, fks, rcks][j][idx]
-                        if j in [0, 1]:
-                                file = open(prefix + '.' + str(idx) + '.' + names[j] + '.byte', 'w')
-                                file.write(str(array))
-                                file.close()
-                        else:
-                                arrays = {}
-                                for enzyme in settings.enzymes:
-                                        arrays[enzyme['id']] = [[], []]
-                                for pos in array:
-                                        arrays[pos[2]['id']][int(pos[1])].append(pos[0])
-                                for enzyme in settings.enzymes:
-                                        for b in [0, 1]:
-                                                file_name = prefix + '.' + str(idx) + '.' + names[j] + '.' + enzyme['id'] + '.' + str(b) + '.byte'
-                                                file = open(file_name, 'wb')
-                                                file.write(struct.pack('i' * len(arrays[enzyme['id']][b]), *(arrays[enzyme['id']][b])))
-                                                meta_file.write(enzyme['id'] + '\t' + str(b) + '\t' + str(len(arrays[enzyme['id']][b])) + '\t' + names[j] + '\t' + file_name + '\n')
-                                                file.close()
-                meta_file.close()
+        mfn = prefix + '.byte.meta'
+        meta_file = open(mfn, 'w')
+        nfn = prefix + '.byte.nicks'
+        nicks_file = open(nfn, 'wb')
+        meta_file.write(str(2) + '\t' + mfn + '\t' + nfn + '\n')
+        meta_file.write(str(len(cmaps)))
+        for iname in cmaps.keys():
+                meta_file.write('\t' + iname)
+        meta_file.write('\n')
+        for iname in cmaps:
+                cmap = cmaps[iname]
+                count = cmap.seq_count()
+                enzymes = cmap.enzymes
+                meta_file.write(str(count))
+                for s in cmap.seqs:
+                        meta_file.write('\t' + s)
+                meta_file.write('\n')
+                meta_file.write(str(count))
+                for l in cmap.seq_lens:
+                        meta_file.write('\t' + str(l))
+                meta_file.write('\n')
+                meta_file.write(str(len(enzymes)))
+                for e in cmap.enzymes:
+                        meta_file.write('\t' + e)
+                meta_file.write('\n')
+                meta_file.write(str(2 * len(cmap.enzymes) * count))
+                for nicks in cmap.nicks:
+                        for enzyme in cmap.enzymes:
+                                if enzyme in nicks.nicks.keys():
+                                        array = nicks.nicks[enzyme]
+                                else:
+                                        array = {False: [], True: []}
+                                for b in [0, 1]:
+                                        nicks_file.write(struct.pack('i' * len(array[b]), *(array[b])))
+                                        meta_file.write('\t' + str(len(array[b])))
+                meta_file.write('\n')
+        meta_file.close()
+        nicks_file.close()
+
 
 def import_input(settings):
-        imported = False
-        idx = 0
+        cmaps = {}
+        if os.path.isfile(settings.prefix + '.byte.meta'):
+                meta_file = open(settings.prefix + '.byte.meta')
+                byte_file = open(settings.prefix + '.byte.nicks')
+                line = meta_file.readline()
+                line = meta_file.readline()
+                file_count = int(line[0])
+                inames = line.split()[1:]
+                for iname in inames:
+                        cmaps[iname] = Cmap(iname)
+                        s = meta_file.readline().split()[1:]
+                        l = meta_file.readline().split()[1:]
+                        for e in meta_file.readline().split()[1:]:
+                                cmaps[iname].add_enzyme(e)
+                        c = meta_file.readline().split()[1:]
+                        c_idx = 0
+                        for idx in range(len(s)):
+                                cmaps[iname].add_meta(idx, s[idx], int(l[idx]))
+                                for e in cmaps[iname].enzymes:
+                                        for b in [False, True]:
+                                                size = int(c[c_idx])
+                                                cmaps[iname].add_nicks(idx, e, b, struct.unpack('i' * size, byte_file.read(4 * size)))
+                                                c_idx += 1
+        return cmaps
+
+
+def filter_nicks(settings, nicks):
+        done = False
+        idxs = {}
+        fns = []
+        for e in nicks.keys():
+                idxs[e] = {False: 0, True: 0}
+        while not done:
+                m = None
+                done = True
+                for e in nicks.keys():
+                        if not e in settings.enzymes.keys():
+                                continue
+                        for b in [False, True]:
+                                if idxs[e][b] >= len(nicks[e][b]):
+                                        continue
+                                if m is None or nicks[e][b][idxs[e][b]] < m[0]:
+                                        m = (nicks[e][b][idxs[e][b]], b, settings.enzymes[e])
+                if m is not None:
+                        fns.append(m)
+                        idxs[m[2]['id']][m[1]] += 1
+                        done = False
+        return fns
+
+def filter_input(settings, cmaps):
         seqs = []
         seq_lens = []
-        fks = []
-        rcks = []
-        while os.path.isfile(settings.prefix + '.' + str(idx) + '.meta.byte'):
-                infile = open(settings.prefix + '.' + str(idx) + '.seqs.byte')
-                for line in infile:
-                        seqs.append(line)
-                infile.close()
-                infile = open(settings.prefix + '.' + str(idx) + '.lens.byte')
-                for line in infile:
-                        seq_lens.append(int(line))
-                infile.close()
-                enzymes = {}
-                for e in settings.enzymes:
-                        enzymes[e['id']] = e
-                infile = open(settings.prefix + '.' + str(idx) + '.meta.byte')
-                temp_fns = {}
-                temp_rcns = {}
-                for line in infile:
-                        e, b, l, name, file_name = line.split()
-                        if not e in temp_fns:
-                                temp_fns[e] = {False:{}, True:{}}
-                                temp_rcns[e] = {False:{}, True:{}}
-                        b = int(b)
-                        if name == 'fns':
-                                fns_file = open(file_name)
-                                temp_fns[e][bool(b)] = struct.unpack('i' * int(l), fns_file.read())
-                                fns_file.close()
-                        elif name == 'rcns':
-                                rcns_file = open(settings.prefix + '.' + str(idx) + '.' + 'rcns' + '.' + e + '.' + str(b) + '.byte')
-                                temp_rcns[e][bool(b)] = struct.unpack('i' * int(l), rcns_file.read())
-                                rcns_file.close()
-                for i in [0, 1]:
-                        idxs = {}
-                        for e in settings.enzymes:
-                                if not e['id'] in idxs:
-                                        idxs[e['id']] = {False:{}, True:{}}
-                                for b in [True, False]:
-                                        idxs[e['id']][b] = 0
-                        temp = [temp_fns, temp_rcns][i]
-                        tn = []
-                        done = False
-                        while not done:
-                                m = None
-                                done = True
-                                for e in settings.enzymes:
-                                        for b in [True, False]:
-                                                if idxs[e['id']][b] >= len(temp[e['id']][b]):
-                                                        continue
-                                                if m is None or temp[e['id']][b][idxs[e['id']][b]] < m[0]:
-                                                        m = (temp[e['id']][b][idxs[e['id']][b]], b, e)
-                                if m is not None:
-                                        tn.append(m)
-                                        idxs[m[2]['id']][m[1]] += 1
-                                        done = False
-                        [fks, rcks][i].append(tn)
-                infile.close()
-                imported = True
-                idx += 1
-        return seqs, seq_lens, fks, rcks, imported
+        fns = []
+        for iname in cmaps:
+                cmap = cmaps[iname]
+                if not cmap.iname in settings.files:
+                        continue
+                for idx in range(len(cmap.seqs)):
+                        seqs.append(cmap.seqs[idx])
+                        seq_lens.append(cmap.seq_lens[idx])
+                        fns.append(filter_nicks(settings, cmap.nicks[idx].nicks))
+        return seqs, seq_lens, fns
 
 
-def get_rcns(settings, fks, seq_lens):
-        rcns = []
-        for idx in range(len(fks)):
-                f = fks[idx]
+def get_rns(settings, fns, seq_lens):
+        rns = []
+        for idx in range(len(fns)):
+                f = fns[idx]
                 l = seq_lens[idx]
-                e = {}
-                for en in settings.enzymes:
-                        e[en['id']] = en 
-                rcns.append(list(reversed([(l - pos[0] - len(e[pos[2]['id']]['pattern']), pos[1], pos[2]) for pos in f])))
-        return rcns
+                rns.append(list(reversed([(l - pos[0] - len(settings.enzymes[pos[2]['id']]['pattern']), pos[1], pos[2]) for pos in f])))
+        return rns
 
 
 def omsim(settings):
         # process input
-        seqs, seq_lens, fks, rcks, imported = import_input(settings)
-        if imported:
-                print('Imported ' + str(sum(len(f) for f in fks)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
-        else:
-                seqs, seq_lens, fks, rcks = KMP(settings)
-        rcks = get_rcns(settings, fks, seq_lens)
+        cmaps = import_input(settings)
+        print('Imported ' + str(sum(cmaps[iname].count() for iname in cmaps)) + ' nicks in ' + str(sum(cmaps[iname].seq_len() for iname in cmaps)) + 'bp.')
+        cmaps = KMP(settings, cmaps)
         # write processed input
-        write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=('.imported' if imported else ''))
+        write_processed_input(settings, cmaps)
+        # filter input for enzymes / files we need
+        seqs, seq_lens, fns = filter_input(settings, cmaps)
+        print('Using ' + str(sum(len(f) for f in fns)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
+        #compute reverse nicking sites
+        rns = get_rns(settings, fns, seq_lens)
         #estimate coverage
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
@@ -167,7 +182,7 @@ def omsim(settings):
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
                         relative_stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']) / chip_settings['stretch_factor'])
-                        for l, m, meta in noise.generate_scan(seq_lens, fks, rcks):
+                        for l, m, meta in noise.generate_scan(seq_lens, fns, rns):
                                         moleculeID += 1
                                         #for mol in meta:
                                         #        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
