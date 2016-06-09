@@ -33,9 +33,11 @@ class BNX:
                 '''
                 ofile.write('# BNX File Version:\t' + self.settings.bnx_version + '\n')
                 ofile.write('# Label Channels:\t' + '1' + '\n')
-                for i in range(len(self.settings.enzymes)):
-                        if self.settings.enzymes[i]['label'] == label:
-                                ofile.write('# Nickase Recognition Site ' + str(i + 1) + ':\t' + self.settings.enzymes[i]['pattern'] + '\n')
+                idx = 1
+                for eid in self.settings.enzymes:
+                        if self.settings.enzymes[eid]['label'] == label:
+                                ofile.write('# Nickase Recognition Site ' + str(idx) + ':\t' + self.settings.enzymes[eid]['pattern'] + '\n')
+                                idx += 1
                 ofile.write('# Bases per Pixel:\t' + str(int(chip_settings['bpp'])) + '\n')
                 ofile.write('# Software Version:\tomsim-' + self.settings.version + '\n')
                 # TODO: run_data

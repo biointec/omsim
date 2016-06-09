@@ -174,7 +174,8 @@ class Noise:
                 meta = [-1, shift]
                 #generate false positives
                 fp = []
-                for enzyme in self.settings.enzymes:
+                for eid in self.settings.enzymes:
+                        enzyme = self.settings.enzymes[eid]
                         fp = fp + self.false_positives(enzyme['fp'], length, enzyme)
                 fp.sort(key=lambda x: x[0], reverse=False)
                 #determine true positives
