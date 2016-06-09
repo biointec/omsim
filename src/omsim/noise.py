@@ -22,7 +22,7 @@ import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
 import numpy as np
-from scipy.stats import invgamma, nbinom
+from scipy.stats import invgamma, nbinom, norm, describe
 
 
 class Noise:
@@ -174,7 +174,8 @@ class Noise:
                 meta = [-1, shift]
                 #generate false positives
                 fp = []
-                for enzyme in self.settings.enzymes:
+                for eid in self.settings.enzymes:
+                        enzyme = self.settings.enzymes[eid]
                         fp = fp + self.false_positives(enzyme['fp'], length, enzyme)
                 fp.sort(key=lambda x: x[0], reverse=False)
                 #determine true positives
@@ -282,19 +283,22 @@ class Noise:
         def intensity(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
-                result = -1
-                while result < 0 or result > 1:
-                        result = random.gauss(float(mu), float(sd))
-                return [result]
+                result = norm.rvs(mu, scale=sd, size=size)
+                #print('norm', describe(result))
+                return result
         
+         
         
         def SNR(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
-                t = (mu * mu) / (sd * sd)
-                a = 2.0 + t
-                b = mu * (1.0 + t)
-                return invgamma.rvs(a, scale=b, size=size)
+                t = 1.0 + (mu * mu) / (sd * sd)
+                a = 1.0 + t
+                b = mu * t
+                result = invgamma.rvs(a, scale=b, size=size)
+                #result = [1.0 / random.gammavariate(a, 1.0 / b) for i in range(int(size))]
+                #print('invgamma', describe(result))
+                return result
         
         
         def randnegbinom(self, mu, sd, size):
@@ -302,7 +306,9 @@ class Noise:
                 sd = float(sd)
                 r = (mu * mu) / (sd * sd - mu)
                 p = 1 - mu / (r + mu)
-                return nbinom.rvs(r, p, size=size)
+                result = nbinom.rvs(r, p, size=size)
+                #print('nbinom', describe(result))
+                return result
         
         
         def next_m_size(self):
@@ -340,7 +346,11 @@ class Noise:
                         self.m_AI = self.intensity(self.settings.molecule_AI_mu, self.settings.molecule_AI_sd, self.settings.sim_batch_size)
                         self.m_AI_idx = 0
                         self.m_AI_len = len(self.m_AI)
-                return self.m_AI[self.m_AI_idx]
+                result = self.m_AI[self.m_AI_idx]
+                if result < 0 or 1 < result:
+                        return self.next_m_AI()
+                else:
+                        return result
         
         
         def next_l_AI(self):
@@ -349,4 +359,8 @@ class Noise:
                         self.l_AI = self.intensity(self.settings.label_AI_mu, self.settings.label_AI_sd, 10 * self.settings.sim_batch_size)
                         self.l_AI_idx = 0
                         self.l_AI_len = len(self.l_AI)
-                return self.l_AI[self.l_AI_idx]
+                result = self.l_AI[self.l_AI_idx]
+                if result < 0 or 1 < result:
+                        return self.next_l_AI()
+                else:
+                        return result

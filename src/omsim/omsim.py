@@ -20,22 +20,151 @@
 '''
 
 import sys
+import os
 import xml.etree.ElementTree
 
 from util import double_stranded_multi_KMP_from_fasta as KMP
 from noise import Noise
 from bnx import BNX
 from settings import Settings
+import struct
+from cmap import Cmap, Nicks
+
+def write_processed_input(settings, cmaps, mod=''):
+        prefix = settings.prefix + mod
+        mfn = prefix + '.byte.meta'
+        meta_file = open(mfn, 'w')
+        nfn = prefix + '.byte.nicks'
+        nicks_file = open(nfn, 'wb')
+        meta_file.write(str(2) + '\t' + mfn + '\t' + nfn + '\n')
+        meta_file.write(str(len(cmaps)))
+        for iname in cmaps.keys():
+                meta_file.write('\t' + iname)
+        meta_file.write('\n')
+        for iname in cmaps:
+                cmap = cmaps[iname]
+                count = cmap.seq_count()
+                enzymes = cmap.enzymes
+                meta_file.write(str(count))
+                for s in cmap.seqs:
+                        meta_file.write('\t' + s)
+                meta_file.write('\n')
+                meta_file.write(str(count))
+                for l in cmap.seq_lens:
+                        meta_file.write('\t' + str(l))
+                meta_file.write('\n')
+                meta_file.write(str(len(enzymes)))
+                for e in cmap.enzymes:
+                        meta_file.write('\t' + e)
+                meta_file.write('\n')
+                meta_file.write(str(2 * len(cmap.enzymes) * count))
+                for nicks in cmap.nicks:
+                        for enzyme in cmap.enzymes:
+                                if enzyme in nicks.nicks.keys():
+                                        array = nicks.nicks[enzyme]
+                                else:
+                                        array = {False: [], True: []}
+                                for b in [0, 1]:
+                                        nicks_file.write(struct.pack('i' * len(array[b]), *(array[b])))
+                                        meta_file.write('\t' + str(len(array[b])))
+                meta_file.write('\n')
+        meta_file.close()
+        nicks_file.close()
+
+
+def import_input(settings):
+        cmaps = {}
+        if os.path.isfile(settings.prefix + '.byte.meta'):
+                meta_file = open(settings.prefix + '.byte.meta')
+                byte_file = open(settings.prefix + '.byte.nicks')
+                line = meta_file.readline()
+                line = meta_file.readline()
+                file_count = int(line[0])
+                inames = line.split()[1:]
+                for iname in inames:
+                        cmaps[iname] = Cmap(iname)
+                        s = meta_file.readline().split()[1:]
+                        l = meta_file.readline().split()[1:]
+                        for e in meta_file.readline().split()[1:]:
+                                cmaps[iname].add_enzyme(e)
+                        c = meta_file.readline().split()[1:]
+                        c_idx = 0
+                        for idx in range(len(s)):
+                                cmaps[iname].add_meta(idx, s[idx], int(l[idx]))
+                                for e in cmaps[iname].enzymes:
+                                        for b in [False, True]:
+                                                size = int(c[c_idx])
+                                                cmaps[iname].add_nicks(idx, e, b, struct.unpack('i' * size, byte_file.read(4 * size)))
+                                                c_idx += 1
+        return cmaps
+
+
+def filter_nicks(settings, nicks):
+        done = False
+        idxs = {}
+        fns = []
+        for e in nicks.keys():
+                idxs[e] = {False: 0, True: 0}
+        while not done:
+                m = None
+                done = True
+                for e in nicks.keys():
+                        if not e in settings.enzymes.keys():
+                                continue
+                        for b in [False, True]:
+                                if idxs[e][b] >= len(nicks[e][b]):
+                                        continue
+                                if m is None or nicks[e][b][idxs[e][b]] < m[0]:
+                                        m = (nicks[e][b][idxs[e][b]], b, settings.enzymes[e])
+                if m is not None:
+                        fns.append(m)
+                        idxs[m[2]['id']][m[1]] += 1
+                        done = False
+        return fns
+
+def filter_input(settings, cmaps):
+        seqs = []
+        seq_lens = []
+        fns = []
+        for iname in cmaps:
+                cmap = cmaps[iname]
+                if not cmap.iname in settings.files:
+                        continue
+                for idx in range(len(cmap.seqs)):
+                        seqs.append(cmap.seqs[idx])
+                        seq_lens.append(cmap.seq_lens[idx])
+                        fns.append(filter_nicks(settings, cmap.nicks[idx].nicks))
+        return seqs, seq_lens, fns
+
+
+def get_rns(settings, fns, seq_lens):
+        rns = []
+        for idx in range(len(fns)):
+                f = fns[idx]
+                l = seq_lens[idx]
+                rns.append(list(reversed([(l - pos[0] - len(settings.enzymes[pos[2]['id']]['pattern']), pos[1], pos[2]) for pos in f])))
+        return rns
+
 
 def omsim(settings):
-        noise = Noise(settings)
         # process input
-        seqs, seq_lens, fks, rcks = KMP(settings)
+        cmaps = import_input(settings)
+        print('Imported ' + str(sum(cmaps[iname].count() for iname in cmaps)) + ' nicks in ' + str(sum(cmaps[iname].seq_len() for iname in cmaps)) + 'bp.')
+        cmaps = KMP(settings, cmaps)
+        # write processed input
+        write_processed_input(settings, cmaps)
+        # filter input for enzymes / files we need
+        seqs, seq_lens, fns = filter_input(settings, cmaps)
+        print('Using ' + str(sum(len(f) for f in fns)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
+        #compute reverse nicking sites
+        rns = get_rns(settings, fns, seq_lens)
+        #estimate coverage
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
-        bedfile = open(settings.prefix + '.bed', 'w')
+        #bedfile = open(settings.prefix + '.bed', 'w')
+        noise = Noise(settings)
         bnx = BNX(settings, noise)
         # generate reads
         for chip in range(1, settings.chips + 1):
@@ -49,14 +178,14 @@ def omsim(settings):
                         molecules[label] = []
                 # generate reads
                 moleculeID = 0
-                stretch = []
+                relative_stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
-                        stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']))
-                        for l, m, meta in noise.generate_scan(seq_lens, fks, rcks):
+                        relative_stretch.append(noise.scan_stretch_factor(chip_settings['stretch_factor']) / chip_settings['stretch_factor'])
+                        for l, m, meta in noise.generate_scan(seq_lens, fns, rns):
                                         moleculeID += 1
-                                        for mol in meta:
-                                                bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
+                                        #for mol in meta:
+                                        #        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
                                         molecule = {}
                                         for label in settings.labels:
                                                 molecule[label] = []
@@ -75,9 +204,9 @@ def omsim(settings):
                         bnx.write_bnx_header(ofile[label], label, chip_settings)
                         for l, m, s in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings)
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, relative_stretch[s - 1])
                         ofile[label].close()
-        bedfile.close()
+        #bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
 
 

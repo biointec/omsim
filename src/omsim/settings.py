@@ -91,17 +91,18 @@ class Settings:
                 return self.scan_size * MEGA
 
         def set_patterns(self):
-                for idx in range(len(self.enzymes)):
-                        enzyme = self.enzymes[idx]
+                enzymes = {}
+                for enzyme in self.enzymes:
                         found = False
                         for e in self.enzyme_xml:
                                 if e['id'] == enzyme['id']:
                                         e['label'] = enzyme['label']
                                         if not enzyme['label'] in self.labels:
                                                 self.labels.append(enzyme['label'])
-                                        self.enzymes[idx] = e
+                                        enzymes[e['id']] = e
                                         found = True
                                         break
                         if not found:
-                                print('Unkown nicking enzyme: ' + enzyme['id'])
+                                print('Unknown nicking enzyme: ' + enzyme['id'])
                                 exit()
+                self.enzymes = enzymes
