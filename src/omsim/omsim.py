@@ -142,7 +142,7 @@ def omsim(settings):
                 seqs, seq_lens, fks, rcks = KMP(settings)
         rcks = get_rcns(settings, fks, seq_lens)
         # write processed input
-        write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=('imported' if imported else ''))
+        write_processed_input(settings, seqs, seq_lens, fks, rcks, mod=('.imported' if imported else ''))
         #estimate coverage
         if settings.coverage != 0 and settings.chips != 1:
                 settings.chips = 1 + int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
