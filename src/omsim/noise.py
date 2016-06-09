@@ -291,10 +291,11 @@ class Noise:
         def SNR(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
-                t = (mu * mu) / (sd * sd)
-                a = 2.0 + t
-                b = mu * (1.0 + t)
-                return invgamma.rvs(a, scale=b, size=size)
+                t = 1.0 + (mu * mu) / (sd * sd)
+                a = 1.0 + t
+                b = mu * t
+                result = invgamma.rvs(a, scale=b, size=size)
+                return result
         
         
         def randnegbinom(self, mu, sd, size):
