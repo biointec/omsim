@@ -295,6 +295,7 @@ class Noise:
                 a = 1.0 + t
                 b = mu * t
                 result = invgamma.rvs(a, scale=b, size=size)
+                #result = [1.0 / random.gammavariate(a, 1.0 / b) for i in range(int(size))]
                 return result
         
         
