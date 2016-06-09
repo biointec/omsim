@@ -22,7 +22,7 @@ import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
 import numpy as np
-from scipy.stats import invgamma, nbinom
+from scipy.stats import invgamma, nbinom, norm, describe
 
 
 class Noise:
@@ -282,7 +282,7 @@ class Noise:
         def intensity(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
-      result = norm.rvs(mu, scale=sd, size=size)
+                result = norm.rvs(mu, scale=sd, size=size)
                 #print('norm', describe(result))
                 return result
         
@@ -296,6 +296,7 @@ class Noise:
                 b = mu * t
                 result = invgamma.rvs(a, scale=b, size=size)
                 #result = [1.0 / random.gammavariate(a, 1.0 / b) for i in range(int(size))]
+                #print('invgamma', describe(result))
                 return result
         
         
@@ -304,7 +305,9 @@ class Noise:
                 sd = float(sd)
                 r = (mu * mu) / (sd * sd - mu)
                 p = 1 - mu / (r + mu)
-                return nbinom.rvs(r, p, size=size)
+                result = nbinom.rvs(r, p, size=size)
+                #print('nbinom', describe(result))
+                return result
         
         
         def next_m_size(self):
