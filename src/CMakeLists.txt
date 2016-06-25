@@ -1,4 +1,6 @@
 add_executable(omsimgui
+BasicPanel.cpp
+ListBoxPanel.cpp
 main.cpp
 Notebook.cpp
 )
