@@ -1,3 +1,6 @@
+#ifndef NOTEBOOK_HPP
+#define NOTEBOOK_HPP
+
 #include "wx.hpp"
 #include <wx/notebook.h>
 #include <wx/grid.h>
@@ -9,9 +12,4 @@ class Notebook : public wxFrame
                 void OnQuit(wxCommandEvent& event);
 };
 
-
-class MyGrid : public wxGrid
-{
-        public:
-                MyGrid(wxNotebook *parent);
-};
+#endif
