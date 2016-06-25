@@ -3,7 +3,7 @@
 #include "AdvancedPanel.hpp"
 
 Notebook::Notebook(const wxString& title)
-      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 500))
+      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(700, 700))
 {
         wxNotebook *nb = new wxNotebook(this, -1, wxPoint(-1, -1), 
                 wxSize(-1, -1), wxNB_TOP);
