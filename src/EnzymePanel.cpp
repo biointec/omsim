@@ -55,34 +55,32 @@ void EnzymePanel::parseXML() {
 }
 
 void EnzymePanel::updateXML() {
-        auto child = doc->FirstChildElement("enzymes")->FirstChildElement("enzyme");
-        while (child != NULL) {
-                auto prev = child;
-                child = prev->NextSiblingElement("enzyme");
-                doc->DeleteNode(prev);
+        if (doc->FirstChildElement() != NULL) {
+                doc->DeleteNode(doc->FirstChildElement());
         }
-        
+        auto * top = doc->NewElement("enzymes");
         for (auto kv : enzymes) {
                 auto e = kv.second;
-                tinyxml2::XMLNode *child = doc->NewElement("enzyme");
-                tinyxml2::XMLNode *id = doc->NewElement("id");
-                tinyxml2::XMLText *idText = doc->NewText(e.id);
+                auto *child = doc->NewElement("enzyme");
+                auto *id = doc->NewElement("id");
+                auto *idText = doc->NewText(e.id);
                 id->LinkEndChild(idText);
                 child->LinkEndChild(id);
-                tinyxml2::XMLNode *pattern = doc->NewElement("pattern");
-                tinyxml2::XMLText *patternText = doc->NewText(e.pattern);
+                auto *pattern = doc->NewElement("pattern");
+                auto *patternText = doc->NewText(e.pattern);
                 pattern->LinkEndChild(patternText);
                 child->LinkEndChild(pattern);
-                tinyxml2::XMLNode *fn = doc->NewElement("fn");
-                tinyxml2::XMLText *fnText = doc->NewText(e.fn);
+                auto *fn = doc->NewElement("fn");
+                auto *fnText = doc->NewText(e.fn);
                 fn->LinkEndChild(fnText);
                 child->LinkEndChild(fn);
-                tinyxml2::XMLNode *fp = doc->NewElement("fp");
-                tinyxml2::XMLText *fpText = doc->NewText(e.fp);
+                auto *fp = doc->NewElement("fp");
+                auto *fpText = doc->NewText(e.fp);
                 fp->LinkEndChild(fpText);
                 child->LinkEndChild(fp);
-                doc->FirstChildElement("enzymes")->LinkEndChild(child);
+                top->LinkEndChild(child);
         }
+        doc->LinkEndChild(top);
 }
 
 void EnzymePanel::OnImport(wxCommandEvent& event) 
