@@ -44,7 +44,7 @@ void EnzymePanel::parseXML() {
                 count += 1;
                 wxString id = child->FirstChildElement("id")->GetText();
                 wxString pattern = child->FirstChildElement("pattern")->GetText();
-                wxString label = "label_" + (count - 1);
+                wxString label = wxString("label_") + wxString::Format(wxT("%d"), (int) (count - 1));
                 wxString fn = child->FirstChildElement("fn")->GetText();
                 wxString fp = child->FirstChildElement("fp")->GetText();
                 enzymes[id] = enzyme(id, pattern, label, fn, fp);
@@ -81,25 +81,44 @@ void EnzymePanel::OnExport(wxCommandEvent& event)
 void EnzymePanel::OnNew(wxCommandEvent& event) 
 {
         EnzymeDialog dlg(this, wxID_ANY, _("Add enzyme"));
-        if (dlg.ShowModal() == wxID_OK) {
-                
+        if (dlg.ShowModal() == wxID_CANCEL) {
+                return;
+        } else {
+                enzyme e = dlg.GetEnzyme();
+                enzymes[e.id] = e;
+                m_clb->Append(e.id);
         }
-        //wxString str = wxGetTextFromUser(wxT("Add new item"));
-        //if (str.Len() > 0) {
-        //        m_clb->Append(str);
-        //}
 }
 
 void EnzymePanel::OnClear(wxCommandEvent& event) 
 {
         m_clb->Clear();
+        enzymes.clear();
 }
 
 void EnzymePanel::OnDelete(wxCommandEvent& event) 
 {
         int sel = m_clb->GetSelection();
         if (sel != -1) {
+                wxString id = m_clb->GetString(sel);
                 m_clb->Delete(sel);
+                enzymes.erase(id);
         }
 }
 
+void EnzymePanel::OnEnzDblClick(wxCommandEvent& event)
+{
+        int sel = m_clb->GetSelection();
+        if (sel != -1) {
+                wxString id = m_clb->GetString(sel);
+                EnzymeDialog dlg(this, wxID_ANY, _("Add enzyme"), enzymes[id]);
+                if (dlg.ShowModal() == wxID_CANCEL) {
+                        return;
+                } else {
+                        enzyme e = dlg.GetEnzyme();
+                        enzymes[e.id] = e;
+                        m_clb->Delete(sel);
+                        m_clb->Insert(e.id, sel);
+                }
+        }
+}

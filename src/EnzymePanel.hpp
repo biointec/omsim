@@ -22,6 +22,7 @@ class EnzymePanel : public wxPanel
                 void OnNew(wxCommandEvent& event);
                 void OnClear(wxCommandEvent& event);
                 void OnDelete(wxCommandEvent& event);
+                void OnEnzDblClick(wxCommandEvent& event);
                 
                 void parseXML();
                 
@@ -31,6 +32,8 @@ class EnzymePanel : public wxPanel
                 wxButton *m_newb;
                 wxButton *m_clearb;
                 wxButton *m_deleteb;
+                
+                std::map<wxString, enzyme> get_enzymes() {return enzymes;}
 };
 
 enum {

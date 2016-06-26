@@ -49,17 +49,20 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id)
         wxBoxSizer *enzymebox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *enzymeTitle = new wxStaticText(this, wxID_ANY, wxT("Enzymes"));
         
-        wxPanel * enzymePanel = new wxPanel(this, -1);
+        wxPanel * ePanel = new wxPanel(this, -1);
         wxBoxSizer *eclbbox = new wxBoxSizer(wxHORIZONTAL);
-        enzymeCheckListBox = new wxCheckListBox(enzymePanel, ID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
+        enzymeCheckListBox = new wxCheckListBox(ePanel, ID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         eclbbox->Add(enzymeCheckListBox, 5, wxEXPAND | wxALL, 20);
-        EnzymePanel *enzymeBtnPanel = new EnzymePanel(enzymePanel, enzymeCheckListBox);
-        eclbbox->Add(enzymeBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
-        enzymePanel->SetSizer(eclbbox);
-        enzymePanel->Center();
+        enzymePanel = new EnzymePanel(ePanel, enzymeCheckListBox);
+        eclbbox->Add(enzymePanel, 1, wxEXPAND | wxRIGHT, 10);
+        ePanel->SetSizer(eclbbox);
+        ePanel->Center();
+        
+        Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
+                wxCommandEventHandler(BasicPanel::OnEnzDblClick));
         
         enzymebox->Add(enzymeTitle);
-        enzymebox->Add(enzymePanel, 1, wxEXPAND);
+        enzymebox->Add(ePanel, 1, wxEXPAND);
         
         /*
                 length box
@@ -87,3 +90,9 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id)
         
         SetSizer(mainbox);
 }
+
+void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
+{
+        enzymePanel->OnEnzDblClick(event);
+}
+

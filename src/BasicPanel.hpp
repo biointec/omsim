@@ -2,7 +2,8 @@
 #define BASICPANEL_HPP
 
 #include "wx.hpp"
-#include <wx/stattext.h>
+
+class EnzymePanel;
 
 class BasicPanel : public wxPanel
 {
@@ -10,8 +11,10 @@ class BasicPanel : public wxPanel
                 wxListBox *fastaListBox;
                 wxListBox *xmlListBox;
                 wxCheckListBox *enzymeCheckListBox;
+                EnzymePanel *enzymePanel;
         public:
                 BasicPanel(wxWindow *parent, wxWindowID id);
+                void OnEnzDblClick(wxCommandEvent& event);
 };
 
 enum {
