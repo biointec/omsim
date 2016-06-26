@@ -1,6 +1,7 @@
 #include "EnzymePanel.hpp"
 #include <wx/textdlg.h>
 
+#include <vector>
 
 EnzymePanel::EnzymePanel(wxPanel * parent, wxCheckListBox * clb)
       : wxPanel(parent, wxID_ANY)
@@ -53,6 +54,37 @@ void EnzymePanel::parseXML() {
         }
 }
 
+void EnzymePanel::updateXML() {
+        auto child = doc->FirstChildElement("enzymes")->FirstChildElement("enzyme");
+        while (child != NULL) {
+                auto prev = child;
+                child = prev->NextSiblingElement("enzyme");
+                doc->DeleteNode(prev);
+        }
+        
+        for (auto kv : enzymes) {
+                auto e = kv.second;
+                tinyxml2::XMLNode *child = doc->NewElement("enzyme");
+                tinyxml2::XMLNode *id = doc->NewElement("id");
+                tinyxml2::XMLText *idText = doc->NewText(e.id);
+                id->LinkEndChild(idText);
+                child->LinkEndChild(id);
+                tinyxml2::XMLNode *pattern = doc->NewElement("pattern");
+                tinyxml2::XMLText *patternText = doc->NewText(e.pattern);
+                pattern->LinkEndChild(patternText);
+                child->LinkEndChild(pattern);
+                tinyxml2::XMLNode *fn = doc->NewElement("fn");
+                tinyxml2::XMLText *fnText = doc->NewText(e.fn);
+                fn->LinkEndChild(fnText);
+                child->LinkEndChild(fn);
+                tinyxml2::XMLNode *fp = doc->NewElement("fp");
+                tinyxml2::XMLText *fpText = doc->NewText(e.fp);
+                fp->LinkEndChild(fpText);
+                child->LinkEndChild(fp);
+                doc->FirstChildElement("enzymes")->LinkEndChild(child);
+        }
+}
+
 void EnzymePanel::OnImport(wxCommandEvent& event) 
 {
         wxFileDialog openDialog(this,
@@ -74,6 +106,7 @@ void EnzymePanel::OnExport(wxCommandEvent& event)
         if (saveDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
+                updateXML();
                 doc->SaveFile(saveDialog.GetPath());
         }
 }

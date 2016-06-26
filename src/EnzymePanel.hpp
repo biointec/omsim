@@ -25,6 +25,7 @@ class EnzymePanel : public wxPanel
                 void OnEnzDblClick(wxCommandEvent& event);
                 
                 void parseXML();
+                void updateXML();
                 
                 wxCheckListBox *m_clb;
                 wxButton *m_importb;
