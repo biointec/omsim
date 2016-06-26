@@ -1,8 +1,17 @@
 #!/bin/bash
-mkdir -p build
 mkdir -p bin
-cd build
+
+#mkdir -p debug
+#cd debug
+#cmake -DCMAKE_BUILD_TYPE=DEBUG ..
+#make
+#cp src/omsimgui ../bin/omsimgui
+#cd ..
+
+mkdir -p release
+cd release
 cmake ..
 make
 cp src/omsimgui ../bin/omsimgui
 cd ..
+
