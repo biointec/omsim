@@ -5,6 +5,7 @@ EnzymeDialog.cpp
 EnzymePanel.cpp
 ListBoxPanel.cpp
 main.cpp
+MainFrame.cpp
 Notebook.cpp
 tinyxml2.cpp
 )

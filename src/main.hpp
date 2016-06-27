@@ -1,6 +1,6 @@
 #include "wx.hpp"
 
-class MyApp : public wxApp
+class OMSim : public wxApp
 {
         public:
                 virtual bool OnInit();

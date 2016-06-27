@@ -1,10 +1,12 @@
 #include "ConfigurationPanel.hpp"
 #include <wx/textdlg.h>
 
+#include "Notebook.hpp"
+
 #include <vector>
 
-ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb)
-      : wxPanel(parent, wxID_ANY)
+ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
+      : wxPanel(parent, wxID_ANY), configurations(configurations_), enzymes(enzymes_)
 {
         doc = new tinyxml2::XMLDocument();
         wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
@@ -155,16 +157,15 @@ void ConfigurationPanel::OnExport(wxCommandEvent& event)
 
 void ConfigurationPanel::OnNew(wxCommandEvent& event) 
 {
-        /*
-        EnzymeDialog dlg(this, wxID_ANY, _("Add configuration"));
+        configuration c;
+        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxSize(700, 700));
         if (dlg.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
                 auto c = dlg.GetConfiguration();
-                configurations[c.id] = c;
-                m_clb->Append(c.id);
+                configurations[c.name] = c;
+                m_clb->Append(c.name);
         }
-        */
 }
 
 void ConfigurationPanel::OnClear(wxCommandEvent& event) 
@@ -177,7 +178,7 @@ void ConfigurationPanel::OnDelete(wxCommandEvent& event)
 {
         int sel = m_clb->GetSelection();
         if (sel != -1) {
-                wxString id = m_clb->GetString(sel);
+                auto id = m_clb->GetString(sel);
                 m_clb->Delete(sel);
                 configurations.erase(id);
         }
@@ -185,19 +186,17 @@ void ConfigurationPanel::OnDelete(wxCommandEvent& event)
 
 void ConfigurationPanel::OnConfDblClick(wxCommandEvent& event)
 {
-        /*
         int sel = m_clb->GetSelection();
         if (sel != -1) {
-                wxString id = m_clb->GetString(sel);
-                ConfigurationDialog dlg(this, wxID_ANY, _("Edit configuration"), configurations[id]);
+                auto name = m_clb->GetString(sel);
+                Notebook dlg(this, wxID_ANY, _("Edit configuration"), configurations[name], enzymes, wxDefaultPosition, wxSize(700, 700));
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
                         auto c = dlg.GetConfiguration();
-                        configurations[c.id] = c;
+                        configurations[c.name] = c;
                         m_clb->Delete(sel);
-                        m_clb->Insert(c.id, sel);
+                        m_clb->Insert(c.name, sel);
                 }
         }
-        */
 }

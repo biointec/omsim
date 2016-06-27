@@ -3,12 +3,12 @@
 
 #include <vector>
 
-EnzymePanel::EnzymePanel(wxPanel * parent, wxCheckListBox * clb)
-      : wxPanel(parent, wxID_ANY)
+EnzymePanel::EnzymePanel(wxPanel * parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
+      : wxPanel(parent, wxID_ANY), configurations(configurations_), enzymes(enzymes_)
 {
         doc = new tinyxml2::XMLDocument();
         wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
-        m_clb = clb;
+        m_lb = lb;
         m_importb = new wxButton(this, wxID_EIMPORT, wxT("Import file"));
         m_exportb = new wxButton(this, wxID_EEXPORT, wxT("Export file"));
         m_newb = new wxButton(this, wxID_NEW, wxT("Add enzyme"));
@@ -38,7 +38,7 @@ EnzymePanel::EnzymePanel(wxPanel * parent, wxCheckListBox * clb)
 
 void EnzymePanel::parseXML() {
         //enzymes.clear();
-        m_clb->Clear();
+        m_lb->Clear();
         auto child = doc->FirstChildElement("enzymes")->FirstChildElement("enzyme");
         count = 0;
         while (child != NULL) {
@@ -49,7 +49,7 @@ void EnzymePanel::parseXML() {
                 wxString fn = child->FirstChildElement("fn")->GetText();
                 wxString fp = child->FirstChildElement("fp")->GetText();
                 enzymes[id] = enzyme(id, pattern, label, fn, fp);
-                m_clb->Append(id);
+                m_lb->Append(id);
                 child = child->NextSiblingElement("enzyme");
         }
 }
@@ -117,39 +117,39 @@ void EnzymePanel::OnNew(wxCommandEvent& event)
         } else {
                 enzyme e = dlg.GetEnzyme();
                 enzymes[e.id] = e;
-                m_clb->Append(e.id);
+                m_lb->Append(e.id);
         }
 }
 
 void EnzymePanel::OnClear(wxCommandEvent& event) 
 {
-        m_clb->Clear();
+        m_lb->Clear();
         enzymes.clear();
 }
 
 void EnzymePanel::OnDelete(wxCommandEvent& event) 
 {
-        int sel = m_clb->GetSelection();
+        int sel = m_lb->GetSelection();
         if (sel != -1) {
-                wxString id = m_clb->GetString(sel);
-                m_clb->Delete(sel);
+                wxString id = m_lb->GetString(sel);
+                m_lb->Delete(sel);
                 enzymes.erase(id);
         }
 }
 
 void EnzymePanel::OnEnzDblClick(wxCommandEvent& event)
 {
-        int sel = m_clb->GetSelection();
+        int sel = m_lb->GetSelection();
         if (sel != -1) {
-                wxString id = m_clb->GetString(sel);
+                wxString id = m_lb->GetString(sel);
                 EnzymeDialog dlg(this, wxID_ANY, _("Add enzyme"), enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
                         enzyme e = dlg.GetEnzyme();
                         enzymes[e.id] = e;
-                        m_clb->Delete(sel);
-                        m_clb->Insert(e.id, sel);
+                        m_lb->Delete(sel);
+                        m_lb->Insert(e.id, sel);
                 }
         }
 }

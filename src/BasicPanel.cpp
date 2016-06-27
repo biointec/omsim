@@ -1,50 +1,10 @@
 #include "BasicPanel.hpp"
 #include "ListBoxPanel.hpp"
-#include "EnzymePanel.hpp"
-#include "ConfigurationPanel.hpp"
 
-BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id)
-      : wxPanel(parent, id)
+BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
+      : wxPanel(parent, id), c(c_), enzymes(enzymes_)
 {
         wxBoxSizer *mainbox = new wxBoxSizer(wxVERTICAL);
-        
-        /*
-                xml box
-        */
-        wxBoxSizer *configurationbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *configurationTitle = new wxStaticText(this, wxID_ANY, wxT("Configurations"));
-        
-        wxPanel * cPanel = new wxPanel(this, -1);
-        wxBoxSizer *cclbbox = new wxBoxSizer(wxHORIZONTAL);
-        configurationCheckListBox = new wxCheckListBox(cPanel, ID_ConfigurationCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
-        cclbbox->Add(configurationCheckListBox, 5, wxEXPAND | wxALL, 20);
-        configurationPanel = new ConfigurationPanel(cPanel, configurationCheckListBox);
-        cclbbox->Add(configurationPanel, 1, wxEXPAND | wxRIGHT, 10);
-        cPanel->SetSizer(cclbbox);
-        cPanel->Center();
-        
-        Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
-                wxCommandEventHandler(BasicPanel::OnConfDblClick));
-        
-        configurationbox->Add(configurationTitle);
-        configurationbox->Add(cPanel, 1, wxEXPAND);
-        /*
-        wxBoxSizer *xmlbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *xmlTitle = new wxStaticText(this, wxID_ANY, wxT("Configuration file"));
-        
-        wxPanel * xmlPanel = new wxPanel(this, -1);
-        wxBoxSizer *xlbbox = new wxBoxSizer(wxHORIZONTAL);
-        xmlListBox = new wxListBox(xmlPanel, ID_XMLListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
-        xlbbox->Add(xmlListBox, 5, wxEXPAND | wxALL, 20);
-        ListBoxPanel *xmlBtnPanel = new ListBoxPanel(xmlPanel, xmlListBox, "XML", "xml");
-        xlbbox->Add(xmlBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
-        xmlPanel->SetSizer(xlbbox);
-        xmlPanel->Center();
-        
-        xmlbox->Add(xmlTitle);
-        xmlbox->Add(xmlPanel, 1, wxEXPAND);
-        */
-        
         /*
                 fasta box
         */
@@ -73,13 +33,8 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id)
         wxBoxSizer *eclbbox = new wxBoxSizer(wxHORIZONTAL);
         enzymeCheckListBox = new wxCheckListBox(ePanel, ID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         eclbbox->Add(enzymeCheckListBox, 5, wxEXPAND | wxALL, 20);
-        enzymePanel = new EnzymePanel(ePanel, enzymeCheckListBox);
-        eclbbox->Add(enzymePanel, 1, wxEXPAND | wxRIGHT, 10);
         ePanel->SetSizer(eclbbox);
         ePanel->Center();
-        
-        Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
-                wxCommandEventHandler(BasicPanel::OnEnzDblClick));
         
         enzymebox->Add(enzymeTitle);
         enzymebox->Add(ePanel, 1, wxEXPAND);
@@ -103,22 +58,17 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id)
         
         
         
-        mainbox->Add(configurationbox);
         mainbox->Add(fastabox);
         mainbox->Add(enzymebox);
         mainbox->Add(lengthbox);
         
         SetSizer(mainbox);
+        
+        update();
 }
 
-
-void BasicPanel::OnConfDblClick(wxCommandEvent& event)
-{
-        configurationPanel->OnConfDblClick(event);
+void BasicPanel::update() {
+        for (auto f : c.files) {
+                fastaListBox->Append(f);
+        }
 }
-
-void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
-{
-        enzymePanel->OnEnzDblClick(event);
-}
-

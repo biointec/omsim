@@ -9,14 +9,17 @@
 
 #include "EnzymeDialog.hpp"
 
+#include "configuration.hpp"
+
 class EnzymePanel : public wxPanel
 {
         private:
                 int count;
-                std::map<wxString, enzyme> enzymes;
+                std::map<wxString, configuration> &configurations;
+                std::map<wxString, enzyme> &enzymes;
                 tinyxml2::XMLDocument *doc;
         public:
-                EnzymePanel(wxPanel *parent, wxCheckListBox * clb);
+                EnzymePanel(wxPanel *parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
                 void OnImport(wxCommandEvent& event);
                 void OnExport(wxCommandEvent& event);
                 void OnNew(wxCommandEvent& event);
@@ -27,7 +30,7 @@ class EnzymePanel : public wxPanel
                 void parseXML();
                 void updateXML();
                 
-                wxCheckListBox *m_clb;
+                wxListBox *m_lb;
                 wxButton *m_importb;
                 wxButton *m_exportb;
                 wxButton *m_newb;

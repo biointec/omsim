@@ -1,11 +1,13 @@
 #include "main.hpp"
-#include "Notebook.hpp"
+#include "MainFrame.hpp"
 
-IMPLEMENT_APP(MyApp)
+IMPLEMENT_APP(OMSim)
 
-bool MyApp::OnInit()
+bool OMSim::OnInit()
 {
-        Notebook *notebook = new Notebook(wxT("OMSim: Optical Map Simulator"));
-        notebook->Show(true);
+//        Notebook *notebook = new Notebook(wxT("OMSim: Optical Map Simulator"));
+//        notebook->Show(true);
+        MainFrame *mainFrame = new MainFrame(wxT("OMSim: Optical Map Simulator"));
+        mainFrame->Show(true);
         return true;
 }

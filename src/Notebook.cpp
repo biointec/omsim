@@ -2,30 +2,17 @@
 #include "BasicPanel.hpp"
 #include "AdvancedPanel.hpp"
 
-Notebook::Notebook(const wxString& title)
-      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(700, 700))
+Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxString &title, const configuration &c_, const std::map<wxString, enzyme> &enzymes_, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
+      : wxDialog(parent, id, title, pos, size, style, name), c(c_), enzymes(enzymes_)
 {
         wxNotebook *nb = new wxNotebook(this, -1, wxPoint(-1, -1), 
                 wxSize(-1, -1), wxNB_TOP);
-        wxMenuBar *menubar = new wxMenuBar;
-        wxMenu *file = new wxMenu;
-        file->Append(wxID_EXIT, wxT("Quit"), wxT(""));
-        menubar->Append(file, wxT("&File"));
-        SetMenuBar(menubar);
-        Connect(wxEVT_COMMAND_MENU_SELECTED, 
-                wxCommandEventHandler(Notebook::OnQuit)); 
         
-        BasicPanel *bpanel = new BasicPanel(nb, -1);
+        BasicPanel *bpanel = new BasicPanel(nb, -1, c, enzymes);
         nb->AddPage(bpanel, wxT("Basic"));
         
         AdvancedPanel *apanel = new AdvancedPanel(nb, -1);
         nb->AddPage(apanel, wxT("Advanced"));
         
-        CreateStatusBar();
         Center();
-}
-
-void Notebook::OnQuit(wxCommandEvent& event) 
-{
-        Close(true);
 }
