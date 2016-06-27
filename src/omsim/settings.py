@@ -62,6 +62,7 @@ class Settings:
                 self.label_SNR_mu = 14.0
                 self.label_SNR_sd = 11.0
                 self.sim_batch_size = 100000
+                self.enzyme_xml = ""
                 self.enzymes = []
                 self.labels = []
                 self.seed = None
@@ -94,15 +95,27 @@ class Settings:
                 enzymes = {}
                 for enzyme in self.enzymes:
                         found = False
-                        for e in self.enzyme_xml:
-                                if e['id'] == enzyme['id']:
-                                        e['label'] = enzyme['label']
-                                        if not enzyme['label'] in self.labels:
-                                                self.labels.append(enzyme['label'])
-                                        enzymes[e['id']] = e
+                        if 'id' in enzyme and 'label' in enzyme:
+                                if 'pattern' in enzyme and 'fn' in enzyme and 'fp' in enzyme:
+                                        enzymes[enzyme['id']] = enzyme
                                         found = True
-                                        break
-                        if not found:
+                                else:
+                                        if self.enzyme_xml == "":
+                                                break
+                                        for e in self.enzyme_xml:
+                                                if e['id'] == enzyme['id']:
+                                                        enzymes[enzyme['id']] = e
+                                                        found = True
+                                                        break
+                        if found:
+                                if 'label' in enzyme:
+                                        label = enzyme['label']
+                                else:
+                                        label = 'label_' + str(len(self.labels))
+                                enzymes[enzyme['id']]['label'] = label
+                                if not label in self.labels:
+                                        self.labels.append(label)
+                        else:
                                 print('Unknown nicking enzyme: ' + enzyme['id'])
                                 exit()
                 self.enzymes = enzymes

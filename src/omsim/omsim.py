@@ -235,7 +235,10 @@ def xml_input_parse(xml_file):
                                         if e.tag == 'enzyme':
                                                 enzyme = {}
                                                 for i in e:
-                                                        enzyme[i.tag] = i.text
+                                                        if i.tag in ['id', 'pattern', 'label']:
+                                                                enzyme[i.tag] = i.text
+                                                        else:
+                                                                enzyme[i.tag] = float(i.text)
                                                 enzymes.append(enzyme)
                                         elif e.tag == 'file':
                                                 for enzyme in xml_enzyme_parse(e.text):
