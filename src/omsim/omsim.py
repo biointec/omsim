@@ -30,8 +30,8 @@ from settings import Settings
 import struct
 from cmap import Cmap, Nicks
 
-def write_processed_input(settings, cmaps, mod=''):
-        prefix = settings.prefix + mod
+def write_processed_input(settings, cmaps):
+        prefix = settings.byte_prefix
         mfn = prefix + '.byte.meta'
         meta_file = open(mfn, 'w')
         nfn = prefix + '.byte.nicks'
@@ -74,9 +74,10 @@ def write_processed_input(settings, cmaps, mod=''):
 
 def import_input(settings):
         cmaps = {}
-        if os.path.isfile(settings.prefix + '.byte.meta'):
-                meta_file = open(settings.prefix + '.byte.meta')
-                byte_file = open(settings.prefix + '.byte.nicks')
+        prefix = settings.byte_prefix
+        if os.path.isfile(prefix + '.byte.meta'):
+                meta_file = open(prefix + '.byte.meta')
+                byte_file = open(prefix + '.byte.nicks')
                 line = meta_file.readline()
                 line = meta_file.readline()
                 file_count = int(line[0])

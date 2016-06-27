@@ -23,6 +23,7 @@ class Settings:
         def __init__(self, args):
                 self.version = 'v0.2'
                 self.bnx_version = '1.2'
+                self.byte_prefix = 'omsim'
                 self.name = 'Unnamed'
                 self.files = []
                 self.prefix = 'omsim_output'
