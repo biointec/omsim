@@ -1,5 +1,6 @@
 #include "BasicPanel.hpp"
 #include "ListBoxPanel.hpp"
+#include "EnzymeDialog.hpp"
 
 BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
       : wxPanel(parent, id), c(c_), enzymes(enzymes_)
@@ -13,7 +14,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         
         wxPanel * fastaPanel = new wxPanel(this, -1);
         wxBoxSizer *flbbox = new wxBoxSizer(wxHORIZONTAL);
-        fastaListBox = new wxListBox(fastaPanel, ID_FastaListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
+        fastaListBox = new wxListBox(fastaPanel, wxID_FastaListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         flbbox->Add(fastaListBox, 5, wxEXPAND | wxALL, 20);
         ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, "Fasta", "fasta");
         flbbox->Add(fastaBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
@@ -31,7 +32,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         
         wxPanel * ePanel = new wxPanel(this, -1);
         wxBoxSizer *eclbbox = new wxBoxSizer(wxHORIZONTAL);
-        enzymeCheckListBox = new wxCheckListBox(ePanel, ID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
+        enzymeCheckListBox = new wxCheckListBox(ePanel, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         eclbbox->Add(enzymeCheckListBox, 5, wxEXPAND | wxALL, 20);
         ePanel->SetSizer(eclbbox);
         ePanel->Center();
@@ -39,6 +40,9 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         enzymebox->Add(enzymeTitle);
         enzymebox->Add(ePanel, 1, wxEXPAND);
         
+        Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
+                wxCommandEventHandler(BasicPanel::OnEnzDblClick));
+                
         /*
                 length box
         */
@@ -70,5 +74,26 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
 void BasicPanel::update() {
         for (auto f : c.files) {
                 fastaListBox->Append(f);
+        }
+        
+        for (auto kv : enzymes) {
+                enzymeCheckListBox->Append(kv.first);
+        }
+}
+
+void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
+{
+        int sel = enzymeCheckListBox->GetSelection();
+        if (sel != -1) {
+                wxString id = enzymeCheckListBox->GetString(sel);
+                EnzymeDialog dlg(this, wxID_ANY, _("Change label"), enzymes[id]);
+                if (dlg.ShowModal() == wxID_CANCEL) {
+                        return;
+                } else {
+                        enzyme e = dlg.GetEnzyme();
+                        enzymes[e.id] = e;
+                        enzymeCheckListBox->Delete(sel);
+                        enzymeCheckListBox->Insert(e.id, sel);
+                }
         }
 }

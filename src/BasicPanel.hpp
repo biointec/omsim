@@ -16,11 +16,12 @@ class BasicPanel : public wxPanel
         public:
                 BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_);
                 void update();
+                void OnEnzDblClick(wxCommandEvent& event);
 };
 
 enum {
-        ID_FastaListBox = wxID_HIGHEST + 1,
-        ID_EnzymeCheckListBox = wxID_HIGHEST + 2
+        wxID_FastaListBox = wxID_HIGHEST + 1,
+        wxID_EnzymeCheckListBox = wxID_HIGHEST + 2
 };
 
 #endif
