@@ -38,8 +38,8 @@ class EnzymePanel : public wxPanel
 };
 
 enum {
-        wxID_IMPORT = wxID_HIGHEST + 1,
-        wxID_EXPORT = wxID_HIGHEST + 2
+        wxID_EIMPORT = wxID_HIGHEST + 1,
+        wxID_EEXPORT = wxID_HIGHEST + 2
 };
 
 #endif

@@ -9,14 +9,14 @@ EnzymePanel::EnzymePanel(wxPanel * parent, wxCheckListBox * clb)
         doc = new tinyxml2::XMLDocument();
         wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
         m_clb = clb;
-        m_importb = new wxButton(this, wxID_IMPORT, wxT("Import file"));
-        m_exportb = new wxButton(this, wxID_EXPORT, wxT("Export file"));
+        m_importb = new wxButton(this, wxID_EIMPORT, wxT("Import file"));
+        m_exportb = new wxButton(this, wxID_EEXPORT, wxT("Export file"));
         m_newb = new wxButton(this, wxID_NEW, wxT("Add enzyme"));
-        m_deleteb = new wxButton(this, wxID_DELETE, wxT("Delete file"));
+        m_deleteb = new wxButton(this, wxID_DELETE, wxT("Delete enzyme"));
         m_clearb = new wxButton(this, wxID_CLEAR, wxT("Clear"));
-        Connect(wxID_IMPORT, wxEVT_COMMAND_BUTTON_CLICKED, 
+        Connect(wxID_EIMPORT, wxEVT_COMMAND_BUTTON_CLICKED, 
                 wxCommandEventHandler(EnzymePanel::OnImport));
-        Connect(wxID_EXPORT, wxEVT_COMMAND_BUTTON_CLICKED, 
+        Connect(wxID_EEXPORT, wxEVT_COMMAND_BUTTON_CLICKED, 
                 wxCommandEventHandler(EnzymePanel::OnExport));
         Connect(wxID_NEW, wxEVT_COMMAND_BUTTON_CLICKED, 
                 wxCommandEventHandler(EnzymePanel::OnNew));
@@ -37,7 +37,7 @@ EnzymePanel::EnzymePanel(wxPanel * parent, wxCheckListBox * clb)
 }
 
 void EnzymePanel::parseXML() {
-        enzymes.clear();
+        //enzymes.clear();
         m_clb->Clear();
         auto child = doc->FirstChildElement("enzymes")->FirstChildElement("enzyme");
         count = 0;
