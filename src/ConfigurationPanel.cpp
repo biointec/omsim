@@ -4,6 +4,7 @@
 #include "Notebook.hpp"
 
 #include <vector>
+#include "MainFrame.hpp"
 
 ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
       : wxPanel(parent, wxID_ANY), configurations(configurations_), enzymes(enzymes_)
@@ -41,37 +42,71 @@ ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, s
 void ConfigurationPanel::parseXML() {
         //configurations.clear();
         m_clb->Clear();
-        auto child = doc->FirstChildElement("simulation")->FirstChildElement("input");
+        auto child = doc->FirstChildElement()->FirstChildElement();
         count = 0;
         while (child != NULL) {
                 count += 1;
                 
                 configuration c;
-                c.name = child->FirstChildElement("name")->GetText();
-                
-                auto file = child->FirstChildElement("files")->FirstChildElement("file");
-                while (file != NULL) {
-                        c.files.push_back(file->GetText());
-                        file = file->NextSiblingElement("file");
+                /*
+                        Required parameters
+                */
+                if (child->FirstChildElement("name") != NULL) {
+                        c.name = child->FirstChildElement("name")->GetText();
                 }
                 
-                auto enzymeElement = child->FirstChildElement("enzymes")->FirstChildElement("enzyme");
-                while (file != NULL) {
-                        auto id = enzymeElement->FirstChildElement("id")->GetText();
-                        auto label = enzymeElement->FirstChildElement("label")->GetText();
-                        c.enzymes.push_back(enzyme(id, "", label, "", ""));
-                        enzymeElement = enzymeElement->NextSiblingElement("enzyme");
+                if (child->FirstChildElement("files") != NULL && 
+                        child->FirstChildElement("files")->FirstChildElement("file") != NULL)
+                {
+                        auto file = child->FirstChildElement("files")->FirstChildElement("file");
+                        while (file != NULL) {
+                                c.files.push_back(file->GetText());
+                                file = file->NextSiblingElement("file");
+                        }
+                }
+                
+                if (child->FirstChildElement("enzymes") != NULL &&
+                        child->FirstChildElement("enzymes")->FirstChildElement("enzyme") != NULL)
+                {
+                        auto enzymeElement = child->FirstChildElement("enzymes")->FirstChildElement("enzyme");
+                        while (enzymeElement != NULL) {
+                                wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
+                                wxString vals [5] = {};
+                                for (auto i = 0; i < 5; ++i) {
+                                        if (enzymeElement->FirstChildElement(tags[i]) != NULL) {
+                                                vals[i] = enzymeElement->FirstChildElement(tags[i])->GetText();
+                                        }
+                                }
+                                enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
+                                c.enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
+                                enzymeElement = enzymeElement->NextSiblingElement("enzyme");
+                        }
                 }
                 
                 if (child->FirstChildElement("circular") != NULL) {
                         c.circular = true;
                 }
                 
+                /*
+                        Optional parameters
+                */
+                
+                /*
+                        Store configuration
+                */
                 configurations[c.name] = c;
                 m_clb->Append(c.name);
                 
-                child = child->NextSiblingElement("input");
+                child = child->NextSiblingElement();
         }
+}
+
+void ConfigurationPanel::updateParent() {
+        ((MainFrame *) GetGrandParent())->update();
+}
+
+void ConfigurationPanel::update() {
+        //
 }
 
 void ConfigurationPanel::updateXML() {
@@ -102,27 +137,26 @@ void ConfigurationPanel::updateXML() {
                         child->LinkEndChild(circular);
                 }
                 
-                auto *enzymes = doc->NewElement("enzymes");
+                auto *enzymesElement = doc->NewElement("enzymes");
                 auto *enzymeFile = doc->NewElement("file");
                 auto enzymeFileText = doc->NewText(c.enzymeFile);
                 enzymeFile->LinkEndChild(enzymeFileText);
-                enzymes->LinkEndChild(enzymeFile);
-                for (auto e : c.enzymes) {
-                        auto *enzyme = doc->NewElement("enzyme");
+                enzymesElement->LinkEndChild(enzymeFile);
+                for (auto kv : c.enzymes) {
+                        auto e = enzymes[kv.first];
+                        auto *enzymeElement = doc->NewElement("enzyme");
                         
-                        auto *enzymeID = doc->NewElement("id");
-                        auto enzymeIDText = doc->NewText(e.id);
-                        enzymeID->LinkEndChild(enzymeIDText);
-                        enzyme->LinkEndChild(enzymeID);
-                        
-                        auto *enzymeLabel = doc->NewElement("label");
-                        auto enzymeLabelText = doc->NewText(e.label);
-                        enzymeLabel->LinkEndChild(enzymeLabelText);
-                        enzyme->LinkEndChild(enzymeLabel);
-                        
-                        enzymes->LinkEndChild(enzyme);
+                        wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
+                        wxString vals [5] = {e.id, e.pattern, e.label, e.fn, e.fp};
+                        for (auto i = 0; i < 5; ++i) {
+                                auto *enzymeChild = doc->NewElement(tags[i]);
+                                auto enzymeChildText = doc->NewText(vals[i]);
+                                enzymeChild->LinkEndChild(enzymeChildText);
+                                enzymeElement->LinkEndChild(enzymeChild);
+                        }
+                        enzymesElement->LinkEndChild(enzymeElement);
                 }
-                child->LinkEndChild(files);
+                child->LinkEndChild(enzymesElement);
                 
                 top->LinkEndChild(child);
         }
@@ -140,6 +174,7 @@ void ConfigurationPanel::OnImport(wxCommandEvent& event)
                 doc->LoadFile(openDialog.GetPath());
                 parseXML();
         }
+        updateParent();
 }
 
 void ConfigurationPanel::OnExport(wxCommandEvent& event) 
@@ -166,6 +201,7 @@ void ConfigurationPanel::OnNew(wxCommandEvent& event)
                 configurations[c.name] = c;
                 m_clb->Append(c.name);
         }
+        updateParent();
 }
 
 void ConfigurationPanel::OnClear(wxCommandEvent& event) 
@@ -199,4 +235,5 @@ void ConfigurationPanel::OnConfDblClick(wxCommandEvent& event)
                         m_clb->Insert(c.name, sel);
                 }
         }
+        updateParent();
 }

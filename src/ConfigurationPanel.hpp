@@ -29,6 +29,9 @@ class ConfigurationPanel : public wxPanel
                 void parseXML();
                 void updateXML();
                 
+                void updateParent();
+                void update();
+                
                 wxCheckListBox *m_clb;
                 wxButton *m_importb;
                 wxButton *m_exportb;

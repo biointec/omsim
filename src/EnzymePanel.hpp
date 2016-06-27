@@ -30,6 +30,8 @@ class EnzymePanel : public wxPanel
                 void parseXML();
                 void updateXML();
                 
+                void update();
+                
                 wxListBox *m_lb;
                 wxButton *m_importb;
                 wxButton *m_exportb;

@@ -2,6 +2,7 @@
 #define CONFIGURATION_HPP
 
 #include <vector>
+#include <map>
 
 #include "enzyme.hpp"
 
@@ -45,7 +46,7 @@ struct configuration {
         wxString seed;
         
         std::vector<wxString> files;
-        std::vector<enzyme> enzymes;
+        std::map<wxString, enzyme> enzymes;
         std::vector<wxString> labels;
         
         wxString enzymeFile;

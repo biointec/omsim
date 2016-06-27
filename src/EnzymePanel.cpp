@@ -37,8 +37,6 @@ EnzymePanel::EnzymePanel(wxPanel * parent, wxListBox * lb, std::map<wxString, co
 }
 
 void EnzymePanel::parseXML() {
-        //enzymes.clear();
-        m_lb->Clear();
         auto child = doc->FirstChildElement("enzymes")->FirstChildElement("enzyme");
         count = 0;
         while (child != NULL) {
@@ -49,8 +47,15 @@ void EnzymePanel::parseXML() {
                 wxString fn = child->FirstChildElement("fn")->GetText();
                 wxString fp = child->FirstChildElement("fp")->GetText();
                 enzymes[id] = enzyme(id, pattern, label, fn, fp);
-                m_lb->Append(id);
                 child = child->NextSiblingElement("enzyme");
+        }
+        update();
+}
+
+void EnzymePanel::update() {
+        m_lb->Clear();
+        for (auto kv : enzymes) {
+                m_lb->Append(kv.first);
         }
 }
 

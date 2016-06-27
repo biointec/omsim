@@ -79,6 +79,13 @@ void BasicPanel::update() {
         for (auto kv : enzymes) {
                 enzymeCheckListBox->Append(kv.first);
         }
+        
+        for (auto kv : c.enzymes) {
+                int idx = enzymeCheckListBox->FindString(kv.first);
+                if (idx != wxNOT_FOUND) {
+                        enzymeCheckListBox->Check(idx);
+                }
+        }
 }
 
 void BasicPanel::OnEnzDblClick(wxCommandEvent& event)

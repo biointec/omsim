@@ -100,3 +100,7 @@ void MainFrame::OnQuit(wxCommandEvent& event)
         Close(true);
 }
 
+void MainFrame::update() {
+        configurationPanel->update();
+        enzymePanel->update();
+}

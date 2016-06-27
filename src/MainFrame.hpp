@@ -24,6 +24,7 @@ class MainFrame : public wxFrame
                 void OnQuit(wxCommandEvent& event);
                 void OnEnzDblClick(wxCommandEvent& event);
                 void OnConfDblClick(wxCommandEvent& event);
+                void update();
 };
 
 enum {
