@@ -148,6 +148,8 @@ def get_rns(settings, fns, seq_lens):
 
 
 def omsim(settings):
+        # cd to the directory containing the configuration file
+        os.chdir(settings.directory)
         # process input
         cmaps = import_input(settings)
         print('Imported ' + str(sum(cmaps[iname].count() for iname in cmaps)) + ' nicks in ' + str(sum(cmaps[iname].seq_len() for iname in cmaps)) + 'bp.')
@@ -228,6 +230,8 @@ def xml_input_parse(xml_file):
         s = []
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
                 settings = {}
+                settings['directory'] = os.path.dirname(os.path.realpath(xml_file))
+                os.chdir(settings['directory'])
                 for entry in child:
                         if entry.tag == 'enzymes':
                                 enzymes = []
