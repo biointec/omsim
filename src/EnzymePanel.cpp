@@ -33,7 +33,7 @@ EnzymePanel::EnzymePanel(wxPanel * parent, wxListBox * lb, std::map<wxString, co
         vbox->Add(m_clearb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(-1, 5);
         
-        SetSizer(vbox);
+        SetSizerAndFit(vbox);
 }
 
 void EnzymePanel::parseXML() {

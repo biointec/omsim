@@ -20,7 +20,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         flbbox->Add(fastaListBox, 5, wxEXPAND | wxALL, 20);
         ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, "Fasta", "fasta");
         flbbox->Add(fastaBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
-        fastaPanel->SetSizer(flbbox);
+        fastaPanel->SetSizerAndFit(flbbox);
         fastaPanel->Center();
         
         fastabox->Add(fastaTitle);
@@ -36,7 +36,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxBoxSizer *eclbbox = new wxBoxSizer(wxHORIZONTAL);
         enzymeCheckListBox = new wxCheckListBox(ePanel, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         eclbbox->Add(enzymeCheckListBox, 5, wxEXPAND | wxALL, 20);
-        ePanel->SetSizer(eclbbox);
+        ePanel->SetSizerAndFit(eclbbox);
         ePanel->Center();
         
         enzymebox->Add(enzymeTitle);
@@ -73,7 +73,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         mainbox->Add(lengthbox);
         mainbox->Add(closebox);
         
-        SetSizer(mainbox);
+        SetSizerAndFit(mainbox);
         
         update();
 }

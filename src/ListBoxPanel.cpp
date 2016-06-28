@@ -28,7 +28,7 @@ ListBoxPanel::ListBoxPanel(wxPanel * parent, wxListBox * lb, wxString const &Ext
         vbox->Add(m_clearb);
         vbox->Add(-1, 5);
         
-        SetSizer(vbox);
+        SetSizerAndFit(vbox);
 }
 
 void ListBoxPanel::OnNew(wxCommandEvent& event) 

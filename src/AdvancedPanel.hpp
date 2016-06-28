@@ -28,7 +28,7 @@ class AdvancedPanel : public wxPanel
                         mainbox->Add(fragilebox);
                         
                         
-                        SetSizer(mainbox);
+                        SetSizerAndFit(mainbox);
                 }
 };
 

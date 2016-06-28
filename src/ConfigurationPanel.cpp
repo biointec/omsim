@@ -36,7 +36,7 @@ ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, s
         vbox->Add(m_clearb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(-1, 5);
         
-        SetSizer(vbox);
+        SetSizerAndFit(vbox);
 }
 
 void ConfigurationPanel::parseXML() {

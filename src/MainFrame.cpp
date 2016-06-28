@@ -32,7 +32,7 @@ MainFrame::MainFrame(const wxString& title)
         cclbbox->Add(configurationCheckListBox, 5, wxEXPAND | wxALL, 20);
         configurationPanel = new ConfigurationPanel(cPanel, configurationCheckListBox, configurations, enzymes);
         cclbbox->Add(configurationPanel, 1, wxEXPAND | wxRIGHT, 10);
-        cPanel->SetSizer(cclbbox);
+        cPanel->SetSizerAndFit(cclbbox);
         cPanel->Center();
         
         Connect(wxID_ConfigurationCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
@@ -69,7 +69,7 @@ MainFrame::MainFrame(const wxString& title)
         elbbox->Add(enzymeListBox, 5, wxEXPAND | wxALL, 20);
         enzymePanel = new EnzymePanel(ePanel, enzymeListBox, configurations, enzymes);
         elbbox->Add(enzymePanel, 1, wxEXPAND | wxRIGHT, 10);
-        ePanel->SetSizer(elbbox);
+        ePanel->SetSizerAndFit(elbbox);
         ePanel->Center();
         
         Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
@@ -94,7 +94,7 @@ MainFrame::MainFrame(const wxString& title)
         mainbox->Add(enzymebox, 1, wxEXPAND | wxALL, 10);
         mainbox->Add(runbox, 0, wxEXPAND | wxALL, 10);
         
-        SetSizer(mainbox);
+        SetSizerAndFit(mainbox);
         
         CreateStatusBar();
         Center();

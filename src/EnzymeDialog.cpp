@@ -61,7 +61,7 @@ EnzymeDialog::EnzymeDialog(wxWindow *parent, wxWindowID id, const wxString &titl
         vbox->Add(hbox5);
         vbox->Add(hbox6);
         
-        SetSizer(vbox);
+        SetSizerAndFit(vbox);
 }
 
 void EnzymeDialog::OnTextID(wxCommandEvent& event) 
