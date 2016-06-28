@@ -2,9 +2,13 @@
 #include "ListBoxPanel.hpp"
 #include "EnzymePanel.hpp"
 #include "ConfigurationPanel.hpp"
+#include "executablePath.hpp"
+#include "main.hpp" //wxGetApp
+
+bool run_sim = false;
 
 MainFrame::MainFrame(const wxString& title)
-      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(700, 700))
+      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 640))
 {
         wxMenuBar *menubar = new wxMenuBar;
         wxMenu *file = new wxMenu;
@@ -74,9 +78,21 @@ MainFrame::MainFrame(const wxString& title)
         enzymebox->Add(enzymeTitle);
         enzymebox->Add(ePanel, 1, wxEXPAND);
         
+        /*
+                run box
+        */
+        wxBoxSizer *runbox = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *runTitle = new wxStaticText(this, wxID_ANY, wxT("Simulation"));
+        wxButton *runButton = new wxButton(this, wxID_RunButton, _T("Save and run simulation"), wxPoint(0, 0), wxDefaultSize, 0);
+        runbox->Add(runTitle);
+        runbox->Add(runButton, 1, wxALL, 10);
         
-        mainbox->Add(configurationbox);
-        mainbox->Add(enzymebox);
+        Connect(wxID_RunButton, wxEVT_BUTTON, 
+                wxCommandEventHandler(MainFrame::OnRunOmsim));
+        
+        mainbox->Add(configurationbox, 1, wxEXPAND | wxALL, 10);
+        mainbox->Add(enzymebox, 1, wxEXPAND | wxALL, 10);
+        mainbox->Add(runbox, 0, wxEXPAND | wxALL, 10);
         
         SetSizer(mainbox);
         
@@ -97,8 +113,37 @@ void MainFrame::OnEnzDblClick(wxCommandEvent& event)
 
 void MainFrame::OnQuit(wxCommandEvent& event) 
 {
+        simulator_thread.join();
         Close(true);
 }
+
+void MainFrame::OnRunOmsim(wxCommandEvent& event) {
+        if(!run_sim) {
+                wxFileDialog saveDialog(this,
+                        _("Save XML file"), wxEmptyString, wxEmptyString,
+                        _("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+                if (saveDialog.ShowModal() == wxID_CANCEL) {
+                        return;
+                } else {
+                        configurationPanel->updateXML();
+                        configurationPanel->doc->SaveFile(saveDialog.GetPath());
+                }
+
+                if (simulator_thread.joinable()) {
+                        simulator_thread.join();
+                }
+                run_sim = true;
+                wxPuts("Start new thread.");
+                const char *argv0 = wxGetApp().argv[0];
+                wxString path = executable_path(argv0);
+                path = path.substr(0, path.size() - 8) + wxString("omsim/__main__ ") + saveDialog.GetPath();
+                simulator_thread = std::thread{ [path](){
+                        std::system(path);
+                        run_sim = false;
+                }};
+        }
+}
+
 
 void MainFrame::update() {
         configurationPanel->update();
