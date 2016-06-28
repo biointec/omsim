@@ -44,13 +44,16 @@ class Cmap:
                                 self.seq_lens.append(seq_len)
         
         def add_nick(self, seq_idx, enzyme=None, fwd=None, nick=None):
-                if seq_idx == len(self.nicks):
+                while seq_idx >= len(self.nicks):
                         n = Nicks()
                         self.nicks.append(n)
                 if not nick is None:
                         self.nicks[seq_idx].add_nick(enzyme, fwd, nick)
         
         def add_nicks(self, seq_idx, enzyme, fwd, nicks):
+                while seq_idx >= len(self.nicks):
+                        n = Nicks()
+                        self.nicks.append(n)
                 for nick in nicks:
                         self.add_nick(seq_idx, enzyme, fwd, nick)
         
