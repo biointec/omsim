@@ -16,7 +16,6 @@ class ConfigurationPanel : public wxPanel
                 int count;
                 std::map<wxString, configuration> &configurations;
                 std::map<wxString, enzyme> &enzymes;
-                tinyxml2::XMLDocument *doc;
         public:
                 ConfigurationPanel(wxPanel *parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
                 void OnImport(wxCommandEvent& event);
@@ -38,6 +37,8 @@ class ConfigurationPanel : public wxPanel
                 wxButton *m_newb;
                 wxButton *m_clearb;
                 wxButton *m_deleteb;
+                
+                tinyxml2::XMLDocument *doc;
 };
 
 enum {
