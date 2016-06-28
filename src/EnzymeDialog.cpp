@@ -28,14 +28,14 @@ EnzymeDialog::EnzymeDialog(wxWindow *parent, wxWindowID id, const wxString &titl
         Connect(wxID_EnzymePattern, wxEVT_TEXT, 
                 wxCommandEventHandler(EnzymeDialog::OnTextPattern));
         
-        wxStaticText *fnText = new wxStaticText(this, wxID_ANY, wxT("False negative (%):"));
+        wxStaticText *fnText = new wxStaticText(this, wxID_ANY, wxT("False negative rate (per nick):"));
         fnCtrl = new wxTextCtrl(this, wxID_EnzymeFN, e.fn, wxPoint(-1, -1), wxSize(-1, -1));
         hbox3->Add(fnText, 0, wxEXPAND | wxLEFT, 20);
         hbox3->Add(fnCtrl, 0, wxEXPAND | wxRIGHT, 20);
         Connect(wxID_EnzymeFN, wxEVT_TEXT, 
                 wxCommandEventHandler(EnzymeDialog::OnTextFN));
         
-        wxStaticText *fpText = new wxStaticText(this, wxID_ANY, wxT("False Positive rate (per 100 Kb):"));
+        wxStaticText *fpText = new wxStaticText(this, wxID_ANY, wxT("False positive rate (per 100 Kb):"));
         fpCtrl = new wxTextCtrl(this, wxID_EnzymeFP, e.fp, wxPoint(-1, -1), wxSize(-1, -1));
         hbox4->Add(fpText, 0, wxEXPAND | wxLEFT, 20);
         hbox4->Add(fpCtrl, 0, wxEXPAND | wxRIGHT, 20);
