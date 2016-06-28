@@ -138,10 +138,12 @@ void ConfigurationPanel::updateXML() {
                 }
                 
                 auto *enzymesElement = doc->NewElement("enzymes");
-                auto *enzymeFile = doc->NewElement("file");
-                auto enzymeFileText = doc->NewText(c.enzymeFile);
-                enzymeFile->LinkEndChild(enzymeFileText);
-                enzymesElement->LinkEndChild(enzymeFile);
+                if (c.enzymeFile != "") {
+                        auto *enzymeFile = doc->NewElement("file");
+                        auto enzymeFileText = doc->NewText(c.enzymeFile);
+                        enzymeFile->LinkEndChild(enzymeFileText);
+                        enzymesElement->LinkEndChild(enzymeFile);
+                }
                 for (auto kv : c.enzymes) {
                         auto e = enzymes[kv.first];
                         auto *enzymeElement = doc->NewElement("enzyme");
