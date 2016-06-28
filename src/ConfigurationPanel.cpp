@@ -29,11 +29,11 @@ ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, s
                 wxCommandEventHandler(ConfigurationPanel::OnDelete));
         
         vbox->Add(-1, 20);
-        vbox->Add(m_importb);
-        vbox->Add(m_exportb);
-        vbox->Add(m_newb);
-        vbox->Add(m_deleteb);
-        vbox->Add(m_clearb);
+        vbox->Add(m_importb, 1, wxEXPAND | wxRIGHT, 10);
+        vbox->Add(m_exportb, 1, wxEXPAND | wxRIGHT, 10);
+        vbox->Add(m_newb, 1, wxEXPAND | wxRIGHT, 10);
+        vbox->Add(m_deleteb, 1, wxEXPAND | wxRIGHT, 10);
+        vbox->Add(m_clearb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(-1, 5);
         
         SetSizer(vbox);
