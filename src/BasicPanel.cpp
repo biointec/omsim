@@ -61,10 +61,16 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         lengthbox->Add(sizedistbox);
         
         
+        wxBoxSizer *closebox = new wxBoxSizer(wxHORIZONTAL);
+        wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
+        wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
+        closebox->Add(ok, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
+        closebox->Add(cancel, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
         
         mainbox->Add(fastabox);
         mainbox->Add(enzymebox);
         mainbox->Add(lengthbox);
+        mainbox->Add(closebox);
         
         SetSizer(mainbox);
         
