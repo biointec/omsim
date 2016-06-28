@@ -3,3 +3,6 @@ build
 bin
 release
 debug
+**/*bnx
+**/*xml
+*byte*
