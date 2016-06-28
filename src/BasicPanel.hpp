@@ -17,6 +17,10 @@ class BasicPanel : public wxPanel
                 BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_);
                 void update();
                 void OnEnzDblClick(wxCommandEvent& event);
+                
+                void addFasta(wxString fasta);
+                void removeFasta(wxString fasta);
+                void clearFasta();
 };
 
 enum {

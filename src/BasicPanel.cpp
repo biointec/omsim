@@ -2,6 +2,8 @@
 #include "ListBoxPanel.hpp"
 #include "EnzymeDialog.hpp"
 
+#include <algorithm> //find
+
 BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
       : wxPanel(parent, id), c(c_), enzymes(enzymes_)
 {
@@ -60,7 +62,6 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         lengthbox->Add(lengthTitle);
         lengthbox->Add(sizedistbox);
         
-        
         wxBoxSizer *closebox = new wxBoxSizer(wxHORIZONTAL);
         wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
         wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
@@ -77,11 +78,31 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         update();
 }
 
+void BasicPanel::addFasta(wxString fasta) {
+        c.files.push_back(fasta);
+        update();
+}
+
+void BasicPanel::removeFasta(wxString fasta) {
+        auto it = std::find(c.files.begin(), c.files.end(), fasta);
+        if (it != c.files.end()) {
+                c.files.erase(it);
+        }
+        update();
+}
+
+void BasicPanel::clearFasta() {
+        c.files.clear();
+        update();
+}
+
 void BasicPanel::update() {
+        fastaListBox->Clear();
         for (auto f : c.files) {
                 fastaListBox->Append(f);
         }
         
+        enzymeCheckListBox->Clear();
         for (auto kv : enzymes) {
                 enzymeCheckListBox->Append(kv.first);
         }
