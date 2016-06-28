@@ -1,5 +1,7 @@
 #include "ListBoxPanel.hpp"
 #include <wx/textdlg.h>
+#include "BasicPanel.hpp"
+
 
 ListBoxPanel::ListBoxPanel(wxPanel * parent, wxListBox * lb, wxString const &Ext_, wxString const &ext_)
       : wxPanel(parent, wxID_ANY),
@@ -39,18 +41,22 @@ void ListBoxPanel::OnNew(wxCommandEvent& event)
         } else {
                 m_lb->Append(openDialog->GetPath());
         }
+        ((BasicPanel *) GetGrandParent())->addFasta(openDialog->GetPath());
 }
 
 void ListBoxPanel::OnClear(wxCommandEvent& event) 
 {
         m_lb->Clear();
+        ((BasicPanel *) GetGrandParent())->clearFasta();
 }
 
 void ListBoxPanel::OnDelete(wxCommandEvent& event) 
 {
         int sel = m_lb->GetSelection();
+        wxString fasta = m_lb->GetString(sel);
         if (sel != -1) {
                 m_lb->Delete(sel);
         }
+        ((BasicPanel *) GetGrandParent())->removeFasta(fasta);
 }
 
