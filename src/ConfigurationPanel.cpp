@@ -195,7 +195,7 @@ void ConfigurationPanel::OnExport(wxCommandEvent& event)
 void ConfigurationPanel::OnNew(wxCommandEvent& event) 
 {
         configuration c;
-        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxSize(700, 700));
+        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxDefaultSize);
         if (dlg.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
