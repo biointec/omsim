@@ -8,7 +8,7 @@
 bool run_sim = false;
 
 MainFrame::MainFrame(const wxString& title)
-      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 640))
+      : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
 {
         wxMenuBar *menubar = new wxMenuBar;
         wxMenu *file = new wxMenu;
@@ -31,7 +31,7 @@ MainFrame::MainFrame(const wxString& title)
         configurationCheckListBox = new wxCheckListBox(cPanel, wxID_ConfigurationCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         cclbbox->Add(configurationCheckListBox, 5, wxEXPAND | wxALL, 20);
         configurationPanel = new ConfigurationPanel(cPanel, configurationCheckListBox, configurations, enzymes);
-        cclbbox->Add(configurationPanel, 1, wxEXPAND | wxRIGHT, 10);
+        cclbbox->Add(configurationPanel, 1, wxRIGHT, 10);
         cPanel->SetSizerAndFit(cclbbox);
         cPanel->Center();
         
@@ -52,7 +52,7 @@ MainFrame::MainFrame(const wxString& title)
         enzymeListBox = new wxListBox(ePanel, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         elbbox->Add(enzymeListBox, 5, wxEXPAND | wxALL, 20);
         enzymePanel = new EnzymePanel(ePanel, enzymeListBox, configurations, enzymes);
-        elbbox->Add(enzymePanel, 1, wxEXPAND | wxRIGHT, 10);
+        elbbox->Add(enzymePanel, 1, wxRIGHT, 10);
         ePanel->SetSizerAndFit(elbbox);
         ePanel->Center();
         
