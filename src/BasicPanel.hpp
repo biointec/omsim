@@ -13,10 +13,14 @@ class BasicPanel : public wxPanel
                 wxListBox *fastaListBox;
                 wxListBox *xmlListBox;
                 wxCheckListBox *enzymeCheckListBox;
+                wxTextCtrl *sizeMeanCtrl;
+                wxTextCtrl *sizeSDCtrl;
         public:
                 BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_);
                 void update();
                 void OnEnzDblClick(wxCommandEvent& event);
+                void OnSizeMean(wxCommandEvent& Event);
+                void OnSizeSD(wxCommandEvent& Event);
                 
                 void addFasta(wxString fasta);
                 void removeFasta(wxString fasta);
@@ -25,7 +29,9 @@ class BasicPanel : public wxPanel
 
 enum {
         wxID_FastaListBox = wxID_HIGHEST + 1,
-        wxID_EnzymeCheckListBox = wxID_HIGHEST + 2
+        wxID_EnzymeCheckListBox = wxID_HIGHEST + 2,
+        wxID_SizeMean = wxID_HIGHEST + 3,
+        wxID_SizeSD = wxID_HIGHEST + 4
 };
 
 #endif
