@@ -151,7 +151,7 @@ void ConfigurationPanel::updateXML() {
                         wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
                         wxString vals [5] = {e.id, e.pattern, e.label, e.fn, e.fp};
                         for (auto i = 0; i < 5; ++i) {
-                                auto *enzymeChild = doc->NewElement(tags[i]);
+                                auto enzymeChild = doc->NewElement(tags[i]);
                                 auto enzymeChildText = doc->NewText(vals[i]);
                                 enzymeChild->LinkEndChild(enzymeChildText);
                                 enzymeElement->LinkEndChild(enzymeChild);
@@ -159,6 +159,20 @@ void ConfigurationPanel::updateXML() {
                         enzymesElement->LinkEndChild(enzymeElement);
                 }
                 child->LinkEndChild(enzymesElement);
+                
+                int const tag_count = 2;
+                wxString tags [tag_count] = {"avg_mol_len", "sd_mol_len"};
+                wxString vals [tag_count] = {c.avg_mol_len, c.sd_mol_len};
+                for (auto i = 0; i < tag_count; ++i) {
+                        auto tag = tags[i];
+                        auto val = vals[i];
+                        if (val != "") {
+                                auto tagChild = doc->NewElement(tag);
+                                auto valChild = doc->NewText(val);
+                                tagChild->LinkEndChild(valChild);
+                                child->LinkEndChild(tagChild);
+                        }
+                }
                 
                 top->LinkEndChild(child);
         }
