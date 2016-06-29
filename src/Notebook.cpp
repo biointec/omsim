@@ -11,7 +11,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxString &title, const
         BasicPanel *bpanel = new BasicPanel(nb, -1, c, enzymes);
         nb->AddPage(bpanel, wxT("Basic"));
         
-        AdvancedPanel *apanel = new AdvancedPanel(nb, -1);
+        AdvancedPanel *apanel = new AdvancedPanel(nb, -1, c);
         nb->AddPage(apanel, wxT("Advanced"));
         
         Center();
