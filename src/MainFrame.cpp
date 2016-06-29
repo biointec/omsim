@@ -40,22 +40,6 @@ MainFrame::MainFrame(const wxString& title)
         
         configurationbox->Add(configurationTitle);
         configurationbox->Add(cPanel, 1, wxEXPAND);
-        /*
-        wxBoxSizer *xmlbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *xmlTitle = new wxStaticText(this, wxID_ANY, wxT("Configuration file"));
-        
-        wxPanel * xmlPanel = new wxPanel(this, -1);
-        wxBoxSizer *xlbbox = new wxBoxSizer(wxHORIZONTAL);
-        xmlListBox = new wxListBox(xmlPanel, ID_XMLListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
-        xlbbox->Add(xmlListBox, 5, wxEXPAND | wxALL, 20);
-        ListBoxPanel *xmlBtnPanel = new ListBoxPanel(xmlPanel, xmlListBox, "XML", "xml");
-        xlbbox->Add(xmlBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
-        xmlPanel->SetSizer(xlbbox);
-        xmlPanel->Center();
-        
-        xmlbox->Add(xmlTitle);
-        xmlbox->Add(xmlPanel, 1, wxEXPAND);
-        */
         
         /*
                 enzyme box
