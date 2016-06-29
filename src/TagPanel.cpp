@@ -13,7 +13,7 @@ TagPanel::TagPanel(wxWindow *parent, wxSizer *sizer, wxString const &tag_, wxStr
                 wxCommandEventHandler(TagPanel::OnText));
         
         SetSizerAndFit(hbox);
-        sizer->Add(this, 1, wxEXPAND);
+        sizer->Add(this, 0, wxEXPAND);
 }
 
 void TagPanel::OnText(wxCommandEvent& event) 
