@@ -1,4 +1,4 @@
- #ifndef ENZYMEDIALOG_HPP
+#ifndef ENZYMEDIALOG_HPP
 #define ENZYMEDIALOG_HPP
 
 #include "wx.hpp"
