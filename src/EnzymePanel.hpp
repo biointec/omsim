@@ -27,6 +27,7 @@ class EnzymePanel : public wxPanel
                 void OnDelete(wxCommandEvent& event);
                 void OnEnzDblClick(wxCommandEvent& event);
                 
+                void addXML(wxString const &xml);
                 void parseXML();
                 void updateXML();
                 

@@ -88,6 +88,11 @@ void EnzymePanel::updateXML() {
         doc->LinkEndChild(top);
 }
 
+void EnzymePanel::addXML(wxString const &xml) {
+        doc->LoadFile(xml);
+        parseXML();
+}
+
 void EnzymePanel::OnImport(wxCommandEvent& event) 
 {
         wxFileDialog openDialog(this,
@@ -96,8 +101,7 @@ void EnzymePanel::OnImport(wxCommandEvent& event)
         if (openDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
-                doc->LoadFile(openDialog.GetPath());
-                parseXML();
+                addXML(openDialog.GetPath());
         }
 }
 
