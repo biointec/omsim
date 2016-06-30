@@ -59,6 +59,7 @@ MainFrame::MainFrame(const wxString& title)
         /*
                 run box
         */
+        /*
         wxBoxSizer *runbox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *runTitle = new wxStaticText(this, wxID_ANY, wxT("Simulation"));
         wxButton *runButton = new wxButton(this, wxID_RunButton, _T("Save and run simulation"), wxPoint(0, 0), wxDefaultSize, 0);
@@ -67,10 +68,15 @@ MainFrame::MainFrame(const wxString& title)
         
         Connect(wxID_RunButton, wxEVT_BUTTON, 
                 wxCommandEventHandler(MainFrame::OnRunOmsim));
+        */
+        
+        /*
+                main box
+        */
         
         mainbox->Add(configurationbox, 1, wxEXPAND | wxALL, 10);
         mainbox->Add(enzymebox, 1, wxEXPAND | wxALL, 10);
-        mainbox->Add(runbox, 0, wxEXPAND | wxALL, 10);
+        //mainbox->Add(runbox, 0, wxEXPAND | wxALL, 10);
         
         SetSizerAndFit(mainbox);
         
