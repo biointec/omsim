@@ -34,7 +34,7 @@ class Settings:
                 self.scans_per_chip = 30
                 self.scan_size = 1500
                 self.avg_mol_len = 90000
-                self.sd_mol_len = 95000
+                self.sd_mol_len = 85000
                 self.min_mol_len = 1
                 self.max_mol_len = 2500000
                 self.min_nicks = 1

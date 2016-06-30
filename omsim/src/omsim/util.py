@@ -88,8 +88,6 @@ def double_stranded_multi_KMP_from_fasta(settings, cmaps):
         metas = []
         seq_lens = []
         for iname in settings.files:
-                ifile = open(iname)
-                c = ifile.read(1)
                 imported = iname in cmaps
                 if not imported:
                         cmaps[iname] = Cmap(iname)
@@ -127,6 +125,8 @@ def double_stranded_multi_KMP_from_fasta(settings, cmaps):
                 nick_count = cmaps[iname].count()
                 meta_count = 0
                 # search for patterns
+                ifile = open(iname)
+                c = ifile.read(1)
                 while c:
                         if c == '>':
                                 '''

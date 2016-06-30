@@ -257,11 +257,11 @@ def xml_input_parse(xml_file):
                                 for file in entry:
                                         files.append(file.text)
                                 settings[entry.tag] = files
-                        elif entry.tag in ['name', 'file', 'prefix']:
+                        elif entry.tag in ['name', 'file', 'prefix', 'byte_prefix', 'label_snr_filter_type']:
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
                                 settings[entry.tag] = True
-                        elif entry.tag in ['chimera_rate', 'fp_rate', 'fn_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd']:
+                        elif entry.tag in ['min_label_SNR', 'chimera_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd', 'molecule_AI_mu', 'molecule_AI_sd', 'label_AI_mu', 'label_AI_sd', 'molecule_SNR_mu', 'molecule_SNR_sd', 'label_SNR_mu', 'label_SNR_sd']:
                                 settings[entry.tag] = float(entry.text)
                         else:
                                 settings[entry.tag] = int(entry.text)
