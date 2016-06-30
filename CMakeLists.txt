@@ -54,4 +54,4 @@ endif (CMAKE_BUILD_TYPE STREQUAL Release)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_subdirectory(src/omsimgui)
+add_subdirectory(src)
