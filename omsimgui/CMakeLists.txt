@@ -1,0 +1,57 @@
+cmake_minimum_required (VERSION 2.6.3)
+
+project (omsimgui)
+
+# project version
+set (${PROJECT_NAME}_MAJOR_VERSION 0)
+set (${PROJECT_NAME}_MINOR_VERSION 1)
+set (${PROJECT_NAME}_PATCH_LEVEL 0)
+add_definitions("-DOMSIMGUI_MAJOR_VERSION=${${PROJECT_NAME}_MAJOR_VERSION}")
+add_definitions("-DOMSIMGUI_MINOR_VERSION=${${PROJECT_NAME}_MINOR_VERSION}")
+add_definitions("-DOMSIMGUI_PATCH_LEVEL=${${PROJECT_NAME}_PATCH_LEVEL}")
+
+# set the default configuration to Release
+if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+            "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+# set the module path
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+# set windows specific flags
+if (MSVC)
+        add_definitions("-D_SCL_SECURE_NO_WARNINGS")
+        add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+endif (MSVC)
+
+# set wx flags
+find_package(wxWidgets REQUIRED)
+include(${wxWidgets_USE_FILE})
+
+# set boost
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED OFF)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost COMPONENTS filesystem)
+include_directories(${Boost_INCLUDE_DIRS})
+
+# set g++ specific flags
+if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+        set(CMAKE_CXX_FLAGS "-Wno-deprecated -Wall -std=c++11")
+        set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall -pedantic -Wno-long-long -Wno-deprecated -Wall -Wextra -Wno-sign-compare")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g3")
+        set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -Wall -pedantic -Wno-long-long")
+endif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+
+# uncomment the portion below to disable assertions
+if (CMAKE_BUILD_TYPE STREQUAL Release)
+        add_definitions(-DNDEBUG)
+else (CMAKE_BUILD_TYPE STREQUAL Release)
+        add_definitions(-DDEBUG)
+endif (CMAKE_BUILD_TYPE STREQUAL Release)
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+add_subdirectory(src)
