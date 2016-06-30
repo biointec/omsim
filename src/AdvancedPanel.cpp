@@ -25,7 +25,6 @@ AdvancedPanel::AdvancedPanel(wxWindow *parent, wxWindowID id, configuration &c_)
         TagPanel *scan_size = new TagPanel(scrollbox, vbox, "scan_size", c.scan_size, "scan_size");
         TagPanel *avg_mol_len = new TagPanel(scrollbox, vbox, "avg_mol_len", c.avg_mol_len, "avg_mol_len");
         TagPanel *sd_mol_len = new TagPanel(scrollbox, vbox, "sd_mol_len", c.sd_mol_len, "sd_mol_len");
-        TagPanel *fragile_correction = new TagPanel(scrollbox, vbox, "fragile_correction", c.fragile_correction, "fragile_correction");
         TagPanel *min_mol_len = new TagPanel(scrollbox, vbox, "min_mol_len", c.min_mol_len, "min_mol_len");
         TagPanel *max_mol_len = new TagPanel(scrollbox, vbox, "max_mol_len", c.max_mol_len, "max_mol_len");
         TagPanel *min_nicks = new TagPanel(scrollbox, vbox, "min_nicks", c.min_nicks, "min_nicks");

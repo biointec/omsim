@@ -16,7 +16,6 @@ struct configuration {
         wxString scan_size;
         wxString avg_mol_len;
         wxString sd_mol_len;
-        wxString fragile_correction;
         wxString min_mol_len;
         wxString max_mol_len;
         wxString min_nicks;
