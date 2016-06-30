@@ -12,4 +12,4 @@ TagPanel.cpp
 tinyxml2.cpp
 )
 target_link_libraries(omsimgui ${wxWidgets_LIBRARIES})
-target_link_libraries(omsimgui ${Boost_LIBRARIES})
+#target_link_libraries(omsimgui ${Boost_LIBRARIES})

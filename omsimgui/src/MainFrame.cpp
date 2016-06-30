@@ -2,7 +2,7 @@
 #include "ListBoxPanel.hpp"
 #include "EnzymePanel.hpp"
 #include "ConfigurationPanel.hpp"
-#include "executablePath.hpp"
+//#include "executablePath.hpp"
 #include "main.hpp" //wxGetApp
 
 bool run_sim = false;
@@ -97,10 +97,11 @@ void MainFrame::OnEnzDblClick(wxCommandEvent& event)
 
 void MainFrame::OnQuit(wxCommandEvent& event) 
 {
-        simulator_thread.join();
+        //simulator_thread.join();
         Close(true);
 }
 
+/*
 void MainFrame::OnRunOmsim(wxCommandEvent& event) {
         if(!run_sim) {
                 wxFileDialog saveDialog(this,
@@ -127,7 +128,7 @@ void MainFrame::OnRunOmsim(wxCommandEvent& event) {
                 }};
         }
 }
-
+*/
 
 void MainFrame::update() {
         configurationPanel->update();

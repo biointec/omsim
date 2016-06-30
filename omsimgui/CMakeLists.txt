@@ -26,15 +26,15 @@ if (MSVC)
 endif (MSVC)
 
 # set wx flags
-find_package(wxWidgets REQUIRED)
+find_package(wxWidgets COMPONENTS core base REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 # set boost
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED OFF)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost COMPONENTS filesystem)
-include_directories(${Boost_INCLUDE_DIRS})
+#set(Boost_USE_STATIC_LIBS OFF)
+#set(Boost_USE_MULTITHREADED OFF)
+#set(Boost_USE_STATIC_RUNTIME OFF)
+#find_package(Boost COMPONENTS filesystem)
+#include_directories(${Boost_INCLUDE_DIRS})
 
 # set g++ specific flags
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)

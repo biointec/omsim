@@ -5,7 +5,7 @@
 #include "ConfigurationPanel.hpp"
 #include "EnzymePanel.hpp"
 
-#include <thread>
+//#include <thread>
 
 class EnzymePanel;
 class ConfigurationPanel;
@@ -20,7 +20,7 @@ class MainFrame : public wxFrame
                 std::map<wxString, configuration> configurations;
                 std::map<wxString, enzyme> enzymes;
                 
-                std::thread simulator_thread;
+                //std::thread simulator_thread;
         public:
                 MainFrame(const wxString& title);
                 
