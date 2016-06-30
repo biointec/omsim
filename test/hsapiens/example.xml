@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all simulations to run-->
+<simulation>
+    <input>
+        <files>
+            <file>hg38.fa</file>
+        </files>
+        <circular/>
+        <enzymes>
+            <enzyme>
+                <id>BspQI</id>
+                <pattern>ACGT</pattern>
+                <label>label_0</label>
+                <fn>0.15</fn>
+                <fp>1.5</fp>
+            </enzyme>
+            <enzyme>
+                <id>BssSI</id>
+                <pattern>ACGT</pattern>
+                <label>label_1</label>
+                <fn>0.15</fn>
+                <fp>1.5</fp>
+            </enzyme>
+        </enzymes>
+        <name>H. sapiens</name>
+        <prefix>hsapiens_output</prefix>
+        <byte_prefix>omsim</byte_prefix>
+        <coverage>1</coverage>
+        <chips>1</chips>
+        <scans_per_chip>30</scans_per_chip>
+        <scan_size>1500</scan_size>
+        <avg_mol_len>90000</avg_mol_len>
+        <sd_mol_len>85000</sd_mol_len>
+        <min_mol_len>20000</min_mol_len>
+        <max_mol_len>2500000</max_mol_len>
+        <min_nicks>1</min_nicks>
+        <label_snr_filter_type>Static</label_snr_filter_type>
+        <min_label_SNR>0.0</min_label_SNR>
+        <nick_sd>50</nick_sd>
+        <fragile_same>50</fragile_same>
+        <fragile_opposite>150</fragile_opposite>
+        <fragile_treshold>25</fragile_treshold>
+        <fragile_factor>3</fragile_factor>
+        <label_mu>1500</label_mu>
+        <label_treshold>500</label_treshold>
+        <label_factor>100</label_factor>
+        <chimera_rate>0.01</chimera_rate>
+        <chimera_mu>1500</chimera_mu>
+        <chimera_sigma>500</chimera_sigma>
+        <stretch_factor>0.85</stretch_factor>
+        <stretch_chip_sd>0.01</stretch_chip_sd>
+        <stretch_scan_sd>0.001</stretch_scan_sd>
+        <molecule_AI_mu>0.3</molecule_AI_mu>
+        <molecule_AI_sd>0.2</molecule_AI_sd>
+        <label_AI_mu>0.07</label_AI_mu>
+        <label_AI_sd>0.04</label_AI_sd>
+        <molecule_SNR_mu>15.0</molecule_SNR_mu>
+        <molecule_SNR_sd>75.0</molecule_SNR_sd>
+        <label_SNR_mu>14.0</label_SNR_mu>
+        <label_SNR_sd>11.0</label_SNR_sd>
+        <sim_batch_size>100000</sim_batch_size>
+        <seed>0</seed>
+    </input>
+</simulation>

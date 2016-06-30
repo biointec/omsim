@@ -2,11 +2,12 @@
 cd ../../omsim
 ./package.sh
 ./install.sh
-cd ../test/ecoli
+cd ../test/hsapiens
 
 /usr/bin/time -v python2 -m omsim example.xml
-bnx0=ecoli_output.label_0.1.bnx
-bnx1=ecoli_output.label_1.1.bnx
+bnx0=hsapiens_output.label_0.1.bnx
+bnx1=hsapiens_output.label_1.1.bnx
+
 
 for bnx in ${bnx0} ${bnx1}; do
         echo "" > ${bnx}.stats
