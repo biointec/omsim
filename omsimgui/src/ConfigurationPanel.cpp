@@ -34,13 +34,12 @@ ConfigurationPanel::ConfigurationPanel(wxWindow * parent, wxCheckListBox * clb, 
         vbox->Add(m_newb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(m_deleteb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(m_clearb, 1, wxEXPAND | wxRIGHT, 10);
-        vbox->Add(-1, 5);
+        vbox->Add(-1, 0);
         
         SetSizerAndFit(vbox);
 }
 
 void ConfigurationPanel::parseXML() {
-        //configurations.clear();
         m_clb->Clear();
         auto child = doc->FirstChildElement()->FirstChildElement();
         count = 0;

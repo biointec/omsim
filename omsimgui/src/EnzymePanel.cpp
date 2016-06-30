@@ -31,8 +31,8 @@ EnzymePanel::EnzymePanel(wxWindow * parent, wxListBox * lb, std::map<wxString, c
         vbox->Add(m_newb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(m_deleteb, 1, wxEXPAND | wxRIGHT, 10);
         vbox->Add(m_clearb, 1, wxEXPAND | wxRIGHT, 10);
-        vbox->Add(-1, 5);
-        
+        vbox->Add(-1, 30);
+//        vbox->Add(new wxWindow(this, wxID_ANY), 0, wxEXPAND | wxALL, 10);
         SetSizerAndFit(vbox);
 }
 
