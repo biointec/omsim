@@ -14,7 +14,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         */
         wxBoxSizer *namebox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *nameTitle = new wxStaticText(this, wxID_ANY, wxT("Experiment name"));
-        nameCtrl = new wxTextCtrl(this, wxID_Name, c.name, wxPoint(-1, -1), wxSize(-1, -1));
+        nameCtrl = new wxTextCtrl(this, wxID_Name, c.get("name"), wxPoint(-1, -1), wxSize(-1, -1));
         namebox->Add(nameTitle);
         namebox->Add(nameCtrl, 0, wxEXPAND | wxALL, 20);
         
@@ -71,9 +71,9 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxStaticText *lengthTitle = new wxStaticText(this, wxID_ANY, wxT("Size distribution"));
         wxBoxSizer *sizedistbox = new wxBoxSizer(wxHORIZONTAL);
         wxStaticText *meanText = new wxStaticText(this, wxID_ANY, wxT("Mean:"));
-        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.avg_mol_len, wxPoint(-1, -1), wxSize(-1, -1));
+        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.get("avg_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
         wxStaticText *stdText = new wxStaticText(this, wxID_ANY, wxT("Standard deviation:"));
-        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.sd_mol_len, wxPoint(-1, -1), wxSize(-1, -1));
+        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.get("sd_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
         sizedistbox->Add(meanText, 0, wxEXPAND | wxALL, 20);
         sizedistbox->Add(sizeMeanCtrl, 0, wxEXPAND | wxTOP | wxBOTTOM, 20);
         sizedistbox->Add(stdText, 0, wxEXPAND | wxALL, 20);
@@ -166,17 +166,17 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
 
 void BasicPanel::OnName(wxCommandEvent& Event)
 {
-        c.name = nameCtrl->GetValue();
+        c.set("name", nameCtrl->GetValue());
 }
 
 void BasicPanel::OnSizeMean(wxCommandEvent& Event)
 {
-        c.avg_mol_len = sizeMeanCtrl->GetValue();
+        c.set("avg_mol_len", sizeMeanCtrl->GetValue());
 }
 
 void BasicPanel::OnSizeSD(wxCommandEvent& Event)
 {
-        c.sd_mol_len = sizeSDCtrl->GetValue();
+        c.set("sd_mol_len", sizeSDCtrl->GetValue());
 }
 
 void BasicPanel::OnCircularCheck(wxCommandEvent& event) 
