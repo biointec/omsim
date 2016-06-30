@@ -7,9 +7,11 @@
 #include "enzyme.hpp"
 
 struct configuration {
+        bool circular;
+        
         wxString name;
         wxString prefix;
-        bool circular;
+        wxString byte_prefix;
         wxString coverage;
         wxString chips;
         wxString scans_per_chip;
@@ -41,14 +43,16 @@ struct configuration {
         wxString label_AI_sd;
         wxString molecule_SNR_mu;
         wxString molecule_SNR_sd;
+        wxString label_SNR_mu;
+        wxString label_SNR_sd;
         wxString sim_batch_size;
         wxString seed;
+        
+        wxString enzyme_xml;
         
         std::vector<wxString> files;
         std::map<wxString, enzyme> enzymes;
         std::vector<wxString> labels;
-        
-        wxString enzymeFile;
         
         configuration(){
                 circular = false;

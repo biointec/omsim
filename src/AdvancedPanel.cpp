@@ -52,7 +52,6 @@ AdvancedPanel::AdvancedPanel(wxWindow *parent, wxWindowID id, configuration &c_)
         TagPanel *molecule_SNR_sd = new TagPanel(scrollbox, vbox, "molecule_SNR_sd", c.molecule_SNR_sd, "molecule_SNR_sd");
         TagPanel *sim_batch_size = new TagPanel(scrollbox, vbox, "sim_batch_size", c.sim_batch_size, "sim_batch_size");
         TagPanel *seed = new TagPanel(scrollbox, vbox, "seed", c.seed, "seed");
-        TagPanel *enzymeFile = new TagPanel(scrollbox, vbox, "enzymeFile", c.enzymeFile, "enzymeFile");
         
         scrollbox->SetSizerAndFit(vbox);
         scrollbox->FitInside();
