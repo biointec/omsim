@@ -3,7 +3,7 @@
 
 #include <vector>
 
-EnzymePanel::EnzymePanel(wxPanel * parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
+EnzymePanel::EnzymePanel(wxWindow * parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
       : wxPanel(parent, wxID_ANY), configurations(configurations_), enzymes(enzymes_)
 {
         doc = new tinyxml2::XMLDocument();

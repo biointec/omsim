@@ -6,7 +6,7 @@
 #include <vector>
 #include "MainFrame.hpp"
 
-ConfigurationPanel::ConfigurationPanel(wxPanel * parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
+ConfigurationPanel::ConfigurationPanel(wxWindow * parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_)
       : wxPanel(parent, wxID_ANY), configurations(configurations_), enzymes(enzymes_)
 {
         doc = new tinyxml2::XMLDocument();

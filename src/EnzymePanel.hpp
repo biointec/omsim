@@ -19,7 +19,7 @@ class EnzymePanel : public wxPanel
                 std::map<wxString, enzyme> &enzymes;
                 tinyxml2::XMLDocument *doc;
         public:
-                EnzymePanel(wxPanel *parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
+                EnzymePanel(wxWindow *parent, wxListBox * lb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
                 void OnImport(wxCommandEvent& event);
                 void OnExport(wxCommandEvent& event);
                 void OnNew(wxCommandEvent& event);

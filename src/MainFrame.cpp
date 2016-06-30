@@ -26,20 +26,17 @@ MainFrame::MainFrame(const wxString& title)
         wxBoxSizer *configurationbox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *configurationTitle = new wxStaticText(this, wxID_ANY, wxT("Configurations"));
         
-        wxPanel * cPanel = new wxPanel(this, -1);
         wxBoxSizer *cclbbox = new wxBoxSizer(wxHORIZONTAL);
-        configurationCheckListBox = new wxCheckListBox(cPanel, wxID_ConfigurationCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
+        configurationCheckListBox = new wxCheckListBox(this, wxID_ConfigurationCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         cclbbox->Add(configurationCheckListBox, 5, wxEXPAND | wxALL, 20);
-        configurationPanel = new ConfigurationPanel(cPanel, configurationCheckListBox, configurations, enzymes);
+        configurationPanel = new ConfigurationPanel(this, configurationCheckListBox, configurations, enzymes);
         cclbbox->Add(configurationPanel, 1, wxRIGHT, 10);
-        cPanel->SetSizerAndFit(cclbbox);
-        cPanel->Center();
         
         Connect(wxID_ConfigurationCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
                 wxCommandEventHandler(MainFrame::OnConfDblClick));
         
         configurationbox->Add(configurationTitle);
-        configurationbox->Add(cPanel, 1, wxEXPAND);
+        configurationbox->Add(cclbbox, 1, wxEXPAND);
         
         /*
                 enzyme box
@@ -47,20 +44,17 @@ MainFrame::MainFrame(const wxString& title)
         wxBoxSizer *enzymebox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *enzymeTitle = new wxStaticText(this, wxID_ANY, wxT("Enzymes"));
         
-        wxPanel * ePanel = new wxPanel(this, -1);
         wxBoxSizer *elbbox = new wxBoxSizer(wxHORIZONTAL);
-        enzymeListBox = new wxListBox(ePanel, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
+        enzymeListBox = new wxListBox(this, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         elbbox->Add(enzymeListBox, 5, wxEXPAND | wxALL, 20);
-        enzymePanel = new EnzymePanel(ePanel, enzymeListBox, configurations, enzymes);
+        enzymePanel = new EnzymePanel(this, enzymeListBox, configurations, enzymes);
         elbbox->Add(enzymePanel, 1, wxRIGHT, 10);
-        ePanel->SetSizerAndFit(elbbox);
-        ePanel->Center();
         
         Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
                 wxCommandEventHandler(MainFrame::OnEnzDblClick));
         
         enzymebox->Add(enzymeTitle);
-        enzymebox->Add(ePanel, 1, wxEXPAND);
+        enzymebox->Add(elbbox, 1, wxEXPAND);
         
         /*
                 run box

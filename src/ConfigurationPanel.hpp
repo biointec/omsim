@@ -17,7 +17,7 @@ class ConfigurationPanel : public wxPanel
                 std::map<wxString, configuration> &configurations;
                 std::map<wxString, enzyme> &enzymes;
         public:
-                ConfigurationPanel(wxPanel *parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
+                ConfigurationPanel(wxWindow *parent, wxCheckListBox * clb, std::map<wxString, configuration> &configurations_, std::map<wxString, enzyme> &enzymes_);
                 void OnImport(wxCommandEvent& event);
                 void OnExport(wxCommandEvent& event);
                 void OnNew(wxCommandEvent& event);
