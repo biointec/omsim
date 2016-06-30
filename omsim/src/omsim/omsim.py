@@ -270,11 +270,11 @@ def xml_input_parse(xml_file):
 
 
 def print_welcome():
-        print('This is an experimental version of omsim, scripts and configuration files based on this version might be incompatible with future versions. Some default settings may not have reasonable values yet.')
+        print('Welcome to OMSim v0.3')
 
 
 def print_usage():
-        print('Usage: omsim.py file.xml' + '\n' + 'Example xml-files: example.xml (all options) and minimal.xml (required options).' + '\n' + 'Enzyme properties are specified in enzymes.xml.')
+        print('Usage: omsim.py file.xml' + '\n' + 'Example xml-files: example.xml (many options) and minimal.xml (minimal required options).' + '\n' + 'Enzyme properties are specified in enzymes.xml.')
 
 
 def main(argv=None):
