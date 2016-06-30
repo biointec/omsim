@@ -23,11 +23,12 @@ class Settings:
         def __init__(self, args):
                 self.version = 'v0.2'
                 self.bnx_version = '1.2'
-                self.byte_prefix = 'omsim'
-                self.name = 'Unnamed'
-                self.files = []
-                self.prefix = 'omsim_output'
+                
                 self.circular = False
+                
+                self.name = 'Unnamed'
+                self.prefix = 'omsim_output'
+                self.byte_prefix = 'omsim'
                 self.coverage = 0
                 self.chips = 1
                 self.scans_per_chip = 30
@@ -62,10 +63,14 @@ class Settings:
                 self.label_SNR_mu = 14.0
                 self.label_SNR_sd = 11.0
                 self.sim_batch_size = 100000
+                self.seed = None
+                
                 self.enzyme_xml = ""
+                
+                self.files = []
                 self.enzymes = []
                 self.labels = []
-                self.seed = None
+
                 self.__dict__.update(args)
                 self.avg_mol_len = float(self.avg_mol_len)
                 self.sd_mol_len = float(self.sd_mol_len)
