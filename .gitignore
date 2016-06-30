@@ -1,0 +1,11 @@
+build
+description
+dist
+plot
+src/omsim.egg-info
+**/*bnx
+**/*bed
+**/*stats
+**/hg38.fa
+**/hg38.fa.gz
+**/omsim.byte*
