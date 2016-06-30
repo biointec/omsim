@@ -8,6 +8,19 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
       : wxPanel(parent, id), c(c_), enzymes(enzymes_)
 {
         wxBoxSizer *mainbox = new wxBoxSizer(wxVERTICAL);
+        
+        /*
+                name box
+        */
+        wxBoxSizer *namebox = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *nameTitle = new wxStaticText(this, wxID_ANY, wxT("Experiment name"));
+        nameCtrl = new wxTextCtrl(this, wxID_Name, c.name, wxPoint(-1, -1), wxSize(-1, -1));
+        namebox->Add(nameTitle);
+        namebox->Add(nameCtrl, 0, wxEXPAND | wxALL, 20);
+        
+        Connect(wxID_Name, wxEVT_TEXT,
+                wxCommandEventHandler(BasicPanel::OnName));
+        
         /*
                 fasta box
         */
@@ -23,8 +36,14 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         fastaPanel->SetSizerAndFit(flbbox);
         fastaPanel->Center();
         
-        fastabox->Add(fastaTitle);
+        circularCheckBox = new wxCheckBox(this, wxID_CircularCheckBox, "Circular Genome", wxPoint(-1, -1), wxSize(-1, -1));
+        circularCheckBox->SetValue(c.circular);
+        Connect(wxID_CircularCheckBox, wxEVT_CHECKBOX,
+                wxCommandEventHandler(BasicPanel::OnCircularCheck));
+        
+        fastabox->Add(fastaTitle, 0);
         fastabox->Add(fastaPanel, 1, wxEXPAND);
+        fastabox->Add(circularCheckBox, 0, wxEXPAND);
         
         /*
                 enzyme box
@@ -67,16 +86,24 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         Connect(wxID_SizeSD, wxEVT_TEXT,
                 wxCommandEventHandler(BasicPanel::OnSizeSD));
         
+        /*
+                close box
+        */
         wxBoxSizer *closebox = new wxBoxSizer(wxHORIZONTAL);
         wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
         wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
         closebox->Add(ok, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
         closebox->Add(cancel, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
         
-        mainbox->Add(fastabox);
-        mainbox->Add(enzymebox);
-        mainbox->Add(lengthbox);
-        mainbox->Add(closebox);
+        
+        /*
+                main box
+        */
+        mainbox->Add(namebox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(fastabox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(enzymebox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(lengthbox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(closebox, 0, wxEXPAND | wxALL, 10);
         
         SetSizerAndFit(mainbox);
         
@@ -137,6 +164,11 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
         }
 }
 
+void BasicPanel::OnName(wxCommandEvent& Event)
+{
+        c.name = nameCtrl->GetValue();
+}
+
 void BasicPanel::OnSizeMean(wxCommandEvent& Event)
 {
         c.avg_mol_len = sizeMeanCtrl->GetValue();
@@ -147,3 +179,7 @@ void BasicPanel::OnSizeSD(wxCommandEvent& Event)
         c.sd_mol_len = sizeSDCtrl->GetValue();
 }
 
+void BasicPanel::OnCircularCheck(wxCommandEvent& event) 
+{
+        c.circular = circularCheckBox->IsChecked();
+}

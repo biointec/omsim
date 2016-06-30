@@ -51,8 +51,13 @@ void ConfigurationPanel::parseXML() {
                 /*
                         Required parameters
                 */
-                if (child->FirstChildElement("name") != NULL) {
-                        c.name = child->FirstChildElement("name")->GetText();
+                int const tag_count = 36;
+                wxString tags [tag_count] = {"name", "prefix", "coverage", "chips", "scans_per_chip", "scan_size", "avg_mol_len", "sd_mol_len", "fragile_correction", "min_mol_len", "max_mol_len", "min_nicks", "label_snr_filter_type", "min_label_SNR", "nick_sd", "fragile_same", "fragile_opposite", "fragile_treshold", "fragile_factor", "label_mu", "label_treshold", "label_factor", "chimera_rate", "chimera_mu", "chimera_sigma", "stretch_factor", "stretch_chip_sd", "stretch_scan_sd", "molecule_AI_mu", "molecule_AI_sd", "label_AI_mu", "label_AI_sd", "molecule_SNR_mu", "molecule_SNR_sd", "sim_batch_size", "seed"};
+                wxString vals [tag_count] = {c.name, c.prefix, c.coverage, c.chips, c.scans_per_chip, c.scan_size, c.avg_mol_len, c.sd_mol_len, c.fragile_correction, c.min_mol_len, c.max_mol_len, c.min_nicks, c.label_snr_filter_type, c.min_label_SNR, c.nick_sd, c.fragile_same, c.fragile_opposite, c.fragile_treshold, c.fragile_factor, c.label_mu, c.label_treshold, c.label_factor, c.chimera_rate, c.chimera_mu, c.chimera_sigma, c.stretch_factor, c.stretch_chip_sd, c.stretch_scan_sd, c.molecule_AI_mu, c.molecule_AI_sd, c.label_AI_mu, c.label_AI_sd, c.molecule_SNR_mu, c.molecule_SNR_sd, c.sim_batch_size, c.seed};
+                for (auto i = 0; i < tag_count; ++i) {
+                        if (child->FirstChildElement(tags[i]) != NULL) {
+                                vals[i] = child->FirstChildElement(tags[i])->GetText();
+                        }
                 }
                 
                 if (child->FirstChildElement("files") != NULL && 
@@ -118,11 +123,6 @@ void ConfigurationPanel::updateXML() {
                 auto c = kv.second;
                 auto *child = doc->NewElement("input");
                 
-                auto *name = doc->NewElement("name");
-                auto *nameText = doc->NewText(c.name);
-                name->LinkEndChild(nameText);
-                child->LinkEndChild(name);
-                
                 auto *files = doc->NewElement("files");
                 for (auto f : c.files) {
                         auto *file = doc->NewElement("file");
@@ -160,9 +160,9 @@ void ConfigurationPanel::updateXML() {
                 }
                 child->LinkEndChild(enzymesElement);
                 
-                int const tag_count = 2;
-                wxString tags [tag_count] = {"avg_mol_len", "sd_mol_len"};
-                wxString vals [tag_count] = {c.avg_mol_len, c.sd_mol_len};
+                int const tag_count = 36;
+                wxString tags [tag_count] = {"name", "prefix", "coverage", "chips", "scans_per_chip", "scan_size", "avg_mol_len", "sd_mol_len", "fragile_correction", "min_mol_len", "max_mol_len", "min_nicks", "label_snr_filter_type", "min_label_SNR", "nick_sd", "fragile_same", "fragile_opposite", "fragile_treshold", "fragile_factor", "label_mu", "label_treshold", "label_factor", "chimera_rate", "chimera_mu", "chimera_sigma", "stretch_factor", "stretch_chip_sd", "stretch_scan_sd", "molecule_AI_mu", "molecule_AI_sd", "label_AI_mu", "label_AI_sd", "molecule_SNR_mu", "molecule_SNR_sd", "sim_batch_size", "seed"};
+                wxString vals [tag_count] = {c.name, c.prefix, c.coverage, c.chips, c.scans_per_chip, c.scan_size, c.avg_mol_len, c.sd_mol_len, c.fragile_correction, c.min_mol_len, c.max_mol_len, c.min_nicks, c.label_snr_filter_type, c.min_label_SNR, c.nick_sd, c.fragile_same, c.fragile_opposite, c.fragile_treshold, c.fragile_factor, c.label_mu, c.label_treshold, c.label_factor, c.chimera_rate, c.chimera_mu, c.chimera_sigma, c.stretch_factor, c.stretch_chip_sd, c.stretch_scan_sd, c.molecule_AI_mu, c.molecule_AI_sd, c.label_AI_mu, c.label_AI_sd, c.molecule_SNR_mu, c.molecule_SNR_sd, c.sim_batch_size, c.seed};
                 for (auto i = 0; i < tag_count; ++i) {
                         auto tag = tags[i];
                         auto val = vals[i];
@@ -209,7 +209,7 @@ void ConfigurationPanel::OnExport(wxCommandEvent& event)
 void ConfigurationPanel::OnNew(wxCommandEvent& event) 
 {
         configuration c;
-        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxDefaultSize);
+        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxSize(500, 700));
         if (dlg.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -241,7 +241,7 @@ void ConfigurationPanel::OnConfDblClick(wxCommandEvent& event)
         int sel = m_clb->GetSelection();
         if (sel != -1) {
                 auto name = m_clb->GetString(sel);
-                Notebook dlg(this, wxID_ANY, _("Edit configuration"), configurations[name], enzymes, wxDefaultPosition, wxSize(700, 700));
+                Notebook dlg(this, wxID_ANY, _("Edit configuration"), configurations[name], enzymes, wxDefaultPosition, wxSize(500, 700));
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
