@@ -126,8 +126,8 @@ void EnzymePanel::OnNew(wxCommandEvent& event)
         } else {
                 enzyme e = dlg.GetEnzyme();
                 enzymes[e.id] = e;
-                m_lb->Append(e.id);
         }
+        update();
 }
 
 void EnzymePanel::OnClear(wxCommandEvent& event) 
@@ -141,9 +141,9 @@ void EnzymePanel::OnDelete(wxCommandEvent& event)
         int sel = m_lb->GetSelection();
         if (sel != -1) {
                 wxString id = m_lb->GetString(sel);
-                m_lb->Delete(sel);
                 enzymes.erase(id);
         }
+        update();
 }
 
 void EnzymePanel::OnEnzDblClick(wxCommandEvent& event)
@@ -157,8 +157,7 @@ void EnzymePanel::OnEnzDblClick(wxCommandEvent& event)
                 } else {
                         enzyme e = dlg.GetEnzyme();
                         enzymes[e.id] = e;
-                        m_lb->Delete(sel);
-                        m_lb->Insert(e.id, sel);
                 }
         }
+        update();
 }
