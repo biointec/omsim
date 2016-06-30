@@ -61,7 +61,7 @@ struct configuration {
                 set("scans_per_chip", "30", "scans_per_chip");
                 set("scan_size", "1500", "scan_size");
                 set("avg_mol_len", "90000", "avg_mol_len");
-                set("sd_mol_len", "95000", "sd_mol_len");
+                set("sd_mol_len", "85000", "sd_mol_len");
                 set("min_mol_len", "1", "min_mol_len");
                 set("max_mol_len", "2500000", "max_mol_len");
                 set("min_nicks", "1", "min_nicks");
