@@ -38,7 +38,7 @@ include(${wxWidgets_USE_FILE})
 
 # set g++ specific flags
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-        set(CMAKE_CXX_FLAGS "-Wno-deprecated -Wall -std=c++11")
+        set(CMAKE_CXX_FLAGS "-Wno-deprecated -Wall -std=c++11 -static-libstdc++ -static-libgcc")
         set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall -pedantic -Wno-long-long -Wno-deprecated -Wall -Wextra -Wno-sign-compare")
         set(CMAKE_CXX_FLAGS_RELEASE "-O3")
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g3")
