@@ -9,16 +9,16 @@
         <enzymes>
             <enzyme>
                 <id>BspQI</id>
-                <pattern>ACGT</pattern>
+                <pattern>GCTCTTC</pattern>
                 <label>label_0</label>
                 <fn>0.15</fn>
-                <fp>1.5</fp>
+                <fp>1.0</fp>
             </enzyme>
             <enzyme>
                 <id>BssSI</id>
-                <pattern>ACGT</pattern>
+                <pattern>CACGAG</pattern>
                 <label>label_1</label>
-                <fn>0.15</fn>
+                <fn>0.20</fn>
                 <fp>1.5</fp>
             </enzyme>
         </enzymes>
