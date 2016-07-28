@@ -42,7 +42,11 @@ struct configuration {
                         indices[tag] = entries.size();
                         entries.push_back(configuration_entry(tag, val, str));
                 } else {
-                        entries[indices[tag]] = configuration_entry(tag, val, str);
+                        auto s = str;
+                        if (s == "") {
+                                s = entries[indices[tag]].str;
+                        }
+                        entries[indices[tag]] = configuration_entry(tag, val, s);
                 }
         }
         
