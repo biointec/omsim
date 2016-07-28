@@ -14,7 +14,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         */
         wxBoxSizer *namebox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *nameTitle = new wxStaticText(this, wxID_ANY, wxT("Experiment name"));
-        nameCtrl = new wxTextCtrl(this, wxID_Name, c.get("name"), wxPoint(-1, -1), wxSize(-1, -1));
+        nameCtrl = new wxTextCtrl(this, wxID_Name, c.get(wxT("name")), wxPoint(-1, -1), wxSize(-1, -1));
         namebox->Add(nameTitle);
         namebox->Add(nameCtrl, 0, wxEXPAND | wxALL, 20);
         
@@ -31,12 +31,12 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxBoxSizer *flbbox = new wxBoxSizer(wxHORIZONTAL);
         fastaListBox = new wxListBox(fastaPanel, wxID_FastaListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         flbbox->Add(fastaListBox, 5, wxEXPAND | wxALL, 20);
-        ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, "Fasta", "fasta");
+        ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, wxT("Fasta"), wxT("fasta"));
         flbbox->Add(fastaBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
         fastaPanel->SetSizerAndFit(flbbox);
         fastaPanel->Center();
         
-        circularCheckBox = new wxCheckBox(this, wxID_CircularCheckBox, "Circular Genome", wxPoint(-1, -1), wxSize(-1, -1));
+        circularCheckBox = new wxCheckBox(this, wxID_CircularCheckBox, wxT("Circular Genome"), wxPoint(-1, -1), wxSize(-1, -1));
         circularCheckBox->SetValue(c.circular);
         Connect(wxID_CircularCheckBox, wxEVT_CHECKBOX,
                 wxCommandEventHandler(BasicPanel::OnCircularCheck));
@@ -71,9 +71,9 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxStaticText *lengthTitle = new wxStaticText(this, wxID_ANY, wxT("Size distribution"));
         wxBoxSizer *sizedistbox = new wxBoxSizer(wxHORIZONTAL);
         wxStaticText *meanText = new wxStaticText(this, wxID_ANY, wxT("Mean:"));
-        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.get("avg_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
+        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.get(wxT("avg_mol_len")), wxPoint(-1, -1), wxSize(-1, -1));
         wxStaticText *stdText = new wxStaticText(this, wxID_ANY, wxT("Standard deviation:"));
-        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.get("sd_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
+        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.get(wxT("sd_mol_len")), wxPoint(-1, -1), wxSize(-1, -1));
         sizedistbox->Add(meanText, 0, wxEXPAND | wxALL, 20);
         sizedistbox->Add(sizeMeanCtrl, 0, wxEXPAND | wxTOP | wxBOTTOM, 20);
         sizedistbox->Add(stdText, 0, wxEXPAND | wxALL, 20);
