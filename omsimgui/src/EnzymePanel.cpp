@@ -96,8 +96,8 @@ void EnzymePanel::addXML(wxString const &xml) {
 void EnzymePanel::OnImport(wxCommandEvent& event) 
 {
         wxFileDialog openDialog(this,
-                _("Choose a file to open"), wxEmptyString, wxEmptyString,
-                _("XML Files (*.xml)|*.xml"), wxFD_MULTIPLE);
+                wxT("Choose a file to open"), wxEmptyString, wxEmptyString,
+                wxT("XML Files (*.xml)|*.xml"), wxFD_MULTIPLE);
         if (openDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -108,8 +108,8 @@ void EnzymePanel::OnImport(wxCommandEvent& event)
 void EnzymePanel::OnExport(wxCommandEvent& event) 
 {
         wxFileDialog saveDialog(this,
-                _("Save XML file"), wxEmptyString, wxEmptyString,
-                _("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+                wxT("Save XML file"), wxEmptyString, wxEmptyString,
+                wxT("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
         if (saveDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -120,7 +120,7 @@ void EnzymePanel::OnExport(wxCommandEvent& event)
 
 void EnzymePanel::OnNew(wxCommandEvent& event) 
 {
-        EnzymeDialog dlg(this, wxID_ANY, _("Add enzyme"));
+        EnzymeDialog dlg(this, wxID_ANY, wxT("Add enzyme"));
         if (dlg.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -151,7 +151,7 @@ void EnzymePanel::OnEnzDblClick(wxCommandEvent& event)
         int sel = m_lb->GetSelection();
         if (sel != -1) {
                 wxString id = m_lb->GetString(sel);
-                EnzymeDialog dlg(this, wxID_ANY, _("Add enzyme"), enzymes[id]);
+                EnzymeDialog dlg(this, wxID_ANY, wxT("Add enzyme"), enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {

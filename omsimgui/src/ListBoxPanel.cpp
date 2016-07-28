@@ -34,8 +34,8 @@ ListBoxPanel::ListBoxPanel(wxPanel * parent, wxListBox * lb, wxString const &Ext
 void ListBoxPanel::OnNew(wxCommandEvent& event) 
 {
         wxFileDialog* openDialog = new wxFileDialog(this,
-                _("Choose a file to open"), wxEmptyString, wxEmptyString,
-                _(Ext + " Files (*." + ext + ")|*." + ext), wxFD_MULTIPLE);
+                wxT("Choose a file to open"), wxEmptyString, wxEmptyString,
+                wxT("" + Ext + " Files (*." + ext + ")|*." + ext), wxFD_MULTIPLE);
         if (openDialog->ShowModal() == wxID_CANCEL) {
                 return;
         } else {

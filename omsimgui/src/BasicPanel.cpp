@@ -152,7 +152,7 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
         int sel = enzymeCheckListBox->GetSelection();
         if (sel != -1) {
                 wxString id = enzymeCheckListBox->GetString(sel);
-                EnzymeDialog dlg(this, wxID_ANY, _("Change label"), enzymes[id]);
+                EnzymeDialog dlg(this, wxID_ANY, wxT("Change label"), enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
@@ -166,17 +166,17 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
 
 void BasicPanel::OnName(wxCommandEvent& Event)
 {
-        c.set("name", nameCtrl->GetValue());
+        c.set(wxT("name"), nameCtrl->GetValue());
 }
 
 void BasicPanel::OnSizeMean(wxCommandEvent& Event)
 {
-        c.set("avg_mol_len", sizeMeanCtrl->GetValue());
+        c.set(wxT("avg_mol_len"), sizeMeanCtrl->GetValue());
 }
 
 void BasicPanel::OnSizeSD(wxCommandEvent& Event)
 {
-        c.set("sd_mol_len", sizeSDCtrl->GetValue());
+        c.set(wxT("sd_mol_len"), sizeSDCtrl->GetValue());
 }
 
 void BasicPanel::OnCircularCheck(wxCommandEvent& event) 

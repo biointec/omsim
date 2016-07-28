@@ -4,7 +4,7 @@ TagPanel::TagPanel(wxWindow *parent, wxSizer *sizer, wxString const &tag_, wxStr
       : wxPanel(parent, wxID_ANY), tag(tag_), val(val_), lab(lab_)
 {
         wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
-        label = new wxStaticText(this, wxID_ANY, lab + wxString(":"));
+        label = new wxStaticText(this, wxID_ANY, lab + wxT(":"));
         ctrl = new wxTextCtrl(this, wxID_Ctrl, val, wxPoint(-1, -1), wxSize(-1, -1));
         hbox->Add(label, 1, wxEXPAND | wxRIGHT, 20);
         hbox->Add(ctrl, 0, wxEXPAND | wxALIGN_RIGHT | wxRIGHT, 5);

@@ -12,7 +12,7 @@ MainFrame::MainFrame(const wxString& title)
 {
         wxMenuBar *menubar = new wxMenuBar;
         wxMenu *file = new wxMenu;
-        file->Append(wxID_EXIT, wxT("Quit"), wxT(""));
+        file->Append(wxID_EXIT, wxT("Quit"), wxString());
         menubar->Append(file, wxT("&File"));
         SetMenuBar(menubar);
         Connect(wxEVT_COMMAND_MENU_SELECTED, 
@@ -62,7 +62,7 @@ MainFrame::MainFrame(const wxString& title)
         /*
         wxBoxSizer *runbox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *runTitle = new wxStaticText(this, wxID_ANY, wxT("Simulation"));
-        wxButton *runButton = new wxButton(this, wxID_RunButton, _T("Save and run simulation"), wxPoint(0, 0), wxDefaultSize, 0);
+        wxButton *runButton = new wxButton(this, wxID_RunButton, wxT("Save and run simulation"), wxPoint(0, 0), wxDefaultSize, 0);
         runbox->Add(runTitle);
         runbox->Add(runButton, 1, wxALL, 10);
         

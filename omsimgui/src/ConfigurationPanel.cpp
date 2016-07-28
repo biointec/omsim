@@ -171,8 +171,8 @@ void ConfigurationPanel::updateXML() {
 void ConfigurationPanel::OnImport(wxCommandEvent& event) 
 {
         wxFileDialog openDialog(this,
-                _("Choose a file to open"), wxEmptyString, wxEmptyString,
-                _("XML Files (*.xml)|*.xml"), wxFD_MULTIPLE);
+                wxT("Choose a file to open"), wxEmptyString, wxEmptyString,
+                wxT("XML Files (*.xml)|*.xml"), wxFD_MULTIPLE);
         if (openDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -185,8 +185,8 @@ void ConfigurationPanel::OnImport(wxCommandEvent& event)
 void ConfigurationPanel::OnExport(wxCommandEvent& event) 
 {
         wxFileDialog saveDialog(this,
-                _("Save XML file"), wxEmptyString, wxEmptyString,
-                _("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+                wxT("Save XML file"), wxEmptyString, wxEmptyString,
+                wxT("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
         if (saveDialog.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -198,7 +198,7 @@ void ConfigurationPanel::OnExport(wxCommandEvent& event)
 void ConfigurationPanel::OnNew(wxCommandEvent& event) 
 {
         configuration c;
-        Notebook dlg(this, wxID_ANY, _("Add configuration"), c, enzymes, wxDefaultPosition, wxSize(500, 700));
+        Notebook dlg(this, wxID_ANY, wxT("Add configuration"), c, enzymes, wxDefaultPosition, wxSize(500, 700));
         if (dlg.ShowModal() == wxID_CANCEL) {
                 return;
         } else {
@@ -230,7 +230,7 @@ void ConfigurationPanel::OnConfDblClick(wxCommandEvent& event)
         int sel = m_clb->GetSelection();
         if (sel != -1) {
                 auto name = m_clb->GetString(sel);
-                Notebook dlg(this, wxID_ANY, _("Edit configuration"), configurations[name], enzymes, wxDefaultPosition, wxSize(500, 700));
+                Notebook dlg(this, wxID_ANY, wxT("Edit configuration"), configurations[name], enzymes, wxDefaultPosition, wxSize(500, 700));
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
