@@ -65,33 +65,18 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
                 wxCommandEventHandler(BasicPanel::OnEnzDblClick));
                 
         /*
-                length box
+                settings box
         */
-        wxBoxSizer *lengthbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *lengthTitle = new wxStaticText(this, wxID_ANY, wxT("Size distribution"));
-        wxBoxSizer *sizedistbox = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText *meanText = new wxStaticText(this, wxID_ANY, wxT("Mean:"));
-        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.get(wxT("avg_mol_len")), wxPoint(-1, -1), wxSize(-1, -1));
-        wxStaticText *stdText = new wxStaticText(this, wxID_ANY, wxT("Standard deviation:"));
-        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.get(wxT("sd_mol_len")), wxPoint(-1, -1), wxSize(-1, -1));
-        sizedistbox->Add(meanText, 0, wxEXPAND | wxALL, 20);
-        sizedistbox->Add(sizeMeanCtrl, 0, wxEXPAND | wxTOP | wxBOTTOM, 20);
-        sizedistbox->Add(stdText, 0, wxEXPAND | wxALL, 20);
-        sizedistbox->Add(sizeSDCtrl, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 20);
-        lengthbox->Add(lengthTitle);
-        lengthbox->Add(sizedistbox);
-        
-        Connect(wxID_SizeMean, wxEVT_TEXT,
-                wxCommandEventHandler(BasicPanel::OnSizeMean));
-        Connect(wxID_SizeSD, wxEVT_TEXT,
-                wxCommandEventHandler(BasicPanel::OnSizeSD));
+        wxBoxSizer *settingsbox = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *settingsTitle = new wxStaticText(this, wxID_ANY, wxT("Settings"));
+        settingsbox->Add(settingsTitle);
         /*
                 main box
         */
         mainbox->Add(namebox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(fastabox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(enzymebox, 0, wxEXPAND | wxALL, 10);
-        mainbox->Add(lengthbox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(settingsbox, 0, wxEXPAND | wxALL, 10);
         
         SetSizerAndFit(mainbox);
         
@@ -155,16 +140,6 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
 void BasicPanel::OnName(wxCommandEvent& Event)
 {
         c.set(wxT("name"), nameCtrl->GetValue());
-}
-
-void BasicPanel::OnSizeMean(wxCommandEvent& Event)
-{
-        c.set(wxT("avg_mol_len"), sizeMeanCtrl->GetValue());
-}
-
-void BasicPanel::OnSizeSD(wxCommandEvent& Event)
-{
-        c.set(wxT("sd_mol_len"), sizeSDCtrl->GetValue());
 }
 
 void BasicPanel::OnCircularCheck(wxCommandEvent& event) 
