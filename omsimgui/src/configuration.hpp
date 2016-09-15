@@ -8,12 +8,20 @@
 
 #include "enzyme.hpp"
 
+enum ConfType{
+        NAME,
+        BASIC,
+        ADVANCED,
+        DEPRECATED
+};
+
 struct configuration_entry {
         wxString tag;
         wxString val;
         wxString str;
+        ConfType type;
         configuration_entry() {}
-        configuration_entry(wxString const &tag_, wxString const &val_, wxString const &str_) {
+        configuration_entry(wxString const &tag_, wxString const &val_, wxString const &str_, ConfType type_) {
                 tag = tag_;
                 if (val_ != wxString()) {
                         val = val_;
@@ -21,6 +29,7 @@ struct configuration_entry {
                 if (str_ != wxString()) {
                         str = str_;
                 }
+                type = type_;
         }
 };
 
@@ -41,17 +50,17 @@ struct configuration {
         std::map<wxString, enzyme> enzymes;
         std::vector<wxString> labels;
         
-        void set(wxString const &tag, wxString const &val = wxString(), wxString const &str = wxString()) {
+        void set(wxString const &tag, wxString const &val = wxString(), wxString const &str = wxString(), ConfType type = ADVANCED) {
                 auto pos = indices.find(tag);
                 if (pos == indices.end()){
                         indices[tag] = entries.size();
-                        entries.push_back(configuration_entry(tag, val, str));
+                        entries.push_back(configuration_entry(tag, val, str, type));
                 } else {
                         auto s = str;
                         if (s == wxString()) {
                                 s = entries[indices[tag]].str;
                         }
-                        entries[indices[tag]] = configuration_entry(tag, val, s);
+                        entries[indices[tag]] = configuration_entry(tag, val, s, type);
                 }
         }
         
@@ -75,17 +84,17 @@ struct configuration {
                 
                 circular = false;
                 
-                set(wxT("name"), wxT("Unnamed"), wxT("Name"));
+                set(wxT("name"), wxT("Unnamed"), wxT("Name"), NAME);
                 set(wxT("prefix"), wxT("omsim_output"), wxT("Prefix"));
                 set(wxT("byte_prefix"), wxT("omsim"), wxT("Byte Prefix"));
 
-                set(wxT("coverage"), wxT("0"), wxT("Minimal Coverage"));
-                set(wxT("chips"), wxT("1"), wxT("Chip Count"));
+                set(wxT("coverage"), wxT("0"), wxT("Minimal Coverage"), DEPRECATED);
+                set(wxT("chips"), wxT("1"), wxT("Chip Count"), BASIC);
                 set(wxT("scans_per_chip"), wxT("30"), wxT("Scans Per Chip"));
                 set(wxT("scan_size"), wxT("1500"), wxT("Scan Size (Megabase)"));
 
-                set(wxT("avg_mol_len"), wxT("90000"), wxT("Molecule Length: Mean"));
-                set(wxT("sd_mol_len"), wxT("85000"), wxT("Molecule Length: Standard Deviation"));
+                set(wxT("avg_mol_len"), wxT("90000"), wxT("Molecule Length: Mean"), BASIC);
+                set(wxT("sd_mol_len"), wxT("85000"), wxT("Molecule Length: Standard Deviation"), BASIC);
                 set(wxT("min_mol_len"), wxT("1"), wxT("Molecule Length: Minimum"));
                 set(wxT("max_mol_len"), wxT("2500000"), wxT("Molecule Length: Maximum"));
                 set(wxT("min_nicks"), wxT("1"), wxT("Minimal Number of Nicks"));
