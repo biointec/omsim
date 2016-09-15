@@ -20,7 +20,7 @@ AdvancedPanel::AdvancedPanel(wxWindow *parent, wxWindowID id, configuration &c_)
                 auto &tag = entry.tag;
                 auto &val = entry.val;
                 auto &str = entry.str;
-                new TagPanel(scrollbox, vbox, tag, val, str);
+                tags.push_back(new TagPanel(scrollbox, vbox, tag, val, str));
         }
         
         scrollbox->SetSizerAndFit(vbox);
@@ -39,4 +39,10 @@ AdvancedPanel::AdvancedPanel(wxWindow *parent, wxWindowID id, configuration &c_)
         mainbox->Add(closebox, 0, wxEXPAND | wxALIGN_CENTER | wxRIGHT | wxTOP | wxBOTTOM, 5);
         
         SetSizerAndFit(mainbox);
+}
+
+void AdvancedPanel::update(){
+        for (auto tag : tags) {
+                tag->update();
+        }
 }

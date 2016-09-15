@@ -14,7 +14,7 @@ class TagPanel : public wxPanel
                 wxString const &lab;
         public:
                 TagPanel(wxWindow *parent, wxSizer *grid, wxString const &tag_, wxString &val_, wxString const &lab_);
-                
+                void update();
                 void OnText(wxCommandEvent& event);
 };
 

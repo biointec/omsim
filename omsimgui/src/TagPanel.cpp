@@ -20,3 +20,7 @@ void TagPanel::OnText(wxCommandEvent& event)
 {
         val = ctrl->GetValue();
 }
+
+void TagPanel::update() {
+        ctrl->SetValue(val);
+}
