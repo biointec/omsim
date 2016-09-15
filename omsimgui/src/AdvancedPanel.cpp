@@ -26,17 +26,7 @@ AdvancedPanel::AdvancedPanel(wxWindow *parent, wxWindowID id, configuration &c_)
         scrollbox->SetSizerAndFit(vbox);
         scrollbox->FitInside();
         scrollbox->SetScrollRate(5, 5);
-        /*
-                close box
-        */
-        wxBoxSizer *closebox = new wxBoxSizer(wxVERTICAL);
-        wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
-        wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
-        closebox->Add(ok, 0, wxEXPAND | wxALIGN_CENTER);
-        closebox->Add(cancel, 0, wxEXPAND | wxALIGN_CENTER);
-        
         mainbox->Add(scrollbox, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 5);
-        mainbox->Add(closebox, 0, wxEXPAND | wxALIGN_CENTER | wxRIGHT | wxTOP | wxBOTTOM, 5);
         
         SetSizerAndFit(mainbox);
 }

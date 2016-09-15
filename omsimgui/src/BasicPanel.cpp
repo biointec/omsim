@@ -85,17 +85,6 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
                 wxCommandEventHandler(BasicPanel::OnSizeMean));
         Connect(wxID_SizeSD, wxEVT_TEXT,
                 wxCommandEventHandler(BasicPanel::OnSizeSD));
-        
-        /*
-                close box
-        */
-        wxBoxSizer *closebox = new wxBoxSizer(wxHORIZONTAL);
-        wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
-        wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
-        closebox->Add(ok, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
-        closebox->Add(cancel, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
-        
-        
         /*
                 main box
         */
@@ -103,7 +92,6 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         mainbox->Add(fastabox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(enzymebox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(lengthbox, 0, wxEXPAND | wxALL, 10);
-        mainbox->Add(closebox, 0, wxEXPAND | wxALL, 10);
         
         SetSizerAndFit(mainbox);
         
