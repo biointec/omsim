@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include "tinyxml2.h"
+
 #include "enzyme.hpp"
 
 struct configuration_entry {
@@ -23,6 +25,9 @@ struct configuration_entry {
 };
 
 struct configuration {
+        wxString xml;
+        tinyxml2::XMLDocument *doc;
+        
         bool circular;
         
         wxString name;
@@ -54,7 +59,20 @@ struct configuration {
                 return entries[indices[tag]].val;
         }
         
-        configuration(){
+        configuration() {
+                doc = new tinyxml2::XMLDocument();
+                new_config();
+        }
+        
+        void open_config(wxString xml_) {
+                xml = xml_;
+                doc->LoadFile(xml);
+                parseXML();
+        }
+        
+        void new_config() {
+                xml = "";
+                
                 circular = false;
                 
                 set(wxT("name"), wxT("Unnamed"), wxT("Name"));
@@ -104,6 +122,110 @@ struct configuration {
                 set(wxT("sim_batch_size"), wxT("100000"), wxT("Simulation Batch Size"));
                 set(wxT("seed"), wxString(), wxT("PRNG Seed"));
         };
-};
+        
+        void parseXML() {
+                auto child = doc->FirstChildElement()->FirstChildElement();
+                if (child != NULL) {
+                        /*
+                                Required parameters
+                        */
+                        for (auto &entry : entries) {
+                                auto &tag = entry.tag;
+                                auto &val = entry.val;
+                                if (child->FirstChildElement(tag) != NULL) {
+                                        val = child->FirstChildElement(tag)->GetText();
+                                }
+                        }
+                        
+                        if (child->FirstChildElement("files") != NULL && 
+                                child->FirstChildElement("files")->FirstChildElement("file") != NULL)
+                        {
+                                auto file = child->FirstChildElement("files")->FirstChildElement("file");
+                                while (file != NULL) {
+                                        files.push_back(file->GetText());
+                                        file = file->NextSiblingElement("file");
+                                }
+                        }
+                        
+                        if (child->FirstChildElement("enzymes") != NULL &&
+                                child->FirstChildElement("enzymes")->FirstChildElement("enzyme") != NULL)
+                        {
+                                auto enzymeElement = child->FirstChildElement("enzymes")->FirstChildElement("enzyme");
+                                while (enzymeElement != NULL) {
+                                        wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
+                                        wxString vals [5] = {};
+                                        for (auto i = 0; i < 5; ++i) {
+                                                if (enzymeElement->FirstChildElement(tags[i]) != NULL) {
+                                                        vals[i] = enzymeElement->FirstChildElement(tags[i])->GetText();
+                                                }
+                                        }
+                                        enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
+                                        enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
+                                        enzymeElement = enzymeElement->NextSiblingElement("enzyme");
+                                }
+                        }
+                        
+                        if (child->FirstChildElement("circular") != NULL) {
+                                circular = true;
+                        }
+                }
+        }
+        
+        void updateXML() {
+                if (doc->FirstChildElement() != NULL) {
+                        doc->DeleteNode(doc->FirstChildElement());
+                }
+                auto * top = doc->NewElement("simulation");
+                auto *child = doc->NewElement("input");
+                auto *filesElement = doc->NewElement("files");
+                for (auto f : files) {
+                        auto *file = doc->NewElement("file");
+                        auto *fileText = doc->NewText(f);
+                        file->LinkEndChild(fileText);
+                        filesElement->LinkEndChild(file);
+                }
+                child->LinkEndChild(filesElement);
+                if (circular) {
+                        auto *circular = doc->NewElement("circular");
+                        child->LinkEndChild(circular);
+                }
+                auto *enzymesElement = doc->NewElement("enzymes");
+                for (auto kv : enzymes) {
+                        auto e = enzymes[kv.first];
+                        auto *enzymeElement = doc->NewElement("enzyme");
+                        wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
+                        wxString vals [5] = {e.id, e.pattern, e.label, e.fn, e.fp};
+                        for (auto i = 0; i < 5; ++i) {
+                                auto enzymeChild = doc->NewElement(tags[i]);
+                                auto enzymeChildText = doc->NewText(vals[i]);
+                                enzymeChild->LinkEndChild(enzymeChildText);
+                                enzymeElement->LinkEndChild(enzymeChild);
+                        }
+                        enzymesElement->LinkEndChild(enzymeElement);
+                }
+                child->LinkEndChild(enzymesElement);
+                for (auto &entry : entries) {
+                        auto &tag = entry.tag;
+                        auto &val = entry.val;
+                        if (val != "") {
+                                auto tagChild = doc->NewElement(tag);
+                                auto valChild = doc->NewText(val);
+                                tagChild->LinkEndChild(valChild);
+                                child->LinkEndChild(tagChild);
+                        }
+                }
+                top->LinkEndChild(child);
+                doc->LinkEndChild(top);
+        }
+        
+        void save() {
+                save_as(xml);
+        }
+        
+        void save_as(wxString const &path) {
+                updateXML();
+                doc->SaveFile(path);
+        }
+};      
 
 #endif
