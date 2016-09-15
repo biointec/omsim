@@ -1,7 +1,7 @@
 #include "BasicPanel.hpp"
 #include "ListBoxPanel.hpp"
 #include "EnzymeDialog.hpp"
-
+#include "TagPanel.hpp"
 #include <algorithm> //find
 
 BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
@@ -70,6 +70,14 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxBoxSizer *settingsbox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *settingsTitle = new wxStaticText(this, wxID_ANY, wxT("Settings"));
         settingsbox->Add(settingsTitle);
+        for (auto &entry : c.entries) {
+                auto &tag = entry.tag;
+                auto &val = entry.val;
+                auto &str = entry.str;
+                if (entry.type == BASIC) {
+                        tags.push_back(new TagPanel(this, settingsbox, tag, val, str));
+                }
+        }
         /*
                 main box
         */
@@ -117,6 +125,9 @@ void BasicPanel::update() {
                 if (idx != wxNOT_FOUND) {
                         enzymeCheckListBox->Check(idx);
                 }
+        }
+        for (auto tag : tags) {
+                tag->update();
         }
 }
 

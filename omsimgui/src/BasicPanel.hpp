@@ -5,6 +5,8 @@
 #include "wx.hpp"
 #include "configuration.hpp"
 
+class TagPanel;
+
 class BasicPanel : public wxPanel
 {
         private:
@@ -17,6 +19,7 @@ class BasicPanel : public wxPanel
                 wxTextCtrl *sizeMeanCtrl;
                 wxTextCtrl *sizeSDCtrl;
                 wxCheckBox *circularCheckBox;
+                std::vector<TagPanel*> tags;
         public:
                 BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_);
                 void update();
