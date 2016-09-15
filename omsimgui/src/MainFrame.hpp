@@ -2,40 +2,36 @@
 #define MAINFRAME_HPP
 
 #include "wx.hpp"
-#include "ConfigurationPanel.hpp"
-#include "EnzymePanel.hpp"
+#include <wx/dialog.h>
+#include <wx/notebook.h>
 
-//#include <thread>
+#include <map>
 
-class EnzymePanel;
-class ConfigurationPanel;
+#include "configuration.hpp"
 
+class BasicPanel;
+class AdvancedPanel;
 class MainFrame : public wxFrame
 {
         private:
-                wxCheckListBox *configurationCheckListBox;
-                ConfigurationPanel *configurationPanel;
-                wxListBox *enzymeListBox;
-                EnzymePanel *enzymePanel;
-                std::map<wxString, configuration> configurations;
+                configuration c;
                 std::map<wxString, enzyme> enzymes;
-                
-                //std::thread simulator_thread;
+                BasicPanel *bpanel;
+                AdvancedPanel *apanel;
         public:
                 MainFrame(const wxString& title);
-                
-                void OnQuit(wxCommandEvent& event);
-                void OnEnzDblClick(wxCommandEvent& event);
-                void OnConfDblClick(wxCommandEvent& event);
-                void OnRunOmsim(wxCommandEvent& event);
-                
                 void update();
+                void OnNew(wxCommandEvent& event);
+                void OnOpen(wxCommandEvent& event);
+                void OnSave(wxCommandEvent& event);
+                void OnCopy(wxCommandEvent& event);
+                void OnQuit(wxCommandEvent& event);
 };
 
 enum {
-        wxID_ConfigurationCheckListBox = wxID_HIGHEST + 1,
-        wxID_EnzymeCheckListBox = wxID_HIGHEST + 2,
-        wxID_RunButton = wxID_HIGHEST + 3
+        wxID_CNEW = wxID_HIGHEST + 1,
+        wxID_COPEN = wxID_HIGHEST + 2,
+        wxID_CSAVE = wxID_HIGHEST + 3,
+        wxID_CCOPY = wxID_HIGHEST + 4
 };
-
 #endif

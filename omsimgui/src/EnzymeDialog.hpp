@@ -17,7 +17,7 @@ class EnzymeDialog : public wxDialog
                 
                 enzyme e;
         public:
-                EnzymeDialog(wxWindow *parent, wxWindowID id, const wxString &title, enzyme const &e_=enzyme("", "", "", "", ""), const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE, const wxString &name=wxDialogNameStr);
+                EnzymeDialog(wxWindow *parent, wxWindowID id, const wxString &title, enzyme const &e_=enzyme(wxString(), wxString(), wxString(), wxString(), wxString()), const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE, const wxString &name=wxDialogNameStr);
                 
                 enzyme GetEnzyme() {return e;}
                 

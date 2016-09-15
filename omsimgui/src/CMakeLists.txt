@@ -1,9 +1,7 @@
 add_executable(omsimgui
 AdvancedPanel.cpp
 BasicPanel.cpp
-ConfigurationPanel.cpp
 EnzymeDialog.cpp
-EnzymePanel.cpp
 ListBoxPanel.cpp
 main.cpp
 MainFrame.cpp

@@ -1,136 +1,104 @@
 #include "MainFrame.hpp"
-#include "ListBoxPanel.hpp"
-#include "EnzymePanel.hpp"
-#include "ConfigurationPanel.hpp"
-//#include "executablePath.hpp"
+#include "Notebook.hpp"
+#include "BasicPanel.hpp"
+#include "AdvancedPanel.hpp"
 #include "main.hpp" //wxGetApp
-
-bool run_sim = false;
+#include <wx/msgdlg.h>
+#include <iostream>
 
 MainFrame::MainFrame(const wxString& title)
       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
 {
         wxMenuBar *menubar = new wxMenuBar;
         wxMenu *file = new wxMenu;
-        file->Append(wxID_EXIT, wxT("Quit"), wxT(""));
+        file->Append(wxID_CNEW, wxT("New"), wxString());
+        file->Append(wxID_COPEN, wxT("Open"), wxString());
+        file->Append(wxID_CSAVE, wxT("Save"), wxString());
+        file->Append(wxID_CCOPY, wxT("Save a copy"), wxString());
+        file->Append(wxID_EXIT, wxT("Quit"), wxString());
         menubar->Append(file, wxT("&File"));
         SetMenuBar(menubar);
-        Connect(wxEVT_COMMAND_MENU_SELECTED, 
-                wxCommandEventHandler(MainFrame::OnQuit)); 
         
+        Connect(wxID_CNEW, wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(MainFrame::OnNew));
+        Connect(wxID_COPEN, wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(MainFrame::OnOpen));
+        Connect(wxID_CSAVE, wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(MainFrame::OnSave));
+        Connect(wxID_CCOPY, wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(MainFrame::OnCopy));
+        Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(MainFrame::OnQuit));
+
         wxBoxSizer *mainbox = new wxBoxSizer(wxVERTICAL);
-        
-        /*
-                xml box
-        */
-        wxBoxSizer *configurationbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *configurationTitle = new wxStaticText(this, wxID_ANY, wxT("Configurations"));
-        
-        wxBoxSizer *cclbbox = new wxBoxSizer(wxHORIZONTAL);
-        configurationCheckListBox = new wxCheckListBox(this, wxID_ConfigurationCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
-        cclbbox->Add(configurationCheckListBox, 5, wxEXPAND | wxALL, 20);
-        configurationPanel = new ConfigurationPanel(this, configurationCheckListBox, configurations, enzymes);
-        cclbbox->Add(configurationPanel, 1, wxRIGHT, 10);
-        
-        Connect(wxID_ConfigurationCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
-                wxCommandEventHandler(MainFrame::OnConfDblClick));
-        
-        configurationbox->Add(configurationTitle);
-        configurationbox->Add(cclbbox, 1, wxEXPAND);
-        
-        /*
-                enzyme box
-        */
-        wxBoxSizer *enzymebox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *enzymeTitle = new wxStaticText(this, wxID_ANY, wxT("Enzymes"));
-        
-        wxBoxSizer *elbbox = new wxBoxSizer(wxHORIZONTAL);
-        enzymeListBox = new wxListBox(this, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
-        elbbox->Add(enzymeListBox, 5, wxEXPAND | wxALL, 20);
-        enzymePanel = new EnzymePanel(this, enzymeListBox, configurations, enzymes);
-        elbbox->Add(enzymePanel, 1, wxRIGHT, 10);
-        
-        Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
-                wxCommandEventHandler(MainFrame::OnEnzDblClick));
-        
-        enzymebox->Add(enzymeTitle);
-        enzymebox->Add(elbbox, 1, wxEXPAND);
-        
-        /*
-                run box
-        */
-        /*
-        wxBoxSizer *runbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *runTitle = new wxStaticText(this, wxID_ANY, wxT("Simulation"));
-        wxButton *runButton = new wxButton(this, wxID_RunButton, _T("Save and run simulation"), wxPoint(0, 0), wxDefaultSize, 0);
-        runbox->Add(runTitle);
-        runbox->Add(runButton, 1, wxALL, 10);
-        
-        Connect(wxID_RunButton, wxEVT_BUTTON, 
-                wxCommandEventHandler(MainFrame::OnRunOmsim));
-        */
-        
-        /*
-                main box
-        */
-        
-        mainbox->Add(configurationbox, 1, wxEXPAND | wxALL, 10);
-        mainbox->Add(enzymebox, 1, wxEXPAND | wxALL, 10);
-        //mainbox->Add(runbox, 0, wxEXPAND | wxALL, 10);
-        
+        wxNotebook *nb = new wxNotebook(this, -1, wxPoint(-1, -1), 
+                wxSize(-1, -1), wxNB_TOP);
+        bpanel = new BasicPanel(nb, -1, c, enzymes);
+        nb->AddPage(bpanel, wxT("Basic"));
+        apanel = new AdvancedPanel(nb, -1, c);
+        nb->AddPage(apanel, wxT("Advanced"));
+        mainbox->Add(nb, 1, wxEXPAND | wxALL, 10);
         SetSizerAndFit(mainbox);
-        
         CreateStatusBar();
         Center();
 }
 
-
-void MainFrame::OnConfDblClick(wxCommandEvent& event)
-{
-        configurationPanel->OnConfDblClick(event);
+void MainFrame::update() {
+        bpanel->update();
+        apanel->update();
 }
 
-void MainFrame::OnEnzDblClick(wxCommandEvent& event)
+void MainFrame::OnNew(wxCommandEvent& event) 
 {
-        enzymePanel->OnEnzDblClick(event);
+        wxMessageDialog dlg(this, wxT("Creating a new configuration will delete any unsaved changes!"), wxMessageBoxCaptionStr, wxOK|wxCANCEL|wxCENTRE);
+        if (dlg.ShowModal() == wxID_CANCEL) {
+                return;
+        } else {
+                c.new_config();
+        }
+        update();
+}
+
+void MainFrame::OnOpen(wxCommandEvent& event) 
+{
+        wxMessageDialog dlg(this, wxT("Opening a new file will delete any unsaved changes!"), wxT(""), wxOK|wxCANCEL|wxCENTRE);
+        if (dlg.ShowModal() == wxID_CANCEL) {
+                return;
+        } else {
+                wxFileDialog openDialog(this, wxT("Choose a file to open"),
+                        wxEmptyString, wxEmptyString,
+                        wxT("XML Files (*.xml)|*.xml"), wxFD_MULTIPLE);
+                if (openDialog.ShowModal() == wxID_CANCEL) {
+                        return;
+                } else {
+                        c.open_config(openDialog.GetPath());
+                }
+        }
+        update();
+}
+
+void MainFrame::OnSave(wxCommandEvent& event) 
+{
+        if (c.xml == "") {
+                OnCopy(event);
+        } else {
+                c.save();
+        }
+}
+
+void MainFrame::OnCopy(wxCommandEvent& event) 
+{
+        wxFileDialog saveDialog(this,
+                wxT("Save XML file"), wxEmptyString, wxEmptyString,
+                wxT("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+        if (saveDialog.ShowModal() == wxID_CANCEL) {
+                return;
+        } else {
+                c.save_as(saveDialog.GetPath());
+        }
 }
 
 void MainFrame::OnQuit(wxCommandEvent& event) 
 {
-        //simulator_thread.join();
         Close(true);
-}
-
-/*
-void MainFrame::OnRunOmsim(wxCommandEvent& event) {
-        if(!run_sim) {
-                wxFileDialog saveDialog(this,
-                        _("Save XML file"), wxEmptyString, wxEmptyString,
-                        _("XML files (*.xml)|*.xml"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
-                if (saveDialog.ShowModal() == wxID_CANCEL) {
-                        return;
-                } else {
-                        configurationPanel->updateXML();
-                        configurationPanel->doc->SaveFile(saveDialog.GetPath());
-                }
-
-                if (simulator_thread.joinable()) {
-                        simulator_thread.join();
-                }
-                run_sim = true;
-                wxPuts("Start new thread.");
-                const char *argv0 = wxGetApp().argv[0];
-                wxString path = executable_path(argv0);
-                path = path.substr(0, path.size() - 8) + wxString("omsim/__main__ ") + saveDialog.GetPath();
-                simulator_thread = std::thread{ [path](){
-                        std::system(path);
-                        run_sim = false;
-                }};
-        }
-}
-*/
-
-void MainFrame::update() {
-        configurationPanel->update();
-        enzymePanel->update();
 }

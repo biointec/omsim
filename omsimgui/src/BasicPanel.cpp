@@ -1,7 +1,7 @@
 #include "BasicPanel.hpp"
 #include "ListBoxPanel.hpp"
 #include "EnzymeDialog.hpp"
-
+#include "TagPanel.hpp"
 #include <algorithm> //find
 
 BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
@@ -14,7 +14,7 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         */
         wxBoxSizer *namebox = new wxBoxSizer(wxVERTICAL);
         wxStaticText *nameTitle = new wxStaticText(this, wxID_ANY, wxT("Experiment name"));
-        nameCtrl = new wxTextCtrl(this, wxID_Name, c.get("name"), wxPoint(-1, -1), wxSize(-1, -1));
+        nameCtrl = new wxTextCtrl(this, wxID_Name, c.get(wxT("name")), wxPoint(-1, -1), wxSize(-1, -1));
         namebox->Add(nameTitle);
         namebox->Add(nameCtrl, 0, wxEXPAND | wxALL, 20);
         
@@ -31,12 +31,12 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         wxBoxSizer *flbbox = new wxBoxSizer(wxHORIZONTAL);
         fastaListBox = new wxListBox(fastaPanel, wxID_FastaListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         flbbox->Add(fastaListBox, 5, wxEXPAND | wxALL, 20);
-        ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, "Fasta", "fasta");
+        ListBoxPanel *fastaBtnPanel = new ListBoxPanel(fastaPanel, fastaListBox, wxT("Fasta"), wxT("fasta"));
         flbbox->Add(fastaBtnPanel, 1, wxEXPAND | wxRIGHT, 10);
         fastaPanel->SetSizerAndFit(flbbox);
         fastaPanel->Center();
         
-        circularCheckBox = new wxCheckBox(this, wxID_CircularCheckBox, "Circular Genome", wxPoint(-1, -1), wxSize(-1, -1));
+        circularCheckBox = new wxCheckBox(this, wxID_CircularCheckBox, wxT("Circular Genome"), wxPoint(-1, -1), wxSize(-1, -1));
         circularCheckBox->SetValue(c.circular);
         Connect(wxID_CircularCheckBox, wxEVT_CHECKBOX,
                 wxCommandEventHandler(BasicPanel::OnCircularCheck));
@@ -65,45 +65,26 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
                 wxCommandEventHandler(BasicPanel::OnEnzDblClick));
                 
         /*
-                length box
+                settings box
         */
-        wxBoxSizer *lengthbox = new wxBoxSizer(wxVERTICAL);
-        wxStaticText *lengthTitle = new wxStaticText(this, wxID_ANY, wxT("Size distribution"));
-        wxBoxSizer *sizedistbox = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText *meanText = new wxStaticText(this, wxID_ANY, wxT("Mean:"));
-        sizeMeanCtrl = new wxTextCtrl(this, wxID_SizeMean, c.get("avg_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
-        wxStaticText *stdText = new wxStaticText(this, wxID_ANY, wxT("Standard deviation:"));
-        sizeSDCtrl =  new wxTextCtrl(this, wxID_SizeSD, c.get("sd_mol_len"), wxPoint(-1, -1), wxSize(-1, -1));
-        sizedistbox->Add(meanText, 0, wxEXPAND | wxALL, 20);
-        sizedistbox->Add(sizeMeanCtrl, 0, wxEXPAND | wxTOP | wxBOTTOM, 20);
-        sizedistbox->Add(stdText, 0, wxEXPAND | wxALL, 20);
-        sizedistbox->Add(sizeSDCtrl, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 20);
-        lengthbox->Add(lengthTitle);
-        lengthbox->Add(sizedistbox);
-        
-        Connect(wxID_SizeMean, wxEVT_TEXT,
-                wxCommandEventHandler(BasicPanel::OnSizeMean));
-        Connect(wxID_SizeSD, wxEVT_TEXT,
-                wxCommandEventHandler(BasicPanel::OnSizeSD));
-        
-        /*
-                close box
-        */
-        wxBoxSizer *closebox = new wxBoxSizer(wxHORIZONTAL);
-        wxButton *ok = new wxButton(this, wxID_OK, wxT("Ok"));
-        wxButton *cancel = new wxButton(this, wxID_CANCEL, wxT("Cancel"));
-        closebox->Add(ok, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
-        closebox->Add(cancel, 0, wxEXPAND | wxBOTTOM | wxLEFT, 20);
-        
-        
+        wxBoxSizer *settingsbox = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *settingsTitle = new wxStaticText(this, wxID_ANY, wxT("Settings"));
+        settingsbox->Add(settingsTitle);
+        for (auto &entry : c.entries) {
+                auto &tag = entry.tag;
+                auto &val = entry.val;
+                auto &str = entry.str;
+                if (entry.type == BASIC) {
+                        tags.push_back(new TagPanel(this, settingsbox, tag, val, str));
+                }
+        }
         /*
                 main box
         */
         mainbox->Add(namebox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(fastabox, 0, wxEXPAND | wxALL, 10);
         mainbox->Add(enzymebox, 0, wxEXPAND | wxALL, 10);
-        mainbox->Add(lengthbox, 0, wxEXPAND | wxALL, 10);
-        mainbox->Add(closebox, 0, wxEXPAND | wxALL, 10);
+        mainbox->Add(settingsbox, 0, wxEXPAND | wxALL, 10);
         
         SetSizerAndFit(mainbox);
         
@@ -145,6 +126,9 @@ void BasicPanel::update() {
                         enzymeCheckListBox->Check(idx);
                 }
         }
+        for (auto tag : tags) {
+                tag->update();
+        }
 }
 
 void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
@@ -152,7 +136,7 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
         int sel = enzymeCheckListBox->GetSelection();
         if (sel != -1) {
                 wxString id = enzymeCheckListBox->GetString(sel);
-                EnzymeDialog dlg(this, wxID_ANY, _("Change label"), enzymes[id]);
+                EnzymeDialog dlg(this, wxID_ANY, wxT("Change label"), enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
@@ -166,17 +150,7 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
 
 void BasicPanel::OnName(wxCommandEvent& Event)
 {
-        c.set("name", nameCtrl->GetValue());
-}
-
-void BasicPanel::OnSizeMean(wxCommandEvent& Event)
-{
-        c.set("avg_mol_len", sizeMeanCtrl->GetValue());
-}
-
-void BasicPanel::OnSizeSD(wxCommandEvent& Event)
-{
-        c.set("sd_mol_len", sizeSDCtrl->GetValue());
+        c.set(wxT("name"), nameCtrl->GetValue());
 }
 
 void BasicPanel::OnCircularCheck(wxCommandEvent& event) 
