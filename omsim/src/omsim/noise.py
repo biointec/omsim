@@ -59,7 +59,7 @@ class Noise:
         
         
         def strand(self):
-                return random.randint(0, 1)
+                return random.randint(0, 1)==0
         
         
         def nick_position(self, p, sd):
@@ -81,7 +81,7 @@ class Noise:
                 false_nick_pos = self.false_positive(fprate)
                 while false_nick_pos < length:
                         # generate FP's on random strand
-                        fp.append((false_nick_pos, self.strand(), False, enzyme))
+                        fp.append([int(false_nick_pos), self.strand(), False, enzyme])
                         false_nick_pos += self.false_positive(fprate)
                 return fp
         
@@ -154,7 +154,7 @@ class Noise:
                                 molecule.append(fp[f_idx])
                                 f_idx += 1
                         else:
-                                if fp[0][0] < tp[0][0]:
+                                if fp[f_idx][0] < tp[t_idx][0]:
                                         molecule.append(fp[f_idx])
                                         f_idx += 1
                                 else:
