@@ -198,6 +198,7 @@ class Noise:
                 length, molecule = self.fragile_sites(length, molecule)
                 # remove strand and [T|F]P information and randomise TP
                 molecule = [[self.nick_position(p, self.settings.nick_sd)[0], p[-1]] for p in molecule]
+                molecule = [p for p in molecule if p[0] < length]
                 return length, molecule, meta
         
         
