@@ -30,7 +30,7 @@ def fasta_parse(ifname):
                                 yield key, val
                         key, val = line[1:].rstrip().split()[0], ''
                 elif key:
-                        val += line.rstrip()
+                        val += line.rstrip().upper()
         if key:
                 yield key, val
 
