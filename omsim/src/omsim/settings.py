@@ -30,7 +30,7 @@ class Settings:
                 self.prefix = 'omsim_output'
                 self.byte_prefix = 'omsim'
                 self.coverage = 0
-                self.chips = 1
+                self.chips = 0
                 self.scans_per_chip = 30
                 self.scan_size = 1500
                 self.avg_mol_len = 90000
