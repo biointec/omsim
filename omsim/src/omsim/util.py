@@ -126,7 +126,7 @@ def double_stranded_multi_KMP_from_fasta(settings, cmaps):
                 meta_count = 0
                 # search for patterns
                 ifile = open(iname)
-                c = ifile.read(1)
+                c = ifile.read(1).upper()
                 while c:
                         if c == '>':
                                 '''
@@ -150,7 +150,7 @@ def double_stranded_multi_KMP_from_fasta(settings, cmaps):
                                         if matchLen[i] == sizes[i]:
                                                 e = enzymes[i % int(count / 2)]
                                                 cmaps[iname].add_nick(meta_count, e, i < count / 2, startPos[i])
-                        c = ifile.read(1)
+                        c = ifile.read(1).upper()
                         if seq_len > 0 and (not c or c == '>'):
                                 '''
                                         we reached the end of the sequence
