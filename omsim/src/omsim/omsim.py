@@ -161,9 +161,9 @@ def omsim(settings):
         print('Using ' + str(sum(len(f) for f in fns)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
         #compute reverse nicking sites
         rns = get_rns(settings, fns, seq_lens)
-	#estimate number of chips based on expected coverage
+        #estimate number of chips based on expected coverage
         if settings.chips == 0:
-        	temp = int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
+                temp = int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
                 settings.chips = temp if temp > 1 else 1
         #estimate coverage
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
