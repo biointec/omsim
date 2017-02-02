@@ -273,8 +273,8 @@ def xml_input_parse(xml_file):
         return s
 
 
-def print_welcome():
-        print('Welcome to OMSim v0.3')
+def print_welcome(version):
+        print('Welcome to OMSim ' + version)
 
 
 def print_usage():
@@ -282,7 +282,8 @@ def print_usage():
 
 
 def main(argv=None):
-        print_welcome()
+        version = "v0.4"
+        print_welcome(version)
         if argv is None:
                 argv = sys.argv
         print(' '.join(argv))
@@ -296,6 +297,7 @@ def main(argv=None):
                         print_usage()
                 else:
                         for s in xml_input_parse(opt):
+                                s.version = version
                                 simulations.append(s)
         for settings in simulations:
                 print(settings)

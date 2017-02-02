@@ -21,7 +21,6 @@
 
 class Settings:
         def __init__(self, args):
-                self.version = 'v0.3'
                 self.bnx_version = '1.2'
                 
                 self.circular = False
