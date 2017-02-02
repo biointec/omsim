@@ -132,11 +132,11 @@ def filter_input(settings, cmaps):
                 if not cmap.iname in settings.files:
                         continue
                 for idx in range(len(cmap.seqs)):
-                        seqs.append(cmap.seqs[idx])
-                        seq_lens.append(cmap.seq_lens[idx])
-                        fns.append(filter_nicks(settings, cmap.nicks[idx].nicks))
+                        if cmap.seq_lens[idx] > settings.min_mol_len:
+                                seqs.append(cmap.seqs[idx])
+                                seq_lens.append(cmap.seq_lens[idx])
+                                fns.append(filter_nicks(settings, cmap.nicks[idx].nicks))
         return seqs, seq_lens, fns
-
 
 def get_rns(settings, fns, seq_lens):
         rns = []
