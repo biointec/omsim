@@ -211,6 +211,7 @@ def omsim(settings):
                                 moleculeID += 1
                                 bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, relative_stretch[s - 1])
                         ofile[label].close()
+                print('Finished chip ' + str(chip) + '/' + str(settings.chips))
         #bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
 
