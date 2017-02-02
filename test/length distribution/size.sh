@@ -2,8 +2,8 @@
 
 #input paramaters
 min_mol_len=${1:-150}
-avg_mol_len=${2:-80}
-sd_mol_len=${3:-90}
+avg_mol_len=${2:-90}
+sd_mol_len=${3:-85}
 
 #sample 100mbp according to the above constraints
 python size.py $min_mol_len $avg_mol_len $sd_mol_len
