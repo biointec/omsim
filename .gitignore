@@ -10,3 +10,5 @@ plot
 **/hg38.fa.gz
 **/ecoli/omsim.byte*
 **/initial
+**/__pycache__
+**/*pyc
