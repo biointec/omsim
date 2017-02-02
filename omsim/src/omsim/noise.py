@@ -164,7 +164,6 @@ class Noise:
         
         
         def generate_molecule(self, nicks, size):
-                nicks = list(nicks)
                 #determine read position
                 shift, length, end = self.read_position(size)
                 #abort if improper read position

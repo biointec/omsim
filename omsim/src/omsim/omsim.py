@@ -121,7 +121,7 @@ def filter_nicks(settings, nicks):
                         fns.append(m)
                         idxs[m[2]['id']][m[1]] += 1
                         done = False
-        return fns
+        return list(fns)
 
 def filter_input(settings, cmaps):
         seqs = []
