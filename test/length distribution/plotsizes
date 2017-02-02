@@ -1,0 +1,12 @@
+n=100
+max=1000000
+min=0
+width=(max-min)/n
+hist(x,width)=width*floor(x/width)+width/2.0
+
+set terminal svg enhanced background rgb 'white' dashed
+set output "size.svg"
+set xrange [min:max]
+set yrange[1:]
+
+plot "size.out" using (hist($1,width)):(1.0) smooth freq dt 0 lt 0 lc rgb"black" title "size distribution"
