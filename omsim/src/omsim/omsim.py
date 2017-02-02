@@ -287,6 +287,9 @@ def main(argv=None):
                 argv = sys.argv
         print(' '.join(argv))
         simulations = []
+        if len(argv) == 1:
+                print_usage()
+                return 0
         for i in range(1, len(argv)):
                 opt = argv[i]
                 if opt == '-h' or opt == '--help':
