@@ -280,6 +280,10 @@ class Noise:
                 return random.gauss(chip_stretch, self.settings.stretch_scan_sd)
         
         
+        def mol_stretch_factor(self, scan_stretch):
+                return random.gauss(scan_stretch, self.settings.stretch_mol_sd)
+        
+        
         def intensity(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)

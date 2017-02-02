@@ -52,8 +52,9 @@ class Settings:
                 self.chimera_mu = 1500
                 self.chimera_sigma = 500
                 self.stretch_factor = .85
-                self.stretch_chip_sd = 0.01
-                self.stretch_scan_sd = 0.001
+                self.stretch_chip_sd = 0.02
+                self.stretch_scan_sd = 0.01
+                self.stretch_mol_sd = 0.005
                 self.molecule_AI_mu = 0.3
                 self.molecule_AI_sd = 0.2
                 self.label_AI_mu = 0.07
