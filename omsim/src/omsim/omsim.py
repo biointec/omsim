@@ -158,6 +158,12 @@ def omsim(settings):
         write_processed_input(settings, cmaps)
         # filter input for enzymes / files we need
         seqs, seq_lens, fns = filter_input(settings, cmaps)
+        prev = 0
+        cum_seq_lens = []
+        for seq_len in seq_lens:
+                curr = prev + seq_len
+                cum_seq_lens += [curr]
+                prev = curr
         print('Using ' + str(sum(len(f) for f in fns)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
         #compute reverse nicking sites
         rns = get_rns(settings, fns, seq_lens)
@@ -187,7 +193,7 @@ def omsim(settings):
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
                         scan_stretch = noise.scan_stretch_factor(chip_settings['stretch_factor'])
-                        for l, m, meta in noise.generate_scan(seq_lens, fns, rns):
+                        for l, m, meta in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns):
                                         moleculeID += 1
                                         #for mol in meta:
                                         #        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')

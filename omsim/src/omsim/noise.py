@@ -246,9 +246,7 @@ class Noise:
                 return mol
         
         
-        def generate_scan(self, seqLens, fks, rcks):
-                seqCount = len(seqLens)
-                cumSeqLens = [sum(seqLens[:k + 1]) for k in range(seqCount)]
+        def generate_scan(self, seqLens, cumSeqLens, fks, rcks):
                 chimera = [False, -1, None, [[-1, -1]]]
                 size = 0
                 while size < self.settings.get_scan_size():
