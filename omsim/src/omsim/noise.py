@@ -1,6 +1,6 @@
 '''
-        Copyright (C) 2016 Giles Miclotte (giles.miclotte@intec.ugent.be)
-        This file is part of BioNanoSim
+        Copyright (C) 2016 Giles Miclotte (giles.miclotte@ugent.be)
+        This file is part of OMSim
 
         This program is free software; you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 '''
-        Copyright (C) 2016 Giles Miclotte (giles.miclotte@intec.ugent.be)
-        This file is part of BioNanoSim
+        Copyright (C) 2016 Giles Miclotte (giles.miclotte@ugent.be)
+        This file is part of OMSim
 
         This program is free software; you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -288,7 +288,7 @@ def print_usage():
 
 
 def main(argv=None):
-        version = "v0.4"
+        version = "v1.0"
         print_welcome(version)
         if argv is None:
                 argv = sys.argv
