@@ -72,13 +72,18 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_/*, std
         
         wxPanel * ePanel = new wxPanel(this, -1);
         wxBoxSizer *eclbbox = new wxBoxSizer(wxHORIZONTAL);
+        
         enzymeCheckListBox = new wxCheckListBox(ePanel, wxID_EnzymeCheckListBox, wxPoint(-1, -1), wxSize(-1, -1)); 
         eclbbox->Add(enzymeCheckListBox, 5, wxEXPAND | wxALL, 20);
         ePanel->SetSizerAndFit(eclbbox);
         ePanel->Center();
         
+        auto enzymeButton = new wxButton(this, wxID_New_Enz, wxT("Add enzyme"));
+        Connect(wxID_New_Enz, wxEVT_COMMAND_BUTTON_CLICKED, 
+                wxCommandEventHandler(BasicPanel::OnNewEnz));
         enzymebox->Add(enzymeTitle);
         enzymebox->Add(ePanel, 1, wxEXPAND);
+        enzymebox->Add(enzymeButton, 0);
         
         Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
                 wxCommandEventHandler(BasicPanel::OnEnzDblClick));
@@ -152,7 +157,7 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
         int sel = enzymeCheckListBox->GetSelection();
         if (sel != -1) {
                 wxString id = enzymeCheckListBox->GetString(sel);
-                EnzymeDialog dlg(this, wxID_ANY, wxT("Change label"), c.enzymes[id]);
+                EnzymeDialog dlg(this, wxID_ANY, wxT("Change enzyme details"), c.enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
@@ -182,4 +187,16 @@ void BasicPanel::OnEnzCheck(wxCommandEvent& event)
         auto item = event.GetInt();
         auto e = enzymeCheckListBox->GetString(item);
         c.enzymes[e].checked = enzymeCheckListBox->IsChecked(item);
+}
+
+void BasicPanel::OnNewEnz(wxCommandEvent& event)
+{
+        EnzymeDialog dlg(this, wxID_ANY, wxT("Change enzyme details"), enzyme());
+        if (dlg.ShowModal() == wxID_CANCEL) {
+                return;
+        } else {
+                enzyme e = dlg.GetEnzyme();
+                c.enzymes[e.id] = e;
+                update();
+        }
 }

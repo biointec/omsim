@@ -41,6 +41,7 @@ class BasicPanel : public wxPanel
         public:
                 BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_);
                 void update();
+                void OnNewEnz(wxCommandEvent& event);
                 void OnEnzDblClick(wxCommandEvent& event);
                 void OnEnzCheck(wxCommandEvent& event);
                 void OnName(wxCommandEvent& Event);
@@ -59,7 +60,8 @@ enum {
         wxID_SizeMean = wxID_HIGHEST + 3,
         wxID_SizeSD = wxID_HIGHEST + 4,
         wxID_CircularCheckBox = wxID_HIGHEST + 5,
-        wxID_Name = wxID_HIGHEST + 6
+        wxID_Name = wxID_HIGHEST + 6,
+        wxID_New_Enz = wxID_HIGHEST + 7
 };
 
 #endif
