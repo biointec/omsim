@@ -28,10 +28,11 @@ struct enzyme {
         wxString label;
         wxString fn;
         wxString fp;
+        bool checked;
         
         enzyme(wxString const &id_ = wxString(), wxString const &pattern_ = wxString(), wxString const &label_ = wxString(), wxString const &fn_ = wxString(), wxString const &fp_ = wxString())
         {
-                wxString vals [5] = {wxT("Enzyme ID"), wxT("ACGT"), wxT("label_0"), wxT("0.15"), wxT("1.5")};
+                wxString vals [5] = {wxT("BspQI"), wxT("GCTCTTC"), wxT("label_0"), wxT("0.15"), wxT("1.0")};
                 wxString vals_ [5] = {id_, pattern_, label_, fn_, fp_};
                 for (auto i = 0; i < 5; ++i) {
                         if (vals_[i] != wxString()) {
@@ -43,6 +44,7 @@ struct enzyme {
                 label = vals[2];
                 fn = vals[3];
                 fp = vals[4];
+                checked = true;
         }
 };
 

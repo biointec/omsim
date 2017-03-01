@@ -52,7 +52,7 @@ MainFrame::MainFrame(const wxString& title)
         wxBoxSizer *mainbox = new wxBoxSizer(wxVERTICAL);
         wxNotebook *nb = new wxNotebook(this, -1, wxPoint(-1, -1), 
                 wxSize(-1, -1), wxNB_TOP);
-        bpanel = new BasicPanel(nb, -1, c, enzymes);
+        bpanel = new BasicPanel(nb, -1, c);
         nb->AddPage(bpanel, wxT("Basic"));
         apanel = new AdvancedPanel(nb, -1, c);
         nb->AddPage(apanel, wxT("Advanced"));

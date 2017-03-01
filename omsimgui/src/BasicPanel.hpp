@@ -30,7 +30,6 @@ class BasicPanel : public wxPanel
 {
         private:
                 configuration &c;
-                std::map<wxString, enzyme> &enzymes;
                 wxTextCtrl *nameCtrl;
                 wxListBox *fastaListBox;
                 wxListBox *xmlListBox;
@@ -40,9 +39,10 @@ class BasicPanel : public wxPanel
                 wxCheckBox *circularCheckBox;
                 std::vector<TagPanel*> tags;
         public:
-                BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_);
+                BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_);
                 void update();
                 void OnEnzDblClick(wxCommandEvent& event);
+                void OnEnzCheck(wxCommandEvent& event);
                 void OnName(wxCommandEvent& Event);
                 void OnSizeMean(wxCommandEvent& Event);
                 void OnSizeSD(wxCommandEvent& Event);

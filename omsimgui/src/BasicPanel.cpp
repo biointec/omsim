@@ -23,8 +23,8 @@
 #include "TagPanel.hpp"
 #include <algorithm> //find
 
-BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::map<wxString, enzyme> &enzymes_)
-      : wxPanel(parent, id), c(c_), enzymes(enzymes_)
+BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_/*, std::map<wxString, enzyme> &enzymes_*/)
+      : wxPanel(parent, id), c(c_)/*, enzymes(enzymes_)*/
 {
         wxBoxSizer *mainbox = new wxBoxSizer(wxVERTICAL);
         
@@ -82,7 +82,8 @@ BasicPanel::BasicPanel(wxWindow *parent, wxWindowID id, configuration &c_, std::
         
         Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, 
                 wxCommandEventHandler(BasicPanel::OnEnzDblClick));
-                
+        Connect(wxID_EnzymeCheckListBox, wxEVT_COMMAND_CHECKLISTBOX_TOGGLED,
+                wxCommandEventHandler(BasicPanel::OnEnzCheck));
         /*
                 settings box
         */
@@ -135,14 +136,10 @@ void BasicPanel::update() {
         }
         
         enzymeCheckListBox->Clear();
-        for (auto kv : enzymes) {
-                enzymeCheckListBox->Append(kv.first);
-        }
-        
         for (auto kv : c.enzymes) {
-                int idx = enzymeCheckListBox->FindString(kv.first);
-                if (idx != wxNOT_FOUND) {
-                        enzymeCheckListBox->Check(idx);
+                enzymeCheckListBox->Append(kv.first);
+                if (kv.second.checked) {
+                        enzymeCheckListBox->Check(enzymeCheckListBox->FindString(kv.first));
                 }
         }
         for (auto tag : tags) {
@@ -155,14 +152,17 @@ void BasicPanel::OnEnzDblClick(wxCommandEvent& event)
         int sel = enzymeCheckListBox->GetSelection();
         if (sel != -1) {
                 wxString id = enzymeCheckListBox->GetString(sel);
-                EnzymeDialog dlg(this, wxID_ANY, wxT("Change label"), enzymes[id]);
+                EnzymeDialog dlg(this, wxID_ANY, wxT("Change label"), c.enzymes[id]);
                 if (dlg.ShowModal() == wxID_CANCEL) {
                         return;
                 } else {
                         enzyme e = dlg.GetEnzyme();
-                        enzymes[e.id] = e;
+                        c.enzymes[e.id] = e;
                         enzymeCheckListBox->Delete(sel);
                         enzymeCheckListBox->Insert(e.id, sel);
+                        if (e.checked) {
+                                enzymeCheckListBox->Check(enzymeCheckListBox->FindString(e.id));
+                        }
                 }
         }
 }
@@ -175,4 +175,11 @@ void BasicPanel::OnName(wxCommandEvent& Event)
 void BasicPanel::OnCircularCheck(wxCommandEvent& event) 
 {
         c.circular = circularCheckBox->IsChecked();
+}
+
+void BasicPanel::OnEnzCheck(wxCommandEvent& event)
+{
+        auto item = event.GetInt();
+        auto e = enzymeCheckListBox->GetString(item);
+        c.enzymes[e].checked = enzymeCheckListBox->IsChecked(item);
 }

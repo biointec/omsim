@@ -149,6 +149,8 @@ struct configuration {
 
                 set(wxT("sim_batch_size"), wxT("100000"), wxT("Simulation Batch Size"));
                 set(wxT("seed"), wxString(), wxT("PRNG Seed"));
+                auto e = enzyme();
+                enzymes[e.id] = e;
         };
         
         void parseXML() {
@@ -188,7 +190,6 @@ struct configuration {
                                                 }
                                         }
                                         enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
-                                        enzymes[vals[0]] = enzyme(vals[0], vals[1], vals[2], vals[3], vals[4]);
                                         enzymeElement = enzymeElement->NextSiblingElement("enzyme");
                                 }
                         }
@@ -219,17 +220,19 @@ struct configuration {
                 }
                 auto *enzymesElement = doc->NewElement("enzymes");
                 for (auto kv : enzymes) {
-                        auto e = enzymes[kv.first];
-                        auto *enzymeElement = doc->NewElement("enzyme");
-                        wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
-                        wxString vals [5] = {e.id, e.pattern, e.label, e.fn, e.fp};
-                        for (auto i = 0; i < 5; ++i) {
-                                auto enzymeChild = doc->NewElement(tags[i]);
-                                auto enzymeChildText = doc->NewText(vals[i]);
-                                enzymeChild->LinkEndChild(enzymeChildText);
-                                enzymeElement->LinkEndChild(enzymeChild);
+                        if (kv.second.checked) {
+                                auto e = enzymes[kv.first];
+                                auto *enzymeElement = doc->NewElement("enzyme");
+                                wxString tags [5] = {"id", "pattern", "label", "fn", "fp"};
+                                wxString vals [5] = {e.id, e.pattern, e.label, e.fn, e.fp};
+                                for (auto i = 0; i < 5; ++i) {
+                                        auto enzymeChild = doc->NewElement(tags[i]);
+                                        auto enzymeChildText = doc->NewText(vals[i]);
+                                        enzymeChild->LinkEndChild(enzymeChildText);
+                                        enzymeElement->LinkEndChild(enzymeChild);
+                                }
+                                enzymesElement->LinkEndChild(enzymeElement);
                         }
-                        enzymesElement->LinkEndChild(enzymeElement);
                 }
                 child->LinkEndChild(enzymesElement);
                 for (auto &entry : entries) {

@@ -34,7 +34,6 @@ class MainFrame : public wxFrame
 {
         private:
                 configuration c;
-                std::map<wxString, enzyme> enzymes;
                 BasicPanel *bpanel;
                 AdvancedPanel *apanel;
         public:

@@ -32,9 +32,9 @@ class Notebook : public wxDialog
 {
         private:
                 configuration c;
-                std::map<wxString, enzyme> enzymes;
+                //std::map<wxString, enzyme> enzymes;
         public:
-                Notebook(wxWindow *parent, wxWindowID id, const wxString &title, const configuration &c_=configuration(), const std::map<wxString, enzyme> &enzymes_=std::map<wxString, enzyme>(), const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE, const wxString &name=wxDialogNameStr);
+                Notebook(wxWindow *parent, wxWindowID id, const wxString &title, const configuration &c_=configuration(), const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE, const wxString &name=wxDialogNameStr);
                 configuration GetConfiguration() {return c;}
 };
 
