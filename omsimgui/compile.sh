@@ -12,6 +12,7 @@ mkdir -p release
 cd release
 cmake ..
 make
-cp src/omsimgui ../../bin/omsimgui
+cp src/omsimgui ../../bin/omsimgui-linux-64
 cd ..
 
+./compile-windows.sh
