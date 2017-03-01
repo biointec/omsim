@@ -3,6 +3,7 @@ build
 bin
 release
 debug
+windows
 **/*bnx
 **/*xml
 *byte*
