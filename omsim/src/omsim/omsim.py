@@ -174,7 +174,6 @@ def omsim(settings):
         #estimate coverage
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
         print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
-        #bedfile = open(settings.prefix + '.bed', 'w')
         noise = Noise(settings)
         bnx = BNX(settings, noise)
         # generate reads
@@ -195,8 +194,6 @@ def omsim(settings):
                         scan_stretch = noise.scan_stretch_factor(chip_settings['stretch_factor'])
                         for l, m, meta in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns):
                                         moleculeID += 1
-                                        #for mol in meta:
-                                        #        bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + '\n')
                                         molecule = {}
                                         for label in settings.labels:
                                                 molecule[label] = []
@@ -204,22 +201,24 @@ def omsim(settings):
                                                 molecule[nick[1]['label']].append(nick[0])
                                         for label in settings.labels:
                                                 if settings.min_nicks <= len(molecule[label]):
-                                                        molecules[label].append((l, molecule[label], chip_settings['scans']))
+                                                        molecules[label].append((l, molecule[label], chip_settings['scans'], meta))
                                                         relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor'])
                                         chip_settings['molecule_count'] += 1
                                         chip_settings['size'] += l
                 # write output
-                ofile = {}
                 for label in settings.labels:
                         moleculeID = 0
-                        ofile[label] = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
-                        bnx.write_bnx_header(ofile[label], label, chip_settings)
-                        for l, m, s in molecules[label]:
+                        ofile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
+                        #bedfile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bed', 'w')
+                        bnx.write_bnx_header(ofile, label, chip_settings)
+                        for l, m, s, meta in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile[label], chip_settings, relative_stretch[moleculeID - 1])
-                        ofile[label].close()
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, relative_stretch[moleculeID - 1])
+                                #for idx, mol in enumerate(meta):
+                                        #bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
+                        ofile.close()
+                        #bedfile.close()
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
-        #bedfile.close()
         print('Finished processing ' + settings.name + '.\n')
 
 
