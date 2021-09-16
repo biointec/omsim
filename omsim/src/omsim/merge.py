@@ -33,7 +33,7 @@ def merge_bnx(out_bnx, in_bnxs):
     idx = 0
     for line in headers[0]:
         if line[:16] == '# Label Channels':
-            out_bnx_file.write('# Label Channels:\t' + ','.join([str(label + 1) for label in range(0, len(in_bnxs))]) + '\n')
+            out_bnx_file.write('# Label Channels:\t' + str(len(in_bnxs)) + '\n')
         elif line[:28] == '# Nickase Recognition Site 1':
             for label in range(0, len(in_bnxs)):
                 out_bnx_file.write('# Nickase Recognition Site ' + str(label + 1) + headers[label][idx][28:])
