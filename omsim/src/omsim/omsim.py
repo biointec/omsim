@@ -29,6 +29,7 @@ from bnx import BNX
 from settings import Settings
 import struct
 from cmap import Cmap, Nicks
+from merge import merge_bnx
 
 def write_processed_input(settings, cmaps):
         prefix = settings.byte_prefix
@@ -199,8 +200,8 @@ def omsim(settings):
                                                 molecule[label] = []
                                         for nick in m:
                                                 molecule[nick[1]['label']].append(nick[0])
-                                        for label in settings.labels:
-                                                if settings.min_nicks <= len(molecule[label]):
+                                        if settings.min_nicks <= len(m):
+                                                for label in settings.labels:
                                                         molecules[label].append((l, molecule[label], chip_settings['scans'], meta))
                                                         relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor'])
                                         chip_settings['molecule_count'] += 1
@@ -218,6 +219,8 @@ def omsim(settings):
                                         #bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
                         ofile.close()
                         #bedfile.close()
+                if len(settings.labels) > 1:
+                        merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
         print('Finished processing ' + settings.name + '.\n')
 
@@ -287,7 +290,7 @@ def print_usage():
 
 
 def main(argv=None):
-        version = "v1.0"
+        version = "v1.1.0"
         print_welcome(version)
         if argv is None:
                 argv = sys.argv
