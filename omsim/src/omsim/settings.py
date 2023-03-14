@@ -28,6 +28,7 @@ class Settings:
                 self.name = 'Unnamed'
                 self.prefix = 'omsim_output'
                 self.byte_prefix = 'omsim'
+                self.do_not_merge_bnx = False
                 self.coverage = 0
                 self.chips = 0
                 self.scans_per_chip = 30

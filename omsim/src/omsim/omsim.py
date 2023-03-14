@@ -219,7 +219,8 @@ def omsim(settings):
                                         #bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
                         ofile.close()
                         #bedfile.close()
-                merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
+                if not settings.do_not_merge_bnx:
+                        merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
         print('Finished processing ' + settings.name + '.\n')
 
@@ -271,6 +272,8 @@ def xml_input_parse(xml_file):
                         elif entry.tag in ['name', 'file', 'prefix', 'byte_prefix', 'label_snr_filter_type']:
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
+                                settings[entry.tag] = True
+                        elif entry.tag == 'do_not_merge_bnx':
                                 settings[entry.tag] = True
                         elif entry.tag in ['min_label_SNR', 'chimera_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd', 'molecule_AI_mu', 'molecule_AI_sd', 'label_AI_mu', 'label_AI_sd', 'molecule_SNR_mu', 'molecule_SNR_sd', 'label_SNR_mu', 'label_SNR_sd']:
                                 settings[entry.tag] = float(entry.text)
