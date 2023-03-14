@@ -78,7 +78,7 @@ def import_input(settings):
         prefix = settings.byte_prefix
         if os.path.isfile(prefix + '.byte.meta'):
                 meta_file = open(prefix + '.byte.meta')
-                byte_file = open(prefix + '.byte.nicks')
+                byte_file = open(prefix + '.byte.nicks', 'rb')
                 line = meta_file.readline()
                 line = meta_file.readline()
                 file_count = int(line[0])
