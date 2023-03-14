@@ -40,6 +40,10 @@ class Noise:
         def randnegbinom(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
+                if sd == 0:
+                        # if sd == 0, then r+mu == 0, resulting in a ZeroDivisionError
+                        # so, simply return an array of mu here
+                        return [mu] * size
                 r = (mu * mu) / (sd * sd - mu)
                 p = 1 - mu / (r + mu)
                 result = nbinom.rvs(r, p, size=size)

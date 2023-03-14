@@ -18,6 +18,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
+import math
 import random
 from bisect import bisect_left
 from math import exp, sqrt, log, fabs, floor, pi
@@ -78,6 +79,8 @@ class Noise:
         
         def false_positives(self, fprate, length, enzyme):
                 fp = []
+                if fprate == 0:
+                        return fp
                 false_nick_pos = self.false_positive(fprate)
                 while false_nick_pos < length:
                         # generate FP's on random strand
@@ -314,6 +317,10 @@ class Noise:
         def randnegbinom(self, mu, sd, size):
                 mu = float(mu)
                 sd = float(sd)
+                if sd == 0:
+                        # if sd == 0, then r+mu == 0, resulting in a ZeroDivisionError
+                        # so, simply return an array of mu here
+                        return [mu] * size
                 r = (mu * mu) / (sd * sd - mu)
                 p = 1 - mu / (r + mu)
                 result = nbinom.rvs(r, p, size=size)
