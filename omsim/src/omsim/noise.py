@@ -181,12 +181,20 @@ class Noise:
                 tp = []
                 idx = bisect_left(nicks, (shift,))
                 while idx < len(nicks) and nicks[idx][0] < end:
+                        # gather nicking sites that have the same start positions
+                        idxs = []
+                        pos = nicks[idx][0]
+                        while idx < len(nicks) and pos == nicks[idx][0]:
+                                idxs.append(idx)
+                                idx += 1
+                        # randomly select one of the nicking sites at this position
+                        nick = nicks[idxs[math.floor(random.random() * len(idxs))]]
+                        # check for false negative
                         r = random.random()
-                        fn_rate = nicks[idx][2]['fn']
+                        fn_rate = nick[2]['fn']
                         if r > fn_rate:
-                                pos = nicks[idx][0] - shift
-                                tp.append([pos, nicks[idx][1], True, nicks[idx][2]])
-                        idx += 1
+                                pos = nick[0] - shift
+                                tp.append([pos, nick[1], True, nick[2]])
                         if idx == len(nicks) and self.settings.circular:
                                 idx = 0
                                 shift -= size
