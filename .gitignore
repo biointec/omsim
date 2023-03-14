@@ -12,3 +12,6 @@ plot
 **/initial
 **/__pycache__
 **/*pyc
+omsim.byte.meta
+omsim.byte.nicks
+.idea
