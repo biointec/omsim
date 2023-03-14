@@ -210,15 +210,20 @@ def omsim(settings):
                 for label in settings.labels:
                         moleculeID = 0
                         ofile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
-                        #bedfile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bed', 'w')
                         bnx.write_bnx_header(ofile, label, chip_settings)
                         for l, m, s, meta in molecules[label]:
                                 moleculeID += 1
                                 bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, relative_stretch[moleculeID - 1])
-                                #for idx, mol in enumerate(meta):
-                                        #bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
                         ofile.close()
-                        #bedfile.close()
+                # write bed file
+                if settings.bed_file:
+                        bed_file = open(settings.prefix + '.' + str(chip) + '.bed', 'w')
+                        moleculeID = 0
+                        for _, _, _, meta in molecules[settings.labels[0]]:
+                                moleculeID += 1
+                                for idx, mol in enumerate(meta):
+                                        bed_file.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
+                        bed_file.close()
                 if not settings.do_not_merge_bnx:
                         merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
@@ -272,6 +277,8 @@ def xml_input_parse(xml_file):
                         elif entry.tag in ['name', 'file', 'prefix', 'byte_prefix', 'label_snr_filter_type']:
                                 settings[entry.tag] = entry.text
                         elif entry.tag == 'circular':
+                                settings[entry.tag] = True
+                        elif entry.tag == 'bed_file':
                                 settings[entry.tag] = True
                         elif entry.tag == 'do_not_merge_bnx':
                                 settings[entry.tag] = True
