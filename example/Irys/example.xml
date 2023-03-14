@@ -9,8 +9,8 @@
                 <!--Locations of all input files (1 or more)-->
                 <files>
                         <!--Location of the data set, absolute, or relative to the current directory-->
-                        <file>genome.fasta</file>
-                        <file>another_genome_file.fasta</file>
+                        <file>../../test/ecoli/MG1655.fasta</file>
+                        <!--file>another_genome_file.fasta</file-->
                 </files>
                 <!--Add this tag ONLY if the sequences in the data set are circular, leave it out if they are not-->
                 <circular/>

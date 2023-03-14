@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all enzymes-->
+<enzymes>
+        <!--properties of the enzyme-->
+        <enzyme>
+                <!--id, used to specify when this enzyme should be used-->
+                <id>DLE-1-noiseless</id>
+                <!--enzyme pattern-->
+                <pattern>CTTAAG</pattern>
+                <!--disable false positives-->
+                <fp>0.0</fp>
+                <!--disable false negatives-->
+                <fn>0.0</fn>
+        </enzyme>
+</enzymes>

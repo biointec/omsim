@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all simulations to run-->
+<simulation>
+        <!--input defining a single simulation-->
+        <input>
+                <name>Noiseless E. coli</name>
+                <files>
+                        <file>../../test/ecoli/MG1655.fasta</file>
+                </files>
+                <!--Add this tag ONLY if the sequences in the data set are circular, leave it out if they are not-->
+                <circular/>
+                <!--The enzymes and their labels to use-->
+                <enzymes>
+                        <file>enzymes.xml</file>
+                        <enzyme>
+                                <!--id of the enzyme, DLE-1-noiseless is specified as producing no false positives/negatives-->
+                                <id>DLE-1-noiseless</id>
+                                <label>label_0</label>
+                        </enzyme>
+                </enzymes>
+
+                <!--NOISE PARAMETERS: in this example all are configured to disable noise-->
+                <!--fixed molecule length-->
+                <sd_mol_len>0</sd_mol_len>
+                <avg_mol_len>200000</avg_mol_len>
+                <min_mol_len>20000</min_mol_len>
+                <max_mol_len>2500000</max_mol_len>
+                <!--fixed stretch factor-->
+                <stretch_factor>0.85</stretch_factor>
+                <stretch_chip_sd>0</stretch_chip_sd>
+                <stretch_scan_sd>0</stretch_scan_sd>
+                <stretch_mol_sd>0</stretch_mol_sd>
+                <!--disable label position normal noise-->
+                <nick_sd>0</nick_sd>
+                <!--disable fragile sites-->
+                <fragile_same>-1</fragile_same>
+                <fragile_opposite>-1</fragile_opposite>
+                <fragile_treshold>0</fragile_treshold>
+                <fragile_factor>0</fragile_factor>
+                <!--disable neighbouring label collapse-->
+                <label_mu>-1</label_mu>
+                <label_treshold>0</label_treshold>
+                <label_factor>0</label_factor>
+                <!--disable chimeric reads-->
+                <chimera_rate>0</chimera_rate>
+
+                <!--enable BED output-->
+                <bed_file/>
+
+                <!--OPTIONAL PARAMETERS not relating to noise-->
+                <prefix>ecoli_output</prefix>
+                <coverage>1</coverage>
+                <chips>1</chips>
+                <scans_per_chip>30</scans_per_chip>
+                <scan_size>1500</scan_size>
+                <min_nicks>1</min_nicks>
+                <seed>0</seed>
+        </input>
+        <!--More simulations can be added here-->
+</simulation>
