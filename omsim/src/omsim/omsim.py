@@ -219,8 +219,7 @@ def omsim(settings):
                                         #bedfile.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
                         ofile.close()
                         #bedfile.close()
-                if len(settings.labels) > 1:
-                        merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
+                merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
         print('Finished processing ' + settings.name + '.\n')
 
