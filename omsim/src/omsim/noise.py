@@ -105,7 +105,7 @@ class Noise:
                         cutoff = self.settings.fragile_same
                 else:
                         cutoff = self.settings.fragile_opposite
-                dist = curr[0] - prev[0]
+                dist = abs(curr[0] - prev[0])
                 if dist < cutoff - self.settings.fragile_treshold:
                         # don't break, nicks are so close that molecule does not become fragile
                         return False
@@ -239,10 +239,8 @@ class Noise:
                                 prev = curr
                                 continue
                         if prev[0] > curr[0]:
-                                temp = prev
-                                prev = curr
-                                curr = temp
-                        dist = curr[0] - prev[0]
+                                prev, curr = curr, prev
+                        dist = abs(curr[0] - prev[0])
                         if dist < mu - t:
                                 # merge
                                 prev[0] = random.randint(int(prev[0]), int(curr[0])) + (prev[0] % 1)
