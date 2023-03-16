@@ -93,6 +93,10 @@ class Noise:
                 '''
                 computes the value of a sigmoid around m at position x, with factor f
                 '''
+                if f == 0:
+                        # f == 0 is an invalid value in this sigmoid function
+                        # here we choose to map the entire sigmoid to 0 in this case
+                        return 0
                 return 1 - 1 / (1 + exp((m - x) / f))
         
         
