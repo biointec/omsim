@@ -170,14 +170,14 @@ class Noise:
                 return molecule
         
         
-        def generate_molecule(self, nicks, size, strand):
+        def generate_molecule(self, nicks, size, is_forward):
                 #determine read position
                 shift, length, end = self.read_position(size)
                 #abort if improper read position
                 if length > size or shift < 0 or (not self.settings.circular and end >= size):
                         return (-1, [], [-1, -1])
                 #set meta for bed file
-                meta = [-1, shift, length, strand]
+                meta = [-1, shift, length, is_forward]
                 #generate false positives
                 fp = []
                 for eid in self.settings.enzymes:
@@ -266,8 +266,8 @@ class Noise:
                         idx = bisect_left(cumSeqLens, random.random() * cumSeqLens[-1])
                         l = -1
                         while l < 0:
-                                strand = self.strand()
-                                l, m, meta = self.generate_molecule(fks[idx] if strand else rcks[idx], seqLens[idx], strand)
+                                is_forward = True if self.settings.always_forward else self.strand()
+                                l, m, meta = self.generate_molecule(fks[idx] if is_forward else rcks[idx], seqLens[idx], is_forward)
                         meta[0] = idx
                         meta = [meta]
                         if chimera[0]:

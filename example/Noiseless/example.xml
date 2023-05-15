@@ -43,6 +43,8 @@
                 <label_factor>0</label_factor>
                 <!--disable chimeric reads-->
                 <chimera_rate>0</chimera_rate>
+                <!--disable reverse molecules-->
+                <!--always_forward>1</always_forward-->
 
                 <!--enable BED output-->
                 <bed_file/>

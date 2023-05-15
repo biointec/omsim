@@ -65,6 +65,7 @@ class Settings:
                 self.label_SNR_mu = 14.0
                 self.label_SNR_sd = 11.0
                 self.sim_batch_size = 100000
+                self.always_forward = False
                 self.seed = None
                 
                 self.enzyme_xml = ""
