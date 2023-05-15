@@ -307,7 +307,7 @@ def print_usage():
 
 
 def main(argv=None):
-        version = "v1.1.4"
+        version = "v1.1.5"
         print_welcome(version)
         if argv is None:
                 argv = sys.argv
