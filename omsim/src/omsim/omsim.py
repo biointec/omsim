@@ -159,6 +159,7 @@ def omsim(settings):
         write_processed_input(settings, cmaps)
         # filter input for enzymes / files we need
         seqs, seq_lens, fns = filter_input(settings, cmaps)
+        # print(fns)
         prev = 0
         cum_seq_lens = []
         for seq_len in seq_lens:
@@ -222,7 +223,14 @@ def omsim(settings):
                         for _, _, _, meta in molecules[settings.labels[0]]:
                                 moleculeID += 1
                                 for idx, mol in enumerate(meta):
-                                        bed_file.write(seqs[mol[0]] + '\t' + str(mol[1]) + '\t' + str(mol[1] + l) + '\t' + str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n')
+                                        strand = mol[3]
+                                        start = mol[1] if strand else seq_lens[mol[0]] - mol[1]
+                                        end = start + mol[2] if strand else start - mol[2]
+                                        molecule_pos = seqs[mol[0]] + '\t'\
+                                                       + str(start) + '\t'\
+                                                       + str(end) + '\t'
+                                        molecule_id = str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\t'
+                                        bed_file.write(molecule_pos + molecule_id + '\n')
                         bed_file.close()
                 if not settings.do_not_merge_bnx:
                         merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
