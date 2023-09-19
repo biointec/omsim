@@ -171,8 +171,14 @@ class Noise:
         
         
         def generate_molecule(self, nicks, size, is_forward):
-                #determine read position
-                shift, length, end = self.read_position(size)
+                # determine read position
+                shift, length, _ = self.read_position(size)
+                # generate molecule at given position
+                return self.generate_molecule_at(nicks, size, is_forward, shift, length)
+
+        def generate_molecule_at(self, nicks, size, is_forward, shift, length):
+                # read ends at shift + length
+                end = shift + length
                 #abort if improper read position
                 if length > size or shift < 0 or (not self.settings.circular and end >= size):
                         return (-1, [], [-1, -1])
