@@ -224,7 +224,7 @@ class Noise:
         
         def cut_long_molecule(self, l, m):
                 idx = len(m)
-                while idx > 0 and m[idx - 1][0] > self.settings.max_mol_len:
+                while idx > 0 and m[idx - 1][0] >= self.settings.max_mol_len:
                         idx -= 1
                 if idx == 0:
                         return (-1, [], [-1, -1])
