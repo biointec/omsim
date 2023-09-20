@@ -227,7 +227,7 @@ class Noise:
                 while idx > 0 and m[idx - 1][0] >= self.settings.max_mol_len:
                         idx -= 1
                 if idx == 0:
-                        return (-1, [], [-1, -1])
+                        return -1, []
                 l = random.randint(int(m[idx - 1][0]) + 1, self.settings.max_mol_len) + (l % 1)
                 return l, m[:idx - 1]
         
