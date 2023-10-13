@@ -52,6 +52,7 @@ class Settings:
                 self.chimera_rate = 0.01
                 self.chimera_mu = 1500
                 self.chimera_sigma = 500
+                self.fixed_stretch_factor_estimate = 0.0
                 self.stretch_factor = .85
                 self.stretch_chip_sd = 0.02
                 self.stretch_scan_sd = 0.01

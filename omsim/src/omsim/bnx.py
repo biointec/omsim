@@ -52,7 +52,7 @@ class BNX:
                 rh += 'NanoChannelPixelsPerScan\t'
                 run_data += str(int(chip_settings['size'] / chip_settings['scans'] / chip_settings['bpp'])) + '\t'  # ~ 1to2 gbp divided by ~500 bpp, so about 2-4Mpixels per scan | total length divided by number of scans...
                 rh += 'StretchFactor\t'
-                run_data += str(chip_settings['stretch_factor']) + '\t'
+                run_data += str(chip_settings['stretch_factor_estimate']) + '\t'
                 rh += 'BasesPerPixel\t'  # 500 with stretch .85, so about 425 / stretchfactor
                 run_data += str(chip_settings['bpp']) + '\t'
                 rh += 'NumberofScans\t'
@@ -85,8 +85,6 @@ class BNX:
         def write_bnx_entry(self, info, nicks, ofile, chip_settings, relative_scan_stretch):
                 count = 0
                 channel = '1'
-                Q1 = 0
-                Q2 = 0
                 q1 = 'QX11'
                 q2 = 'QX12'
                 for pos in nicks:

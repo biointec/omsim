@@ -184,7 +184,10 @@ def omsim(settings):
                                  'chip_id': '20249,11843,07/17/2014,840014289', 'run_id': str(chip),
                                  'flowcell': 1, 'molecule_count': 0,
                                  'bpp': 425, 'stretch_factor': noise.chip_stretch_factor()}
-                chip_settings['bpp'] /= chip_settings['stretch_factor']
+                chip_settings['stretch_factor_estimate'] = chip_settings['stretch_factor']
+                if settings.fixed_stretch_factor_estimate > 0:
+                        chip_settings['stretch_factor_estimate'] = settings.fixed_stretch_factor_estimate
+                chip_settings['bpp'] /= chip_settings['stretch_factor_estimate']
                 molecules = {}
                 for label in settings.labels:
                         molecules[label] = []
@@ -204,7 +207,7 @@ def omsim(settings):
                                         if settings.min_nicks <= len(m):
                                                 for label in settings.labels:
                                                         molecules[label].append((l, molecule[label], chip_settings['scans'], meta))
-                                                        relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor'])
+                                                        relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor_estimate'])
                                         chip_settings['molecule_count'] += 1
                                         chip_settings['size'] += l
                 # write output
@@ -291,7 +294,7 @@ def xml_input_parse(xml_file):
                                 settings[entry.tag] = True
                         elif entry.tag == 'do_not_merge_bnx':
                                 settings[entry.tag] = True
-                        elif entry.tag in ['min_label_SNR', 'chimera_rate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd', 'stretch_mol_sd', 'molecule_AI_mu', 'molecule_AI_sd', 'label_AI_mu', 'label_AI_sd', 'molecule_SNR_mu', 'molecule_SNR_sd', 'label_SNR_mu', 'label_SNR_sd']:
+                        elif entry.tag in ['min_label_SNR', 'chimera_rate', 'fixed_stretch_factor_estimate', 'stretch_factor', 'stretch_chip_sd', 'stretch_scan_sd', 'stretch_mol_sd', 'molecule_AI_mu', 'molecule_AI_sd', 'label_AI_mu', 'label_AI_sd', 'molecule_SNR_mu', 'molecule_SNR_sd', 'label_SNR_mu', 'label_SNR_sd']:
                                 settings[entry.tag] = float(entry.text)
                         else:
                                 settings[entry.tag] = int(entry.text)
