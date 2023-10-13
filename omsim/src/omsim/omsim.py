@@ -253,9 +253,10 @@ def xml_enzyme_parse(xml_file):
 
 def xml_input_parse(xml_file):
         s = []
+        directory = os.path.dirname(os.path.realpath(xml_file))
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
                 settings = {}
-                settings['directory'] = os.path.dirname(os.path.realpath(xml_file))
+                settings['directory'] = directory
                 os.chdir(settings['directory'])
                 for entry in child:
                         if entry.tag == 'enzymes':
