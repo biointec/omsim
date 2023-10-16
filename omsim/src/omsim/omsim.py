@@ -33,7 +33,7 @@ from cmap import Cmap, Nicks
 from merge import merge_bnx
 
 def write_processed_input(settings, cmaps):
-        prefix = settings.byte_prefix
+        prefix = settings.directory + '/' + settings.byte_prefix
         mfn = prefix + '.byte.meta'
         meta_file = open(mfn, 'w')
         nfn = prefix + '.byte.nicks'
@@ -76,7 +76,7 @@ def write_processed_input(settings, cmaps):
 
 def import_input(settings):
         cmaps = {}
-        prefix = settings.byte_prefix
+        prefix = settings.directory + '/' + settings.byte_prefix
         if os.path.isfile(prefix + '.byte.meta'):
                 meta_file = open(prefix + '.byte.meta')
                 byte_file = open(prefix + '.byte.nicks', 'rb')
@@ -150,8 +150,6 @@ def get_rns(settings, fns, seq_lens):
 
 
 def omsim(settings):
-        # cd to the directory containing the configuration file
-        os.chdir(settings.directory)
         # process input
         cmaps = import_input(settings)
         print('Imported ' + str(sum(cmaps[iname].count() for iname in cmaps)) + ' nicks in ' + str(sum(cmaps[iname].seq_len() for iname in cmaps)) + 'bp.')
@@ -210,9 +208,10 @@ def omsim(settings):
                                                         molecules[label].append((l, molecule[label], chip_settings['scans'], meta, stretch_factor / chip_settings['stretch_factor_estimate']))
                                         chip_settings['molecule_count'] += 1
                 # write output
+                prefix = settings.directory + '/' + settings.prefix
                 for label in settings.labels:
                         moleculeID = 0
-                        ofile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
+                        ofile = open(prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
                         bnx.write_bnx_header(ofile, label, chip_settings)
                         for l, m, s, meta, stretch_factor in molecules[label]:
                                 moleculeID += 1
@@ -220,7 +219,7 @@ def omsim(settings):
                         ofile.close()
                 # write bed file
                 if settings.bed_file:
-                        bed_file = open(settings.prefix + '.' + str(chip) + '.bed', 'w')
+                        bed_file = open(prefix + '.' + str(chip) + '.bed', 'w')
                         moleculeID = 0
                         for _, _, _, meta, _ in molecules[settings.labels[0]]:
                                 moleculeID += 1
@@ -235,7 +234,7 @@ def omsim(settings):
                                         bed_file.write(molecule_pos + molecule_id)
                         bed_file.close()
                 if not settings.do_not_merge_bnx:
-                        merge_bnx(settings.prefix + '.' + str(chip) + '.bnx', [settings.prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
+                        merge_bnx(prefix + '.' + str(chip) + '.bnx', [prefix + '.' + label + '.' + str(chip) + '.bnx' for label in settings.labels])
                 print('Finished chip ' + str(chip) + '/' + str(settings.chips))
         print('Finished processing ' + settings.name + '.\n')
 
@@ -257,9 +256,7 @@ def xml_input_parse(xml_file):
         s = []
         directory = os.path.dirname(os.path.realpath(xml_file))
         for child in xml.etree.ElementTree.parse(xml_file).getroot():
-                settings = {}
-                settings['directory'] = directory
-                os.chdir(settings['directory'])
+                settings = {'directory': directory}
                 for entry in child:
                         if entry.tag == 'enzymes':
                                 enzymes = []
