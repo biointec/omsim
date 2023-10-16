@@ -35,11 +35,11 @@
                 <!--disable fragile sites-->
                 <fragile_same>-1</fragile_same>
                 <fragile_opposite>-1</fragile_opposite>
-                <fragile_treshold>0</fragile_treshold>
+                <fragile_threshold>0</fragile_threshold>
                 <fragile_factor>0</fragile_factor>
                 <!--disable neighbouring label collapse-->
                 <label_mu>-1</label_mu>
-                <label_treshold>0</label_treshold>
+                <label_threshold>0</label_threshold>
                 <label_factor>0</label_factor>
                 <!--disable chimeric reads-->
                 <chimera_rate>0</chimera_rate>

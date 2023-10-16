@@ -119,13 +119,13 @@ struct configuration {
                 set(wxT("min_nicks"), wxT("1"), wxT("Minimal Number of Nicks"));
 
                 set(wxT("label_mu"), wxT("1500"), wxT("Label Merge: Mean"));
-                set(wxT("label_treshold"), wxT("500"), wxT("Label Merge: Treshold"));
+                set(wxT("label_threshold"), wxT("500"), wxT("Label Merge: Threshold"));
                 set(wxT("label_factor"), wxT("100"), wxT("Label Merge: Factor"));
                 set(wxT("nick_sd"), wxT("50"), wxT("Label position: Standard Deviation"));
 
                 set(wxT("fragile_same"), wxT("50"), wxT("Fragile Distance: Same Strand Mean"));
                 set(wxT("fragile_opposite"), wxT("150"), wxT("Fragile Distance: Opposite Strand Mean"));
-                set(wxT("fragile_treshold"), wxT("25"), wxT("Fragile Distance: Treshold"));
+                set(wxT("fragile_threshold"), wxT("25"), wxT("Fragile Distance: Threshold"));
                 set(wxT("fragile_factor"), wxT("3"), wxT("Fragile Distance: Factor"));
 
                 set(wxT("chimera_rate"), wxT("0.01"), wxT("Chimera Rate"));
