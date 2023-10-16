@@ -37,7 +37,7 @@ def merge_bnx(out_bnx, in_bnxs):
         elif line[:28] == '# Nickase Recognition Site 1':
             for label in range(0, len(in_bnxs)):
                 out_bnx_file.write('# Nickase Recognition Site ' + str(label + 1) + headers[label][idx][28:])
-        elif line[:3] == '#1h':
+        elif line[:3] == '#1':
             for label in range(0, len(in_bnxs)):
                 out_bnx_file.write('#' + str(label + 1) + headers[label][idx][2:])
                 out_bnx_file.write('#' + str(label + 1) + headers[label][idx + 1][2:])
@@ -45,7 +45,7 @@ def merge_bnx(out_bnx, in_bnxs):
             for label in range(0, len(in_bnxs)):
                 out_bnx_file.write(headers[label][idx][:18] + str(label + 1) + headers[label][idx][19:-2] + str(label + 1) + '\n')
                 out_bnx_file.write(headers[label][idx + 1][:18] + str(label + 1) + headers[label][idx + 1][19:-2] + str(label + 1) + '\n')
-        elif line[:3] != '#1h' and line[:15] != '# Quality Score':
+        elif line[:3] != '#1' and line[:15] != '# Quality Score':
             out_bnx_file.write(line)
         idx += 1
 
