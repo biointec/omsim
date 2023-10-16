@@ -44,10 +44,10 @@ class Settings:
                 self.nick_sd = 50
                 self.fragile_same = 50
                 self.fragile_opposite = 150
-                self.fragile_treshold = 25
+                self.fragile_threshold = 25
                 self.fragile_factor = 3
                 self.label_mu = 1500
-                self.label_treshold = 500
+                self.label_threshold = 500
                 self.label_factor = 100
                 self.chimera_rate = 0.01
                 self.chimera_mu = 1500

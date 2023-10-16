@@ -38,10 +38,10 @@
         <nick_sd>50</nick_sd>
         <fragile_same>50</fragile_same>
         <fragile_opposite>150</fragile_opposite>
-        <fragile_treshold>25</fragile_treshold>
+        <fragile_threshold>25</fragile_threshold>
         <fragile_factor>3</fragile_factor>
         <label_mu>1500</label_mu>
-        <label_treshold>500</label_treshold>
+        <label_threshold>500</label_threshold>
         <label_factor>100</label_factor>
         <chimera_rate>0.01</chimera_rate>
         <chimera_mu>1500</chimera_mu>
