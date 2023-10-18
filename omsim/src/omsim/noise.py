@@ -106,10 +106,10 @@ class Noise:
                 else:
                         cutoff = self.settings.fragile_opposite
                 dist = abs(curr[0] - prev[0])
-                if dist < cutoff - self.settings.fragile_treshold:
+                if dist < cutoff - self.settings.fragile_threshold:
                         # don't break, nicks are so close that molecule does not become fragile
                         return False
-                elif cutoff + self.settings.fragile_treshold < dist:
+                elif cutoff + self.settings.fragile_threshold < dist:
                         # don't break, nicks are too far apart for molecule to become fragile
                         return False
                 else:
@@ -237,7 +237,7 @@ class Noise:
                         return m
                 mol = []
                 mu = self.settings.label_mu
-                t = self.settings.label_treshold
+                t = self.settings.label_threshold
                 f = self.settings.label_factor
                 prev = None
                 for curr in m:
