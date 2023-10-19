@@ -50,7 +50,7 @@ class BNX:
                 rh += 'Time\t'
                 run_data += str(datetime.now().strftime('%D %I:%M %p')) + '\t'
                 rh += 'NanoChannelPixelsPerScan\t'
-                run_data += str(int(chip_settings['size'] / chip_settings['scans'] / chip_settings['bpp'])) + '\t'  # ~ 1to2 gbp divided by ~500 bpp, so about 2-4Mpixels per scan | total length divided by number of scans...
+                run_data += str(int(self.settings.get_scan_size() / chip_settings['bpp'])) + '\t'  # ~ 1to2 gbp divided by ~500 bpp, so about 2-4Mpixels per scan | total length divided by number of scans...
                 rh += 'StretchFactor\t'
                 run_data += str(chip_settings['stretch_factor_estimate']) + '\t'
                 rh += 'BasesPerPixel\t'  # 500 with stretch .85, so about 425 / stretchfactor

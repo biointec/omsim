@@ -181,7 +181,7 @@ def omsim(settings):
         bnx = BNX(settings, noise)
         # generate reads
         for chip in range(1, settings.chips + 1):
-                chip_settings = {'size': 0, 'scans': 0,
+                chip_settings = {'scans': 0,
                                  'chip_id': '20249,11843,07/17/2014,840014289', 'run_id': str(chip),
                                  'flowcell': 1, 'molecule_count': 0,
                                  'bpp': 425, 'stretch_factor': noise.chip_stretch_factor()}
@@ -210,7 +210,6 @@ def omsim(settings):
                                                         molecules[label].append((l, molecule[label], chip_settings['scans'], meta))
                                                         relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor_estimate'])
                                         chip_settings['molecule_count'] += 1
-                                        chip_settings['size'] += l
                 # write output
                 for label in settings.labels:
                         moleculeID = 0
