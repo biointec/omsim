@@ -90,7 +90,6 @@ class Settings:
                 s += 'Minimal molecule length: ' + str(self.min_mol_len) + ' bp\n'
                 s += 'Average molecule length: ' + str(self.avg_mol_len) + ' bp\n'
                 s += 'Standard deviation of molecule length: ' + str(self.sd_mol_len) + '\n'
-                s += 'Minimal coverage: ' + str(self.coverage) + 'x\n'
                 s += 'Chimera rate: ' + str(self.chimera_rate * 100) + '%\n'
                 if self.seed is not None:
                         s += 'Random seed: ' + str(self.seed) + '\n'

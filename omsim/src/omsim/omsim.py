@@ -19,6 +19,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
+import math
 import sys
 import os
 import xml.etree.ElementTree
@@ -171,7 +172,7 @@ def omsim(settings):
         rns = get_rns(settings, fns, seq_lens)
         #estimate number of chips based on expected coverage
         if settings.chips == 0:
-                temp = int(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
+                temp = math.ceil(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
                 settings.chips = temp if temp > 1 else 1
         #estimate coverage
         settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
