@@ -194,11 +194,11 @@ def omsim(settings):
                         molecules[label] = []
                 # generate reads
                 moleculeID = 0
-                relative_stretch = []
                 for scan in range(1, settings.scans_per_chip + 1):
                         chip_settings['scans'] += 1
                         scan_stretch = noise.scan_stretch_factor(chip_settings['stretch_factor'])
-                        for l, m, meta in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns):
+                        for l, m, meta, stretch_factor in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns,
+                                                                              scan_stretch):
                                         moleculeID += 1
                                         molecule = {}
                                         for label in settings.labels:
@@ -207,23 +207,22 @@ def omsim(settings):
                                                 molecule[nick[1]['label']].append(nick[0])
                                         if settings.min_nicks <= len(m):
                                                 for label in settings.labels:
-                                                        molecules[label].append((l, molecule[label], chip_settings['scans'], meta))
-                                                        relative_stretch.append(noise.mol_stretch_factor(scan_stretch) / chip_settings['stretch_factor_estimate'])
+                                                        molecules[label].append((l, molecule[label], chip_settings['scans'], meta, stretch_factor / chip_settings['stretch_factor_estimate']))
                                         chip_settings['molecule_count'] += 1
                 # write output
                 for label in settings.labels:
                         moleculeID = 0
                         ofile = open(settings.prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
                         bnx.write_bnx_header(ofile, label, chip_settings)
-                        for l, m, s, meta in molecules[label]:
+                        for l, m, s, meta, stretch_factor in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, relative_stretch[moleculeID - 1])
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, stretch_factor)
                         ofile.close()
                 # write bed file
                 if settings.bed_file:
                         bed_file = open(settings.prefix + '.' + str(chip) + '.bed', 'w')
                         moleculeID = 0
-                        for _, _, _, meta in molecules[settings.labels[0]]:
+                        for _, _, _, meta, _ in molecules[settings.labels[0]]:
                                 moleculeID += 1
                                 for idx, mol in enumerate(meta):
                                         is_forward = mol[3]

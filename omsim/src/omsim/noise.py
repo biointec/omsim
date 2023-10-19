@@ -265,7 +265,7 @@ class Noise:
                 return mol
         
         
-        def generate_scan(self, seqLens, cumSeqLens, fks, rcks):
+        def generate_scan(self, seqLens, cumSeqLens, fks, rcks, scan_stretch):
                 chimera = [False, -1, None, [[-1, -1]]]
                 size = 0
                 while size < self.settings.get_scan_size():
@@ -285,9 +285,13 @@ class Noise:
                                 m = self.merge_labels(m)
                                 if self.settings.max_mol_len < l:
                                         l, m = self.cut_long_molecule(l, m)
+                                stretch_factor = self.mol_stretch_factor(scan_stretch)
+                                if 0 <= l:
+                                        size += math.ceil(l * stretch_factor)
+                                        if size > self.settings.get_scan_size():
+                                                return
                                 if self.settings.min_mol_len <= l:
-                                        size += l
-                                        yield l, m, meta
+                                        yield l, m, meta, stretch_factor
         
         
         def chip_stretch_factor(self):
