@@ -87,7 +87,7 @@ class BNX:
                 channel = '1'
                 q1 = 'QX11'
                 q2 = 'QX12'
-                for pos in nicks:
+                for pos in sorted(nicks):
                         count += 1
                         channel += '\t' + '{0:.2f}'.format(pos * relative_scan_stretch)
                         val = self.noise.next_l_SNR()
