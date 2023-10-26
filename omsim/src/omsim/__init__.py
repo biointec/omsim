@@ -18,7 +18,7 @@
         59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 '''
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 __title__ = "omsim"
 __description__ = "Optical map simulator."
