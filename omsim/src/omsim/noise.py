@@ -290,8 +290,7 @@ class Noise:
                                         size += math.ceil(l * stretch_factor)
                                         if size > self.settings.get_scan_size():
                                                 return
-                                if self.settings.min_mol_len <= l:
-                                        yield l, m, meta, stretch_factor
+                                yield l, m, meta, stretch_factor
         
         
         def chip_stretch_factor(self):

@@ -21,11 +21,14 @@ def merge_bnx(out_bnx, in_bnxs):
         header = []
         while True:
             line = bnx_file.readline()
+            if len(line) == 0:
+                break
             if line[0] == '#':
                 header.append(line)
             else:
                 break
-        last_lines.append(line)
+        if len(line) > 0:
+            last_lines.append(line)
         headers.append(header)
 
     out_bnx_file = open(out_bnx, 'w')
@@ -50,17 +53,17 @@ def merge_bnx(out_bnx, in_bnxs):
         idx += 1
 
     # read and write entries in batches
-    backbone = last_lines[0]
-    entries = [
-        {
+    entries = []
+    if len(last_lines) > 0:
+        backbone = last_lines[0]
+        entries.append({
             'backbone': backbone.split('\t'),
             'data': [],
             'snr': [],
             'intensity': [],
-        }
-    ]
-    # fix nick count
-    entries[0]['backbone'][5] = str(sum(int(x.split('\t')[5]) for x in last_lines))
+        })
+        # fix nick count
+        entries[0]['backbone'][5] = str(sum(int(x.split('\t')[5]) for x in last_lines))
 
     limit = 1000
     while True:

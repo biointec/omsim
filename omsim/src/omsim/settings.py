@@ -34,6 +34,8 @@ class Settings:
                 self.chips = 0
                 self.scans_per_chip = 30
                 self.scan_size = 1500
+                self.min_num_mol = 0
+                self.max_num_mol = 0
                 self.avg_mol_len = 90000
                 self.sd_mol_len = 85000
                 self.min_mol_len = 1
@@ -94,6 +96,27 @@ class Settings:
                 if self.seed is not None:
                         s += 'Random seed: ' + str(self.seed) + '\n'
                 return s
+
+        def warn(self):
+                warned = False
+                # specific setting issues
+                if self.min_num_mol > self.max_num_mol:
+                        self.max_num_mol = self.min_num_mol
+                # check incompatible settings
+                for incompatible_couple in [
+                        ['chips', 0, 'coverage', 0],
+                        ['chips', 1, 'min_num_mol', 0],
+                        ['coverage', 0, 'min_num_mol', 0],
+                        ['scans_per_chip', 0, 'min_num_mol', 0],
+                ]:
+                        a, mina, b, minb = incompatible_couple
+                        vala, valb = getattr(self, a), getattr(self, b)
+                        if vala > mina and valb > minb:
+                                warned = True
+                                print(f'Warning: settings "{a} = {vala}" and "{b} = {valb}" are not compatible.')
+                if warned:
+                        print('Some settings were not compatible, the resulting output may not fit your expectation.')
+                        print()
 
         def get_scan_size(self):
                 MEGA = 1000 * 1000

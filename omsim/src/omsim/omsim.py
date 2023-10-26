@@ -149,6 +149,37 @@ def get_rns(settings, fns, seq_lens):
         return rns
 
 
+def generate_scan(settings, chip_settings, noise, seq_lens, cum_seq_lens, fns, rns, molecules, total_num_mol):
+        """
+        Generate a single scan on the chip defined by chip_settings.
+        chip_settings and molecules are modified here
+        """
+        moleculeID = 0
+        scan = 0
+        while True if settings.min_num_mol > 0 else scan < settings.scans_per_chip:
+                scan += 1
+                chip_settings['scans'] += 1
+                scan_stretch = noise.scan_stretch_factor(chip_settings['stretch_factor'])
+                for l, m, meta, stretch_factor in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns, scan_stretch):
+                        moleculeID += 1
+                        molecule = {}
+                        for label in settings.labels:
+                                molecule[label] = []
+                        for nick in m:
+                                molecule[nick[1]['label']].append(nick[0])
+                        rel_stretch_factor = stretch_factor / chip_settings['stretch_factor_estimate']
+                        if settings.min_mol_len <= l * rel_stretch_factor and settings.min_nicks <= len(m):
+                                for label in settings.labels:
+                                        molecules[label].append((l, molecule[label], chip_settings['scans'], meta,
+                                                                 rel_stretch_factor, moleculeID))
+                        chip_settings['molecule_count'] += 1
+                        total_num_mol += 1
+                        if total_num_mol >= settings.max_num_mol > 0:
+                                return total_num_mol
+                if total_num_mol >= settings.min_num_mol > 0:
+                        break
+        return total_num_mol
+
 def omsim(settings):
         # process input
         cmaps = import_input(settings)
@@ -168,17 +199,37 @@ def omsim(settings):
         print('Using ' + str(sum(len(f) for f in fns)) + ' nicks in ' + str(sum(seq_lens)) + 'bp.')
         #compute reverse nicking sites
         rns = get_rns(settings, fns, seq_lens)
-        #estimate number of chips based on expected coverage
-        if settings.chips == 0:
+        # determine number of chips
+        if settings.chips > 0:
+                # if number of chips is specified, then this takes priority
+                settings.chips = settings.chips
+        elif settings.min_num_mol > 0:
+                # if minimal number of molecules is specified, then a single chip will be simulated
+                settings.chips = 1
+        elif settings.coverage > 0:
+                # if the coverage is specified, then estimate the number of required chips
                 temp = math.ceil(sum(seq_lens) * settings.coverage / (settings.scans_per_chip * settings.get_scan_size()))
                 settings.chips = temp if temp > 1 else 1
+        else:
+                # in the final case, nothing is specified, and a single chip will be simulated
+                settings.chips = 1
         #estimate coverage
-        settings.estimated_coverage = int(settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens)))
-        print('Generating reads on ' + str(settings.chips) + ' chip' + ('' if settings.chips == 1 else 's') + ', estimated coverage: ' + str(settings.estimated_coverage) + 'x.')
+        settings.estimated_coverage = 0
+        if settings.min_num_mol == 0:
+                settings.estimated_coverage = settings.get_scan_size() * settings.scans_per_chip * settings.chips / float(sum(seq_lens))
+        else:
+                settings.estimated_coverage = settings.min_num_mol * settings.avg_mol_len / float(sum(seq_lens))
+        if settings.max_num_mol > 0:
+                cap = settings.max_num_mol * settings.avg_mol_len / float(sum(seq_lens))
+                settings.estimated_coverage = min(settings.estimated_coverage, cap)
+        print(f'Generating reads on {settings.chips} chip{"" if settings.chips == 1 else "s"}, estimated coverage: {settings.estimated_coverage:.2f}x.')
         noise = Noise(settings)
         bnx = BNX(settings, noise)
+        total_num_mol = 0
         # generate reads
         for chip in range(1, settings.chips + 1):
+                if total_num_mol >= settings.max_num_mol > 0:
+                        break
                 chip_settings = {'scans': 0,
                                  'chip_id': '20249,11843,07/17/2014,840014289', 'run_id': str(chip),
                                  'flowcell': 1, 'molecule_count': 0,
@@ -191,31 +242,17 @@ def omsim(settings):
                 for label in settings.labels:
                         molecules[label] = []
                 # generate reads
-                moleculeID = 0
-                for scan in range(1, settings.scans_per_chip + 1):
-                        chip_settings['scans'] += 1
-                        scan_stretch = noise.scan_stretch_factor(chip_settings['stretch_factor'])
-                        for l, m, meta, stretch_factor in noise.generate_scan(seq_lens, cum_seq_lens, fns, rns,
-                                                                              scan_stretch):
-                                        moleculeID += 1
-                                        molecule = {}
-                                        for label in settings.labels:
-                                                molecule[label] = []
-                                        for nick in m:
-                                                molecule[nick[1]['label']].append(nick[0])
-                                        if settings.min_nicks <= len(m):
-                                                for label in settings.labels:
-                                                        molecules[label].append((l, molecule[label], chip_settings['scans'], meta, stretch_factor / chip_settings['stretch_factor_estimate']))
-                                        chip_settings['molecule_count'] += 1
+                total_num_mol = generate_scan(settings, chip_settings, noise, seq_lens, cum_seq_lens, fns, rns, molecules, total_num_mol)
+
                 # write output
                 prefix = settings.directory + '/' + settings.prefix
                 for label in settings.labels:
                         moleculeID = 0
                         ofile = open(prefix + '.' + label + '.' + str(chip) + '.bnx', 'w')
                         bnx.write_bnx_header(ofile, label, chip_settings)
-                        for l, m, s, meta, stretch_factor in molecules[label]:
+                        for l, m, s, meta, stretch_factor, original_ID in molecules[label]:
                                 moleculeID += 1
-                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, stretch_factor)
+                                bnx.write_bnx_entry((moleculeID, l, s), m, ofile, chip_settings, stretch_factor, original_ID)
                         ofile.close()
                 # write bed file
                 if settings.bed_file:
@@ -227,9 +264,7 @@ def omsim(settings):
                                         is_forward = mol[3]
                                         start = mol[1] if is_forward else seq_lens[mol[0]] - mol[1]
                                         end = start + mol[2] if is_forward else start - mol[2]
-                                        molecule_pos = seqs[mol[0]] + '\t'\
-                                                       + str(start) + '\t'\
-                                                       + str(end) + '\t'
+                                        molecule_pos = seqs[mol[0]] + '\t' + str(start) + '\t' + str(end) + '\t'
                                         molecule_id = str(moleculeID) + ('.' + str(idx) if len(meta) > 1 else '') + '\n'
                                         bed_file.write(molecule_pos + molecule_id)
                         bed_file.close()
@@ -326,5 +361,6 @@ def main(argv=None):
                                 simulations.append(s)
         for settings in simulations:
                 print(settings)
+                settings.warn()
                 omsim(settings)
         return 0

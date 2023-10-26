@@ -82,7 +82,7 @@ class BNX:
                 ofile.write('# Quality Score QX12: Label Intensity for channel 1' + '\n')
         
         
-        def write_bnx_entry(self, info, nicks, ofile, chip_settings, relative_scan_stretch):
+        def write_bnx_entry(self, info, nicks, ofile, chip_settings, relative_scan_stretch, original_ID):
                 count = 0
                 channel = '1'
                 q1 = 'QX11'
@@ -102,10 +102,10 @@ class BNX:
                 backbone += str(0) + '\t'                                               # backboneLabelChannel   0
                 backbone += str(moleculeID) + '\t'                                      # ID                     1
                 backbone += str('{0:.2f}'.format(length)) + '\t'                        # length                 x.00
-                backbone += str('{0:.2f}'.format(self.noise.next_m_AI())) + '\t'     # avgIntensity           10.00
-                backbone += str('{0:.2f}'.format(self.noise.next_m_SNR())) + '\t'    # SNR                    10.00
+                backbone += str('{0:.2f}'.format(self.noise.next_m_AI())) + '\t'        # avgIntensity           10.00
+                backbone += str('{0:.2f}'.format(self.noise.next_m_SNR())) + '\t'       # SNR                    10.00
                 backbone += str(count) + '\t'                                           # NumberofLabels         count
-                backbone += str(moleculeID) + '\t'                                      # OriginalMoleculeId     1
+                backbone += str(original_ID) + '\t'                                     # OriginalMoleculeId     int
                 backbone += str(scan) + '\t'                                            # ScanNumber             1
                 backbone += str(-1) + '\t'                                              # ScanDirection          -1
                 backbone += str(chip_settings['chip_id']) + '\t'                        # ChipId                 unknown
