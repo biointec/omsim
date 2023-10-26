@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Root containing all simulations to run-->
+<simulation>
+        <!--input defining a single simulation-->
+        <input>
+                <!--REQUIRED PARAMETERS-->
+                <!--Name of the data set-->
+                <name>chips</name>
+                <!--Locations of all input files (1 or more)-->
+                <files>
+                        <!--Location of the data set, absolute, or relative to the current directory-->
+                        <file>../../test/ecoli/MG1655.fasta</file>
+
+                </files>
+                <!--Add this tag ONLY if the sequences in the data set are circular, leave it out if they are not-->
+                <circular/>
+                <!--The enzymes and their labels to use-->
+                <enzymes>
+                        <!--Location of the enzymes file-->
+                        <file>../Fixed-SF-Estimate/enzymes.xml</file>
+                        <!--Specification of one enzyme and its label-->
+                        <enzyme>
+                                <!--id of the enzyme-->
+                                <id>DLE-1</id>
+                                <!--label used for this enzyme, different labels will result in different output files-->
+                                <label>label_1</label>
+                        </enzyme>
+                </enzymes>
+                
+                <!--OPTIONAL PARAMETERS-->
+                <!--Prefix of the output, relative to the current directory-->
+                <prefix>ecoli_output_chips</prefix>
+                <!--Number of chips that will be used, this takes precedence over coverage-->
+                <chips>1</chips>
+                <!--Number of scans taken per chip-->
+                <scans_per_chip>1</scans_per_chip>
+                <!--Scan size in Mbp-->
+                <scan_size>15</scan_size>
+                <!--Average molecule length-->
+                <avg_mol_len>200000</avg_mol_len>
+                <!--Standard deviation of the molecule length-->
+                <sd_mol_len>150000</sd_mol_len>
+                <!--Minimal molecule length-->
+                <min_mol_len>20000</min_mol_len>
+                <!--Maximal molecule length-->
+                <max_mol_len>2500000</max_mol_len>
+                <!--Fixed estimate of the chip stretch factor, 0 is the default behaviour: here the chip stretch factor is perfectly estimated instead-->
+                <fixed_stretch_factor_estimate>0</fixed_stretch_factor_estimate>
+                <!--Average stretch factor-->
+                <stretch_factor>0.85</stretch_factor>
+                <!--Standard deviation of stretch factor per chip-->
+                <stretch_chip_sd>0.2</stretch_chip_sd>
+                <!--Standard deviation of stretch factor per scan-->
+                <stretch_scan_sd>0.2</stretch_scan_sd>
+                <!--Minimal number of labels required per read-->
+                <min_nicks>1</min_nicks>
+                <!--Additional normal noise-->
+                <nick_sd>50</nick_sd>
+                <fragile_same>-1</fragile_same>
+                <fragile_opposite>-1</fragile_opposite>
+                <fragile_threshold>0</fragile_threshold>
+                <!--Factor determining the steepness of the fragile location cutoff when the distance is less than fragile_threshold away from the 50% point-->
+                <fragile_factor>3</fragile_factor>
+                <!--Distance between labels where there is 50% chance of collapsing them unto one label-->
+                <label_mu>1500</label_mu>
+                <!--Similar to fragile_threshold, but now for label collapsing-->
+                <label_threshold>500</label_threshold>
+                <!--Similar to fragile_factor, but now for label collapsing-->
+                <label_factor>100</label_factor>
+                <!--Percent of the reads that will be extend as a chimera-->
+                <chimera_rate>0.01</chimera_rate>
+                <!--Mean of the normal distribution determining the distance added between two parts of a chimeric read-->
+                <chimera_mu>1500</chimera_mu>
+                <!--SD of the normal distribution determining the distance added between two parts of a chimeric read-->
+                <chimera_sigma>500</chimera_sigma>
+                <!--The seed used for all pseudo random number generators-->
+                <seed>0</seed>
+        </input>
+        
+        <!--More simulations can be added here-->
+        
+</simulation>
