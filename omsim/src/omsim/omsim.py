@@ -258,7 +258,7 @@ def omsim(settings):
                 if settings.bed_file:
                         bed_file = open(prefix + '.' + str(chip) + '.bed', 'w')
                         moleculeID = 0
-                        for _, _, _, meta, _ in molecules[settings.labels[0]]:
+                        for _, _, _, meta, _, _ in molecules[settings.labels[0]]:
                                 moleculeID += 1
                                 for idx, mol in enumerate(meta):
                                         is_forward = mol[3]
